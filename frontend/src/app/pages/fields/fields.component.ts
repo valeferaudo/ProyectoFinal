@@ -1,8 +1,8 @@
-import { Component, OnInit, DoCheck, OnChanges } from '@angular/core';
-import { FieldService } from 'src/app/services/field.service';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import Swal from 'sweetalert2';
 import { User } from 'src/app/models/user.model';
+import { ErrorsService } from '../../services/errors.service';
+import { FieldService } from '../../services/field.service'
 
 @Component({
   selector: 'app-fields',
@@ -18,7 +18,8 @@ export class FieldsComponent implements OnInit {
   user: User;
 
   constructor(private fieldService: FieldService,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              private errorService: ErrorsService) {
               }
 
    ngOnInit(): void {
@@ -45,7 +46,8 @@ export class FieldsComponent implements OnInit {
                               }
                             }, err => {
                               console.log(err);
-                              Swal.fire('Error', 'Intentar nuevamente...', 'error');
+                              this.errorService.showErrors('mejorar',99)
                             });
      }
+
 }

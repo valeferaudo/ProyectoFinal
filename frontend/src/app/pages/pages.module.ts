@@ -1,51 +1,48 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// Modules
+//MODULOS
+import { AppRoutingModule } from '../app-routing.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
-import { AppRoutingModule } from '../app.routing.module';
-import { ComponentsModule } from '../components/components.module';
 
-
-// Components
-import { HomeComponent } from './home/home.component';
-import { AppointmentsComponent } from './appointments/appointments.component';
-import { FieldsComponent } from './fields/fields.component';
-import { UsersComponent } from './users/users.component';
+//COMPONENTES
 import { PagesComponent } from './pages.component';
-import { DoAppointmentComponent } from './do-appointments/do-appointments.component';
+import { HomeComponent } from './home/home.component';
+import { UsersComponent } from './users/users.component';
 import { AboutComponent } from './about/about.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MaterialModule } from '../material.module';
-
-
+import { FieldsComponent } from './fields/fields.component';
+import { DoAppointmentComponent } from './do-appointment/do-appointment.component';
+import { AppointmentsComponent } from './appointments/appointments.component';
+import { ComponentsModule } from '../components/components.module';
 
 
 @NgModule({
   declarations: [
-    HomeComponent,
-    AppointmentsComponent,
     PagesComponent,
-    FieldsComponent,
+    HomeComponent,
     UsersComponent,
-    DoAppointmentComponent,
     AboutComponent,
+    FieldsComponent,
+    DoAppointmentComponent,
+    AppointmentsComponent
   ],
   imports: [
     CommonModule,
-    SharedModule,
-    ComponentsModule,
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    MaterialModule
+    SharedModule,
+    ComponentsModule
   ],
-  exports: [
-    HomeComponent,
-    AppointmentsComponent,
-    FieldsComponent,
+  exports:[
     PagesComponent,
+    HomeComponent,
     UsersComponent,
+    AboutComponent,
+    FieldsComponent,
+    AppointmentsComponent,
+    DoAppointmentComponent
   ]
 })
 export class PagesModule { }

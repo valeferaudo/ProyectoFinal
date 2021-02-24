@@ -1,44 +1,42 @@
-<body class="login-register login-sidebar" style="background: url(../../../assets/img/fondo3.jpg) no-repeat center center fixed; overflow: scroll; background-size: cover; margin-bottom: 0px;">
-    
-    <div class="modal-dialog text-center mx-auto" style="margin-top: 100px;margin-bottom: 0px;">
-        <div class="col-sm-10 main-section">
-            <div class="modal-content"  >
-                    <div class="col-12" style="margin-top: 10px; margin-bottom: 10px;">
-                        <div>
-                            <img src="../../../assets/img/av_hombre.png" style="width:50%; height:auto;" class="pull-left" >
+<section id="wrapper">
+    <div class="login-register" style="background-image:url(../../../assets/images/background/login-register.jpg);">
+        <div class="login-box card">
+            <div class="card-body">
+                <form class="form-horizontal form-material" [formGroup]="loginForm" (submit)="signIn()">
+                    <h3 class="box-title m-b-20 text-center">Ingresar</h3>
+                    <div class="form-group ">
+                        <div class="col-xs-12">
+                            <input class="form-control" type="text" formControlName="email" placeholder="Email"> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input class="form-control" type="password" formControlName="password" placeholder="Contraseña"> </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <div class="checkbox checkbox-primary pull-left mb-0">
+                                <input id="checkbox-signup" 
+                                        type="checkbox" 
+                                        class="filled-in chk-col-light-blue"
+                                        formControlName="remember"> 
+                            <label for="checkbox-signup">Recordar usuario</label>
                         </div>
-                        <div>
-                            <img src="../../../assets/img/avatar mujer.png" style="width:50%; height:auto;" class="pull-right" >
+                            <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> ¿Olvidó su contraseña?</a> 
                         </div>
                     </div>
-                
-                    <form class="col-12" [formGroup]="form" (submit)="signIn()">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Email" formControlName="email">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" placeholder="Password" formControlName="password">
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <div class="checkbox checkbox-primary pull-left mb-0">
-                                    <input id="checkbox-signup" 
-                                            type="checkbox" 
-                                            class="filled-in chk-col-light-blue"
-                                            formControlName="remember"> 
-                                <label for="checkbox-signup">Recordar usuario</label>
-                            </div>
+                    <div class="form-group text-center">
+                        <div class="col-xs-12 p-b-20">
+                            <button class="btn btn-block btn-lg btn-info btn-rounded" type="submit">Ingresar</button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-dark mb-2 mt-0" [disabled]="form.invalid"><i class="fas fa-sign-in-alt"></i>  Ingresar</button>
                     <div class="form-group m-b-0">
                         <div class="col-sm-12 text-center">
-                            ¿No tienes cuenta? <a routerLink='/register' class="text-primary m-l-5"><b> Registrarse</b></a>
+                            ¿Todavía no tiene cuenta? <a [routerLink]="['/register']"  class="text-info m-l-5"><b> Registrarse</b></a>
                         </div>
                     </div>
-            </form>
+                </form>
+                <!-- MODAL DE RECUPERO DE PASSWORD -->
+            </div>
         </div>
     </div>
-</div>
-
-</body>
+</section>

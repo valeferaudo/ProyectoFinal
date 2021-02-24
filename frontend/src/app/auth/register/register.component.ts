@@ -1,28 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
-import { ValidatorService } from 'src/app/services/validator.service';
+import { ErrorsService } from 'src/app/services/errors.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
+import { ValidatorService } from 'src/app/services/validator.service'
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent  {
+export class RegisterComponent {
 
-  form: FormGroup;
+  registerForm: FormGroup;
 
   constructor(private fb: FormBuilder,
               private userService: UserService,
               private router: Router,
-              private validator: ValidatorService) {
+              private validator: ValidatorService,
+              private errorService: ErrorsService,
+              private sweetAlertService: SweetAlertService) {
     this.createForm();
    }
 
    createForm(){
-     this.form = this.fb.group({
+     this.registerForm = this.fb.group({
        name: ['', [Validators.required]],
        address: ['', [Validators.required]],
        phone: ['', [Validators.required]],
@@ -33,39 +36,36 @@ export class RegisterComponent  {
    }
 
    get pass2Valid(){
-      const pass1 = this.form.get('password').value;
-      const pass2 = this.form.get('password2').value;
+      const pass1 = this.registerForm.get('password').value;
+      const pass2 = this.registerForm.get('password2').value;
       return ( pass1 === pass2 ) ? false : true;
    }
 
    getFieldValid(field: string){
-      return this.form.get(field).invalid &&
-              this.form.get(field).touched;
+      return this.registerForm.get(field).invalid &&
+              this.registerForm.get(field).touched;
    }
 
    signUp(){
-     if (this.form.invalid){
-       Object.values(this.form.controls).forEach(control => {
+     if (this.registerForm.invalid){
+       Object.values(this.registerForm.controls).forEach(control => {
          control.markAsTouched();
        });
        return;
      }
-     this.userService.signUp(this.form.value, 'USER')
+     this.userService.signUp(this.registerForm.value, 'USER')
                       .subscribe(resp => {
-                        Swal.fire({
+                        this.sweetAlertService.showSwalResponse({
                           title: 'Usuario Registrado',
+                          text:'',
                           icon: 'success',
-                          timer: 2000,
-                          showConfirmButton: false,
-                          allowOutsideClick: false
-                        });
+                        })
                         setTimeout(() => {
                           this.router.navigateByUrl('/login');
                         }, 2000);
                       }, (err) => {
-                        Swal.fire('Error en el registro', err.error.msg, 'error');
+                        this.errorService.showErrors('error',99)
                       });
    }
-
 
 }

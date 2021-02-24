@@ -1,13 +1,13 @@
 <h2>Historial de turnos</h2>
 <hr>
 <h3>Por comenzar</h3>
-<app-appointment-table [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-appointment-table>
+<app-table-appointment [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
 <hr>
 <h3>Reservado</h3>
-<app-appointment-table [appointments]="reservedAppointments" [text]="'reservados.'"></app-appointment-table>
+<app-table-appointment [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
 <hr>
 <h3>En curso</h3>
-<app-appointment-table [appointments]="inProgressAppointments" [text]="'en curso.'"></app-appointment-table>
+<app-table-appointment [appointments]="inProgressAppointments" [text]="'en curso.'"></app-table-appointment>
 <hr>
 <h3>Finalizado</h3>
-<app-appointment-table [appointments]="completedAppointments" [text]="'finalizados.'"></app-appointment-table>
+<app-table-appointment [appointments]="completedAppointments" [text]="'finalizados.'"></app-table-appointment>

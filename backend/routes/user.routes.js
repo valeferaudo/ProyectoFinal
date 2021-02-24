@@ -19,7 +19,7 @@ router.put('/:id',[validateJWT,
                 check('name','Name field is required').not().isEmpty(),
                 check('email','Email field is incorrect').isEmail(),
                 validateFields],userCtrl.updateUser);
-
+    
 
 
 module.exports = router;

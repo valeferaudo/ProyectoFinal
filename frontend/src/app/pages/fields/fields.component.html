@@ -5,7 +5,7 @@
     <hr>
     
     <div class="card-columns">
-        <app-field-card [field]="field" [id]='field.id' *ngFor="let field of fields"></app-field-card>
+        <app-card-field [field]="field" [id]='field.id' *ngFor="let field of fields"></app-card-field>
     </div>
 </div>
 <div *ngIf="empty" class="alert alert-dark" role="alert">

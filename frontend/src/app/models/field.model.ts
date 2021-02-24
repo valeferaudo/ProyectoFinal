@@ -1,8 +1,3 @@
-import { environment } from 'src/environments/environment';
-
-const base_url = environment.base_url;
-
-
 export class Field{
     constructor(
            public name: string,

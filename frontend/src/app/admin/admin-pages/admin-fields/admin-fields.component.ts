@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
+import { ErrorsService } from 'src/app/services/errors.service';
 import { FieldService } from 'src/app/services/field.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
-import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-fields',
+  selector: 'app-admin-fields',
   templateUrl: './admin-fields.component.html',
   styleUrls: ['./admin-fields.component.css']
 })
-export class FieldsComponent implements OnInit {
+export class AdminFieldsComponent implements OnInit {
 
   fields = [];
   param: string;
@@ -22,7 +23,9 @@ export class FieldsComponent implements OnInit {
   constructor(private fieldService: FieldService,
               private userService: UserService,
               private router: Router,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              private sweetAlertService: SweetAlertService,
+              private errorService: ErrorsService) {
                 this.user = this.userService.user;
                 this.activatedRoute.queryParams.subscribe((param: {search: string}) => {
                   this.query = param.search || '';
@@ -50,7 +53,8 @@ export class FieldsComponent implements OnInit {
                             }
                           }, err => {
                             console.log(err);
-                            Swal.fire('Error', 'Intentar nuevamente...', 'error');
+                            this.errorService.showErrors('error',99)
+                            // Swal.fire('Error', 'Intentar nuevamente...', 'error');
                           });
   }
    searchField(text: string){
@@ -58,4 +62,5 @@ export class FieldsComponent implements OnInit {
                                       replaceUrl: true,
                                       queryParamsHandling: 'merge'});
   }
+
 }

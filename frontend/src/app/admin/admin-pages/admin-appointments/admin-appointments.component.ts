@@ -26,4 +26,5 @@ export class AdminAppointmentsComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
 }

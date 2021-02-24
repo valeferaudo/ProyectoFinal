@@ -73,6 +73,7 @@ userCtrl.updateUser = async (req = request, res = response) =>{
             })
         }
         const changes = req.body;
+        //si no modifica el email (porque sino chocan por ser iguales)
         if(changes.email === userDB.email){
             delete changes.email
         }else{

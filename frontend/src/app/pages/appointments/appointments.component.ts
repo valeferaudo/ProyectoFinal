@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from 'src/app/services/user.service';
 import { AppointmentService } from 'src/app/services/appointment.service';
 
 @Component({
@@ -7,7 +6,7 @@ import { AppointmentService } from 'src/app/services/appointment.service';
   templateUrl: './appointments.component.html',
   styleUrls: ['./appointments.component.css']
 })
-export class AppointmentsComponent  {
+export class AppointmentsComponent {
 
   reservedAppointments = [];
   completedAppointments = [];
@@ -24,4 +23,4 @@ export class AppointmentsComponent  {
                                       });
 
                }
-  }
+}

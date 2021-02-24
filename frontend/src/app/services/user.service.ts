@@ -55,6 +55,12 @@ export class UserService {
 
   logOut(){
     localStorage.removeItem('token');
+    if(this.user.role.description === 'USER'){
+      this.router.navigateByUrl('home')
+    }
+    else{
+      this.router.navigateByUrl('/admin/home')
+    }
   }
 
   updateUser(id: string, data: RegisterForm){

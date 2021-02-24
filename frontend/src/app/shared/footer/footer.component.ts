@@ -5,9 +5,12 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
-export class FooterComponent  {
-
-  year =  new Date().getFullYear();
+export class FooterComponent implements OnInit {
+  
+  year =  new Date().getFullYear()
   constructor() { }
+
+  ngOnInit(): void {
+  }
 
 }

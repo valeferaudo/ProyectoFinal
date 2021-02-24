@@ -28,6 +28,7 @@ export class UploadFileService {
         },
         body: formData
       });
+      //Desaencapsula la data
       const data = await resp.json();
       if (data.ok){
         return data;

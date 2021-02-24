@@ -1,0 +1,72 @@
+<!-- ============================================================== -->
+<!-- Topbar header - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<header class="topbar">
+    <nav class="navbar top-navbar navbar-expand-md navbar-light">
+        <!-- ============================================================== -->
+        <!-- Logo -->
+        <!-- ============================================================== -->
+        <div class="navbar-header">
+            <a class="navbar-brand" routerLink="/entry">
+                <!-- Logo icon --><b>
+                    <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                    <!--  Logo icon -->
+                    <img src="../../../assets/img/icons/logo-brown-sanvicente.jpg" alt="homepage" class="dark-logo" />
+                </b>
+                <!--End Logo icon -->
+                <!-- Logo text -->
+                <span>
+                    <!-- dark Logo text -->
+                    <img src="./assets/img/icons/logo-text-2.png" alt="homepage" class="dark-logo" />
+                    <!-- <img src="../../../assets/img/icons/logo-text.png" alt="homepage" class="dark-logo" /> -->
+                    <!-- Light Logo text -->    
+                </span> 
+            </a>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Logo -->
+        <!-- ============================================================== -->
+        <div class="navbar-collapse">
+            <!-- ============================================================== -->
+            <!-- toggle and nav items -->
+            <!-- ============================================================== -->
+            <ul class="navbar-nav mr-auto">
+                <!-- This is  -->
+                <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                <li class="nav-item"> <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                <li class="nav-item hidden-sm-down"></li>
+            </ul>
+            <!-- ============================================================== -->
+            <!-- User profile-->
+            <!-- ============================================================== -->
+            <ul class="navbar-nav my-lg-0">
+                <!-- ============================================================== -->
+                <!-- Profile -->
+                <!-- ============================================================== -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../../../assets/img/icons/avatar-user.jpg" alt="user" class="profile-pic" /></a>
+                    <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                        <ul class="dropdown-user">
+                            <li>
+                                <div class="dw-user-box">
+                                    <div class="u-img"><img src="../../../assets/img/icons/avatar-user.jpg" alt="user"></div>
+                                    <div class="u-text">
+                                        <h3>{{this.user.name}} APELLIDO</h3>
+                                        <h4 class="text-muted">{{this.user.email}}</h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li><a (click)="goProfile()" class="pointer text-dark"><i class="ti-settings"></i> Configuración</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li ><a class="text-danger pointer" (click)="logout()"><i class="fa fa-power-off"></i> Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<!-- ============================================================== -->
+<!-- End Topbar header -->
+<!-- ============================================================== -->

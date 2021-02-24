@@ -1,16 +1,48 @@
-<aside class="left-sidebar bg-dark">
-  <div class="sidebar-heading align-middle text-monospace text-dark bg-info"><p class="p-2">Administración <i class="fas fa-users-cog"></i></p></div>
-          <!-- Sidebar scroll-->
-          <div class="scroll-sidebar">
-              <!-- Sidebar navigation-->
-              <nav class="sidebar-nav">
-                  <ul id="sidebarnav">
-                    <a  [routerLink]="['/admin/home']" class="list-group-item list-group-item-action bg-dark text-light">Home</a>
-                    <a  [routerLink]="['/admin/fields']" class="list-group-item list-group-item-action bg-dark text-light">Canchas</a>
-                    <a  [routerLink]="['/admin/appointments']" class="list-group-item list-group-item-action bg-dark text-light">Turnos</a>
-                    <a  [routerLink]="['/admin/settings']" class="list-group-item list-group-item-action bg-dark text-light">Configuración <i class="fas fa-wrench"></i></a>
-                    <a  (click)="logout()" class="list-group-item list-group-item-action bg-dark text-danger pointer">Cerrar Sesión <i class="fas fa-sign-out-alt"></i></a>
-                  </ul>
-              </nav>
-            </div>
-      </aside>
+<!-- ============================================================== -->
+<!-- Left Sidebar - style you can find in sidebar.scss  -->
+<!-- ============================================================== -->
+<aside class="left-sidebar">
+    <!-- Sidebar scroll-->
+    <div class="scroll-sidebar">
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav">
+                <li> <a class="waves-effect waves-dark"[routerLink]="['/home']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false"><i class="fas fa-clipboard-check text-center"></i><span class="hide-menu align-middle"><strong>Inicio</strong></span></a>
+                </li>
+                <li class="nav-devider"></li>
+                    
+                    <li> <a class="has-arrow waves-effect waves-dark"  aria-expanded="false"><i class="fas fa-users text-center"></i><span class="hide-menu"> Deportes</span></a>
+                        <ul aria-expanded="false" class="collapse pointer">
+                            <li><a [routerLink]="['users']" routerLinkActive="active"><i class="fas fa-list-ul"></i> Lista de deportes</a></li>
+                            <li><a [routerLink]="['user']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-user-plus"></i> Nuevo deporte</a></li>
+                        </ul>
+                    </li>
+                    <li> <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-dumbbell"></i><span class="hide-menu"> Canchas</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a [routerLink]="['/admin/fields']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-list-ul"></i> Lista de canchas</a></li>
+                            <li><a [routerLink]="['/admin/field']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-plus"></i> Nueva cancha</a></li>
+                        </ul>
+                    </li>
+                    <li> <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-thumbtack px-1"></i><span class="hide-menu"> Turnos</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a [routerLink]="['/admin/appointments']" routerLinkActive="active"><i class="fas fa-list-ul"></i> Lista de turnos</a></li>
+                            <li><a [routerLink]="['/admin/appointment/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-plus"></i> Nuevo turno</a></li>
+                        </ul>
+                    </li>
+                    <li> <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="far fa-address-card"></i><span class="hide-menu"> Usuario</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a [routerLink]="['/admin/settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-list-ul"></i> Configuración</a></li>
+                            <li><a (click)="logout()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-sync-alt"></i> Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                    <li> <a class="waves-effect waves-dark" [routerLink]="['reports']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false"><i class="far fa-file-pdf px-1"></i><span class="hide-menu"> Reportes</span></a>
+                    </li>
+            </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+</aside>
+<!-- ============================================================== -->
+<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+<!-- ============================================================== -->

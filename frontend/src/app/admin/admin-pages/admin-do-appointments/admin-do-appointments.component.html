@@ -14,7 +14,7 @@
     </div>
     <div class="col-lg-1 col"></div>
     <div class="col-lg-3 col-md-9 mt-0 mt-md-2 d-flex">
-        <form action="#" class="request-form ftco-animate text-white" [formGroup]="form" (submit)="search()">
+        <form action="#" class="request-form ftco-animate text-white" [formGroup]="appointmentForm" (submit)="search()">
             <h1 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; background-color: white;">Busca un horario</h1>
             <div class="d-flex">
                 <div class="form-group mr-2">
@@ -31,11 +31,11 @@
                         Error en la fecha
                     </small>
             <div class="form-group">
-                <button class="btn btn-block btn-info" [disabled]="form.invalid"><i class="fas fa-search"></i> Buscar</button>
+                <button class="btn btn-block btn-info" [disabled]="appointmentForm.invalid"><i class="fas fa-search"></i> Buscar</button>
             </div>
         </form>
     </div>
 </div>
 </div>
 </div>
-<app-do-appointment-table [available]="available" [field]="field" *ngIf="table"></app-do-appointment-table>
+<app-table-do-appointment [available]="available" [field]="field" *ngIf="table"></app-table-do-appointment>

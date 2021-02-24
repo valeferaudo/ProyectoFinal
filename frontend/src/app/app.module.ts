@@ -1,50 +1,39 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-// Modules
-import { AppRoutingModule } from './app.routing.module';
+//MODULOS
+import { AppRoutingModule } from './app-routing.module';
 import { PagesModule } from './pages/pages.module';
-import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from './shared/shared.module';
+import { AdminModule } from './admin/admin.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-// Components
+//COMPONENTES
 import { AppComponent } from './app.component';
-import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { ComponentsModule } from './components/components.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { MaterialModule } from './material.module';
-import { AdminModule } from './admin/admin.module';
-import { LoginAdminComponent } from './admin/admin-auth/admin-login/admin-login.component';
-import { RegisterAdminComponent } from './admin/admin-auth/admin-register/admin-register.component';
-
-
-
+import { AdminLoginComponent } from './admin/admin-auth/admin-login/admin-login.component';
+import { AdminRegisterComponent } from './admin/admin-auth/admin-register/admin-register.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    PageNotFoundComponent,
     LoginComponent,
     RegisterComponent,
-    LoginAdminComponent,
-    RegisterAdminComponent,
+    AdminLoginComponent,
+    AdminRegisterComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ComponentsModule,
+    PagesModule,
+    SharedModule,
+    AdminModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MaterialModule,
-    PagesModule,
-    AdminModule
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

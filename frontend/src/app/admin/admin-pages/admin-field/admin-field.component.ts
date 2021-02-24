@@ -3,17 +3,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Field } from 'src/app/models/field.model';
 import { User } from 'src/app/models/user.model';
+import { ErrorsService } from 'src/app/services/errors.service';
 import { FieldService } from 'src/app/services/field.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UploadFileService } from 'src/app/services/upload-file.service';
 import { UserService } from 'src/app/services/user.service';
-import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-field',
+  selector: 'app-admin-field',
   templateUrl: './admin-field.component.html',
   styleUrls: ['./admin-field.component.css']
 })
-export class FieldComponent implements OnInit {
+export class AdminFieldComponent implements OnInit {
 
   fieldForm: FormGroup;
   file: File;
@@ -30,7 +31,9 @@ export class FieldComponent implements OnInit {
               private fieldService: FieldService,
               private userService: UserService,
               private router: Router,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              private sweetAlertService: SweetAlertService,
+              private errorService: ErrorsService) {
     this.createFieldForm();
     this.user = this.userService.user;
     this.editMode();
@@ -136,34 +139,32 @@ export class FieldComponent implements OnInit {
             if (this.file){
               this.uploadFileService.uploadImage(this.file, 'field', resp.field.id)
                                      .then(data => {
-                                      Swal.fire({
-                                        title: 'Cancha creada',
-                                        icon: 'success',
-                                        timer: 2000,
-                                        showConfirmButton: false,
-                                        allowOutsideClick: false
-                                      });
+                                       this.sweetAlertService.showSwalResponse({
+                                         title: 'Cancha creada',
+                                         text:'',
+                                         icon: 'success',
+                                       });
                                       setTimeout(() => {
                                         this.router.navigateByUrl('/admin/fields');
                                       }, 2000);
                                     }, (err) => {
                                       console.log(err);
-                                      Swal.fire('Error al subir la foto', 'Por favor, intentelo nuevamente', 'error');
+                                      this.errorService.showErrors('error',99);
+                                      // Swal.fire('Error al subir la foto', 'Por favor, intentelo nuevamente', 'error');
                                     });
             }
-            Swal.fire({
-            title: 'Cancha creada',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false,
-            allowOutsideClick: false
-          });
+            this.sweetAlertService.showSwalResponse({
+              title: 'Cancha creada',
+              text:'',
+              icon: 'success',
+            });
             setTimeout(() => {
             this.router.navigateByUrl('/admin/fields');
           }, 2000);
           }, (err) => {
             console.log(err);
-            Swal.fire('Error al crear la cancha', 'Por favor, intentelo nuevamente o cambie los datos', 'error');
+            this.errorService.showErrors('error',99);
+            // Swal.fire('Error al crear la cancha', 'Por favor, intentelo nuevamente o cambie los datos', 'error');
           });
   }
 
@@ -173,34 +174,33 @@ export class FieldComponent implements OnInit {
             if (this.file){
               this.uploadFileService.uploadImage(this.file, 'field', this.fieldID)
                                      .then(data => {
-                                      Swal.fire({
+                                      this.sweetAlertService.showSwalResponse({
                                         title: 'Cancha editada',
+                                        text:'',
                                         icon: 'success',
-                                        timer: 2000,
-                                        showConfirmButton: false,
-                                        allowOutsideClick: false
                                       });
                                       setTimeout(() => {
                                         this.router.navigateByUrl('/admin/fields');
                                       }, 2000);
                                     }, (err) => {
                                       console.log(err);
-                                      Swal.fire('Error al subir la foto', 'Por favor, intentelo nuevamente', 'error');
+                                      this.errorService.showErrors('error',99);
+                                      // Swal.fire('Error al subir la foto', 'Por favor, intentelo nuevamente', 'error');
                                     });
             }
-            Swal.fire({
-            title: 'Cancha editada',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false,
-            allowOutsideClick: false
-          });
+            this.sweetAlertService.showSwalResponse({
+              title: 'Cancha editada',
+              text:'',
+              icon: 'success',
+            });
             setTimeout(() => {
             this.router.navigateByUrl('/admin/fields');
           }, 2000);
           }, (err) => {
             console.log(err);
-            Swal.fire('Error al editar la cancha', 'Por favor, intentelo nuevamente o cambie los datos', 'error');
+            this.errorService.showErrors('error',99);
+            // Swal.fire('Error al editar la cancha', 'Por favor, intentelo nuevamente o cambie los datos', 'error');
           });
   }
+
 }

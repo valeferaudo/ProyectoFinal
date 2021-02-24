@@ -3,33 +3,36 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Field } from 'src/app/models/field.model';
 import { AppointmentService } from 'src/app/services/appointment.service';
+import { ErrorsService } from 'src/app/services/errors.service';
 import { FieldService } from 'src/app/services/field.service';
-import Swal from 'sweetalert2';
+import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 
 @Component({
   selector: 'app-admin-do-appointments',
   templateUrl: './admin-do-appointments.component.html',
   styleUrls: ['./admin-do-appointments.component.css']
 })
-export class AdminDoAppointmentsComponent {
+export class AdminDoAppointmentsComponent  {
 
   public field;
   since: Date;
   until: Date;
   now: Date;
-
+  empty: boolean;
   available = [];
   table = false;
 
   default  = new Date(Date.now()).toISOString().split('T')[0];
 
 
-  form: FormGroup;
+  appointmentForm: FormGroup;
 
   constructor(private activateRoute: ActivatedRoute,
               private fieldService: FieldService,
               private fb: FormBuilder,
-              private appointmentsService: AppointmentService) {
+              private appointmentsService: AppointmentService,
+              private sweetAlertService: SweetAlertService,
+              private errorService: ErrorsService) {
     this.activateRoute.params.subscribe((param: {id: string}) => {
                 this.fieldService.getField(param.id)
                           .subscribe((resp: Field) => {
@@ -41,61 +44,83 @@ export class AdminDoAppointmentsComponent {
   }
 
   createForm(){
-    this.form = this.fb.group({
+    this.appointmentForm = this.fb.group({
       sinceDate : [this.default, Validators.required],
       untilDate : [null, Validators.required]
     });
   }
 
   search(){
-    this.appointmentsService.getAvailableAppointments(this.form.value, this.field.id)
+    this.appointmentsService.getAvailableAppointments(this.appointmentForm.value, this.field.id)
                             .subscribe(resp => {
                               this.available = resp;
                               this.table = true;
                             });
   }
-
   getFieldValid(field: string){
-    return this.form.get(field).invalid &&
-            this.form.get(field).touched;
+    return this.appointmentForm.get(field).invalid &&
+            this.appointmentForm.get(field).touched;
  }
 
    listenerForm(){
-     this.form.valueChanges
-               .subscribe(data => {
+     this.appointmentForm.valueChanges
+              .subscribe(data => {
                 this.now = new Date(Date.now());
                 this.since = this.setDateSince(data.sinceDate);
                 if (data.sinceDate !== null){
-                  if (this.since.getTime() <= Date.now()){
-                    Swal.fire('Fecha menor a hoy', 'Cambiarla', 'error');
-                    this.form.patchValue({sinceDate: this.default});
+                   if (this.since.getTime() <= Date.now()){
+                     this.sweetAlertService.showSwalResponse({
+                       title:'Fecha menor a hoy',
+                       text:'Por favor, cambiarla',
+                       icon:'error'
+                     })
+                     this.appointmentForm.patchValue({sinceDate: this.default});
+                   }
                   }
-                }
                 if (data.untilDate !== null){
                   this.until = this.setDateUntil(data.untilDate);
                   if (this.until.getTime() <= Date.now()){
-                    Swal.fire('Fecha menor a hoy', 'Cambiarla', 'error');
-                    this.form.patchValue({untilDate: null});
+                    this.sweetAlertService.showSwalResponse({
+                      title:'Fecha menor a hoy',
+                      text:'Por favor, cambiarla',
+                      icon:'error'
+                    })
+                      this.appointmentForm.patchValue({untilDate: null});
+                    }
+                  }else{
+                        this.appointmentForm.patchValue({
+                          untilDate: data.sinceDate
+                        });
                   }
-                }else{
-                    this.form.patchValue({
-                        untilDate: data.sinceDate
-                    });
-                }
                 if (this.since !== null && this.until !== null && this.since !== undefined && this.until !== null){
-                  if (this.since.getTime() > this.until.getTime()){
-                  Swal.fire('Error de fechas', 'Fecha "desde" debe ser menor o igual a fecha "hasta"', 'error');
-                  this.form.patchValue({sinceDate: this.default});
-                  }
-                  if ((this.until.getTime() > this.now.setDate(this.now.getDate() + 8))) {
-                    Swal.fire('Error de fechas', 'Solo se puede buscar hasta 7 días posteriores', 'error');
-                    this.form.patchValue({untilDate: null});
-                  }
-                  if ((this.since.getTime() > this.now.setDate(this.now.getDate() + 8))) {
-                    Swal.fire('Error de fechas', 'Solo se puede buscar hasta 7 días posteriores', 'error');
-                    this.form.patchValue({untilDate: null});
-                  }
-                }
+                   if (this.since.getTime() > this.until.getTime()){
+                    this.sweetAlertService.showSwalResponse({
+                      title:'Error de menor a hoy',
+                      text:'Por favor, cambiarla',
+                      icon:'error'
+                    })
+                  // Swal.fire('Error de fechas', 'Fecha "desde" debe ser menor o igual a fecha "hasta"', 'error');
+                   this.appointmentForm.patchValue({sinceDate: this.default});
+                   }
+                   if ((this.until.getTime() > this.now.setDate(this.now.getDate() + 8))) {
+                    this.sweetAlertService.showSwalResponse({
+                      title:'Fecha menor a hoy',
+                      text:'Por favor, cambiarla',
+                      icon:'error'
+                    })
+                    //Swal.fire('Error de fechas', 'Solo se puede buscar hasta 7 días posteriores', 'error');
+                    this.appointmentForm.patchValue({untilDate: null});
+                   }
+                   if ((this.since.getTime() > this.now.setDate(this.now.getDate() + 8))) {
+                    this.sweetAlertService.showSwalResponse({
+                      title:'Fecha menor a hoy',
+                      text:'Por favor, cambiarla',
+                      icon:'error'
+                    })
+                    //Swal.fire('Error de fechas', 'Solo se puede buscar hasta 7 días posteriores', 'error');
+                    this.appointmentForm.patchValue({untilDate: null});
+                   }
+                 }
                });
    }
 

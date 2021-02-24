@@ -6,6 +6,7 @@ const uploadCtrl = require ("../controllers/uploadFile.controller")
 const { validateJWT } = require('../middlewares/validateJWT');
 const fileUpload = require('express-fileupload');
 
+//Da acceso a los files
 router.use(fileUpload());
 
 router.put('/:type/:id', [validateJWT],uploadCtrl.fileUpload);

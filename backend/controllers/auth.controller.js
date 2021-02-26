@@ -3,6 +3,8 @@ const {request, response} = require('express');
 const UserType = require ('../models/userType.model')
 const authCtrl ={};
 
+const UserRoleHistorial = require ('../models/userRoleHistorial.model')
+
 const {generateJWT} = require ('../helpers/jwt');
 //Encripta psw
 const bycript = require('bcryptjs');
@@ -26,11 +28,17 @@ authCtrl.login = async(req = request,res = response)=>{
                 msg:"Wrong email or password"
             });
         }
-        const userType = await UserType.findById(userDB.role);
-        if(userType.description !== type){
+        const userRoleHistorial = await UserRoleHistorial.find({user:userDB.id}).sort({'sinceDate' : -1}).limit(1)
+        if(userRoleHistorial.role !== type){
             return res.status(403).json({
                 ok:false,
-                msg:'User does not have permission'
+                msg:'User does not have permission in this module'
+            });
+        }
+        if(userDB.status === false){
+            return res.status(403).json({
+                ok:false,
+                msg:'User is not allowed'
             });
         }
 //GENERAR JWT

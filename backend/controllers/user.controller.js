@@ -2,15 +2,15 @@ const User = require ('../models/user.model');
 const { request, response} = require ('express');
 const userCtrl = {};
 const bycript = require('bcryptjs');
-const UserType = require ('../models/userType.model');
-
+const UserRoleHistorial = require ('../models/userRoleHistorial.model');
+const { sendNewUserEmail } = require ('../helpers/newUserEmail');
+const { sendAcceptUser } = require ('../helpers/acceptUserEmail');
 
 
 userCtrl.getUser = async (req = request,res = response)=>{
     uid = req.params.uid;
     try {
         const user = await User.findById(uid)
-                                .populate('role','description');
         if (!user) {
             return res.status(404).json({
                 ok:false,
@@ -20,7 +20,37 @@ userCtrl.getUser = async (req = request,res = response)=>{
         res.json({
             ok: true,
             msg:'Found user',
-            user
+            param: user
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.stat(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
+userCtrl.getUsers = async (req = request,res = response)=>{
+    active = parseInt(req.query.active);
+    blocked = parseInt(req.query.blocked);
+    try {
+        var users;
+        if(active === 1 && blocked === 0){
+            users = await User.find({deletedDate: null})
+
+        }
+        else if(active === 0 && blocked === 1){
+            users = await User.find({deletedDate: {$ne:null}})
+        }
+        else if(active === 1 && blocked === 1){
+            users = await User.find()
+
+        }
+        res.json({
+            ok: true,
+            msg:'Found users',
+            param: users
         })
         
     } catch (error) {
@@ -33,7 +63,7 @@ userCtrl.getUser = async (req = request,res = response)=>{
 }
 
 userCtrl.createUser = async (req = request, res = response) =>{
-    const {email, password} = req.body
+    const {email, password, role} = req.body
     try {
         const existsEmail = await User.findOne({email});
         if(existsEmail){
@@ -42,12 +72,49 @@ userCtrl.createUser = async (req = request, res = response) =>{
                 msg:'An user already exists with this email'
             })
         }
-        user = new User(req.body);
-        usertype = (await UserType.findOne({description:req.body.role}))._id;
-        user.role = usertype;
+        var initialState = false;
+        switch (role) {
+                case 'USER':
+                    initialState = true;
+                    break;
+                case 'CENTER-ADMIN':
+                    initialState = true;
+                    break;
+                case 'CENTER-SUPER-ADMIN':
+                    initialState = false;
+                    break;
+                case 'SUPER-ADMIN':
+                    initialState = true;
+                    break;
+                default:
+                    return res.status(400).json({
+                        ok:false,
+                        msg:'User role is wrong'
+                    });
+        }
+        user = new User({
+            name: req.body.name,
+            secondName: req.body.secondName,
+            phone: req.body.phone,
+            address: req.body.address,
+            email: req.body.email,
+            password: req.body.password,
+            state: initialState,
+        });
+
         const salt = bycript.genSaltSync();
         user.password = bycript.hashSync(password,salt);
         await user.save();
+        userDB = await User.findOne({email:user.email});
+        const userRoleHistorial = new UserRoleHistorial({
+            user: userDB.id,
+            sinceDate: Date.now(),
+            role: role
+        })
+        await userRoleHistorial.save();
+        if(role === 'CENTER-SUPER-ADMIN'){
+            sendNewUserEmail(user);
+        }
         res.json({
             ok:true,
             msg: 'Created User',
@@ -91,10 +158,139 @@ userCtrl.updateUser = async (req = request, res = response) =>{
             const salt = bycript.genSaltSync();
             changes.password = bycript.hashSync(changes.password,salt);
         }
+        if(changes.role !== 'CENTER-SUPER-ADMIN' && changes.role !== 'CENTER-ADMIN'){
+            return res.status(400).json({
+                ok:false,
+                msg:'User role is wrong'
+            });
+        }
         await User.findByIdAndUpdate(uid,changes,{new:true})
+        userRoleHistorial = await UserRoleHistorial.findOne({user:userDB.id}).sort({'sinceDate' : -1}).limit(1);
+        if(userRoleHistorial.role === 'USER' || userRoleHistorial.role === 'SUPER-ADMIN'){
+            return res.status(400).json({
+                ok:false,
+                msg:'User role is not allowed to change his role'
+            });
+        }
+        if(changes.role !== userRoleHistorial.role){
+            const userRoleHistorial = new UserRoleHistorial({
+                user: userDB.id,
+                sinceDate: Date.now(),
+                role: req.body.role
+            })
+            await userRoleHistorial.save();
+        }
         res.json({
             ok:true,
             msg:'Updated User'
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
+userCtrl.deleteUser = async (req = request, res = response) =>{
+    const uid = req.params.id;
+    try {
+        const userDB = await User.findById(uid);
+        if(!userDB){
+            return res.status(404).json({
+                ok:false,
+                msg:'Unknown ID. Please insert a correct User ID'
+            })
+        }
+        if(userDB.deletedDate !== null){
+            return res.status(404).json({
+                ok:false,
+                msg:'This User is already blocked'
+            })
+        }
+        userDB.deletedDate = Date.now();
+        await User.findByIdAndUpdate(uid,userDB,{new:true})
+        res.json({
+            ok:true,
+            msg:'Deleted User'
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
+userCtrl.activateUser = async (req = request, res = response) =>{
+    const uid = req.params.id;
+    try {
+        const userDB = await User.findById(uid);
+        if(!userDB){
+            return res.status(404).json({
+                ok:false,
+                msg:'Unknown ID. Please insert a correct User ID'
+            })
+        }
+        if(userDB.deletedDate === null){
+            return res.status(404).json({
+                ok:false,
+                msg:'This User is already active'
+            })
+        }
+        userDB.deletedDate = null;
+        await User.findByIdAndUpdate(uid,userDB,{new:true})
+        res.json({
+            ok:true,
+            msg:'Activated User'
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
+
+userCtrl.activateSuperCenterAdmin = async (req = request, res = response) =>{
+    const superAdminID = req.uid;
+    const uid = req.params.id;
+    try {
+        const adminDBRole = await UserRoleHistorial.findOne({user:superAdminID}).sort({'sinceDate' : -1}).limit(1);
+        if(adminDBRole.role !== 'SUPER-ADMIN'){
+            return res.status(403).json({
+                ok:false,
+                msg:'This User role doesn´t have the permissions'
+            })
+        }
+        const userRole = await UserRoleHistorial.findOne({user:uid}).sort({'sinceDate' : -1}).limit(1);
+        if(userRole.role !== 'CENTER-SUPER-ADMIN'){
+            return res.status(404).json({
+                ok:false,
+                msg:'This User role doesn´t have to be accepted'
+            })
+        }
+        const userDB = await User.findById(uid);
+        if(!userDB){
+            return res.status(404).json({
+                ok:false,
+                msg:'Unknown ID. Please insert a correct User ID'
+            })
+        }
+        if(userDB.deletedDate !== null){
+            return res.status(403).json({
+                ok:false,
+                msg:'This User is deleted'
+            })
+        }
+        userDB.state = true;
+        await User.findByIdAndUpdate(uid,userDB,{new:true});
+        sendAcceptUser(userDB)
+        res.json({
+            ok:true,
+            msg:'Activated CENTER-SUPER-ADMIN User'
         })
     } catch (error) {
         console.log(error);

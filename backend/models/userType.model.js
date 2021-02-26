@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const {Schema , model} = mongoose;
 
 const UserTypeSchema = new Schema({
+    id:{type:Number,required:true},
     description:{type:String, required: true},
 },{collection:'userTypes'})
 

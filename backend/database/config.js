@@ -10,7 +10,8 @@ const dbConnection = async () =>{
             useFindAndModify:false,
             useUnifiedTopology:true
         });
-        console.log('DataBase is connected')
+        console.log('DataBase is connected');
+
     }catch(error){
         console.log(error);
         throw new Error('Database connection error')

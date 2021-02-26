@@ -3,19 +3,23 @@ const {Schema , model} = mongoose;
 
 
 const AppointmentSchema = new Schema({
+    createdDate:{type:Date, required: true},
     date:{type:Date, required: true},
-    state:{type:String, required: true,default:'Reserved'},
-    createdDate:{type:Date},
-    user:{type:Schema.Types.ObjectId,ref:'User',required:true},
-    field:{type:Schema.Types.ObjectId,ref:'Field',required:true},
+    state:{type:String,enum:['Reserved','AboutToStart','InProgress','Completed'],default:'Reserved', required: true},
+    totalAmount:{type:Number, required:true},
+    lightTime: {type: Boolean, default: false},
     owner:{
         oid:{type:String, required:true},
         name:{type:String, required:true},
         phone:{type:Number,required:true}
-    }
+    },
+    user:{type:Schema.Types.ObjectId,ref:'User',required:true},
+    field:{type:Schema.Types.ObjectId,ref:'Field',required:true},
 },{collection:'appointments'})
 
-AppointmentSchema.index({ date: 1, field: 1 }, { unique: true})
+AppointmentSchema.index({ date: 1, field: 1 }, { unique: true});
+
+// AppointmentSchema.index({ date: 1, user: 1 }, { unique: true})
 
 AppointmentSchema.method('toJSON',function(){
     const {__v,_id, ...object}=this.toObject();

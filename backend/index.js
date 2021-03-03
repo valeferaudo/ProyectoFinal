@@ -21,8 +21,11 @@ app.use(express.json());
 
 //VALIDAR EL JWT EN CADA RUTA   
 app.use('/api/users',require('./routes/user.routes'));
+app.use('/api/sportcenters',require('./routes/sportCenter.routes'));
+app.use('/api/specialschedules',require('./routes/specialSchedule.routes'));
+app.use('/api/services',require('./routes/service.routes'));
 app.use('/api/login',require('./routes/auth.routes'))
-app.use('/api/usertypes',require('./routes/userType.routes'));
+// app.use('/api/usertypes',require('./routes/userType.routes'));
 app.use('/api/fields',require('./routes/field.routes'));
 app.use('/api/appointments',require('./routes/appointment.routes'));
 app.use('/api/uploads',require('./routes/upload.routes'));

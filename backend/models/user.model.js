@@ -10,6 +10,7 @@ const UserSchema = new Schema({
     email:{type:String, required: true,lowercase:true, unique: true},
     password:{type:String, required: true},
     deletedDate:{type: Date, default:null},
+    favorites:{type: Array, default:[]},
     sportCenter:{type:Schema.Types.ObjectId,ref:'SportCenter',default:null},
     state:{type:Boolean, default: true},
     // role:{type:Schema.Types.ObjectId,ref:'UserType',required:true},

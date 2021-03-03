@@ -1,4 +1,6 @@
 const User = require ('../models/user.model');
+const Field = require ('../models/field.model');
+const SportCenter = require ('../models/sportCenter.model');
 const { request, response} = require ('express');
 const userCtrl = {};
 const bycript = require('bcryptjs');
@@ -300,5 +302,62 @@ userCtrl.activateSuperCenterAdmin = async (req = request, res = response) =>{
         })
     }
 }
-
+userCtrl.favoriteUser = async (req = request, res = response) =>{
+    const userID = req.uid;
+    const newFavorite = req.params.id;
+    try {
+        const adminDBRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
+        if(adminDBRole.role !== 'USER'){
+            return res.status(403).json({
+                ok:false,
+                msg:'This User role doesn´t have the permissions to add favorites'
+            })
+        }
+        const userDB = await User.findById(userID);
+        if(!userDB){
+            return res.status(404).json({
+                ok:false,
+                msg:'Unknown ID. Please insert a correct User ID'
+            })
+        }
+        if(userDB.deletedDate !== null){
+            return res.status(403).json({
+                ok:false,
+                msg:'This User is deleted'
+            })
+        }
+        const fieldDB = await Field.findById(newFavorite);
+        const sportCenterDB = await SportCenter.findById(newFavorite);
+        if (fieldDB === {} || sportCenterDB === {}){
+            return res.status(404).json({
+                ok:false,
+                msg:'Unknown ID. Please insert a correct Field ID or SportCenter ID'
+            })
+        }
+        if (userDB.favorites.includes(newFavorite)){
+            for (let i = 0; i < userDB.favorites.length; i++) {
+                if (userDB.favorites[i] = newFavorite){
+                    this.userDB.favorites.splice(i,1)
+                }
+            }
+            return res.json({
+                ok:true,
+                msg: 'Favorite item deleted'
+            })
+        }
+        this.userDB.favorites.push(newFavorite);
+        await User.findByIdAndUpdate(uid,userDB,{new:true});
+        sendAcceptUser(userDB)
+        res.json({
+            ok:true,
+            msg:'Favorite item added'
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
 module.exports = userCtrl;

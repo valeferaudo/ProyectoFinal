@@ -20,8 +20,12 @@ router.post('/',[check('name','Name field is required').not().isEmpty(),
                 validateFields],userCtrl.createUser);
 router.put('/:id',[validateJWT,
                 check('name','Name field is required').not().isEmpty(),
+                check('secondName','Second name field is required').not().isEmpty(),
+                check('phone','Phone field is required').not().isEmpty(),
                 check('email','Email field is incorrect').isEmail(),
+                check('password','Password field is required').not().isEmpty(),
                 validateFields],userCtrl.updateUser);
+router.put('/favorite/:id',[validateJWT],userCtrl.favoriteUser);
 router.put('/delete/:id',[validateJWT],userCtrl.deleteUser);
 router.put('/activate/:id',[validateJWT],userCtrl.activateUser);
 router.put('/accept/:id',[validateJWT],userCtrl.activateSuperCenterAdmin);

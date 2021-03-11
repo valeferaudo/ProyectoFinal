@@ -4,7 +4,7 @@ const {Schema , model} = mongoose;
 
 const SportCenterDaySchema = new Schema({
     sportCenter:{type:Schema.Types.ObjectId,ref:'SportCenter',required:true},
-    day:{type:Schema.Types.ObjectId,ref:'SportCenter',required:true},
+    day:{type:Number,required:true},
     sinceHour:{type:Number, required: true},
     untilHour:{type:Number, required: true}
 },{collection:'sportCenterDays'})

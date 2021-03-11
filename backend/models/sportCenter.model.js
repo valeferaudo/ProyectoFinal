@@ -15,7 +15,7 @@ const SportCenterSchema = new Schema({
 
 SportCenterSchema.method('toJSON',function(){
     const {__v,_id, ...object}=this.toObject();
-    object.uid = _id;
+    object.id = _id;
     return object;
 })
 

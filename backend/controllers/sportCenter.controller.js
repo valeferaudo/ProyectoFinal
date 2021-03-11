@@ -185,7 +185,6 @@ sportCenterCtrl.deleteSportCenter = async (req = request, res = response) =>{
                 msg:'This User role doesn´t have the permissions to delete Sport Center'
             })
         }
-        const sportCenterDB = await SportCenter.findById(sportCenterID)
         if(sportCenterDB.deletedDate !== null){
             return res.status(404).json({
                 ok:false,
@@ -310,8 +309,8 @@ sportCenterCtrl.updateService = async (req = request, res = response) =>{
             })
         }
         changes = {
-            price = req.body.price,
-            observation = req.body.observation
+            price : req.body.price,
+            observation : req.body.observation
         }
         await SportCenterService.findOneAndUpdate({sportCenter:sportCenterID, service: serviceID},changes, {new:true});
         res.json({
@@ -371,7 +370,7 @@ sportCenterCtrl.deleteService = async (req = request, res = response) =>{
                 msg:'This Sport Center is blocked'
             })
         }
-        const sportCenterDB = await SportCenter.findOneAndDelete({sportCenter:sportCenterID, service:serviceID})
+        await SportCenter.findOneAndDelete({sportCenter:sportCenterID, service:serviceID})
         res.json({
             ok:true,
             msg:'Deleted Sport Center Service'

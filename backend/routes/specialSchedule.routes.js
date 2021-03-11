@@ -18,7 +18,7 @@ router.post('/:id',[validateJWT,
                 check('untilHour','Until Hour field is required').not().isEmpty(),
                 validateFields],specialScheduleCtrl.createSpecialSchedule);
  router.put('/delete/:id',[validateJWT,
-                 validateFields],sportCenterCtrl.deleteSpecialSchedule);
+                 validateFields],specialScheduleCtrl.deleteSpecialSchedule);
 
 
 

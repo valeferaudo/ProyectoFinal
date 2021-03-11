@@ -5,8 +5,8 @@ const { request, response} = require ('express');
 const userCtrl = {};
 const bycript = require('bcryptjs');
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
-const { sendNewUserEmail } = require ('../helpers/newUserEmail');
-const { sendAcceptUser } = require ('../helpers/acceptUserEmail');
+const { sendNewUserEmail } = require ('../helpers/emails/newUserEmail');
+const { sendAcceptUser } = require ('../helpers/emails/acceptUserEmail');
 
 
 userCtrl.getUser = async (req = request,res = response)=>{

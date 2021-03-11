@@ -1,6 +1,7 @@
 const express = require ('express');
 require('dotenv').config();
 const {dbConnection} = require ('./database/config');
+const {fillDayCollection} = require ('./seeders/daySeeder')
 const cors = require ('cors')
 
 
@@ -9,6 +10,9 @@ const app = express();
 
 //Database connection  
 dbConnection();
+
+//Seeders
+fillDayCollection();
 
 //settings
 app.set('Port',process.env.PORT);
@@ -29,6 +33,7 @@ app.use('/api/login',require('./routes/auth.routes'))
 app.use('/api/fields',require('./routes/field.routes'));
 app.use('/api/appointments',require('./routes/appointment.routes'));
 app.use('/api/uploads',require('./routes/upload.routes'));
+
 
 //start server
 app.listen(app.get('Port'),()=>{

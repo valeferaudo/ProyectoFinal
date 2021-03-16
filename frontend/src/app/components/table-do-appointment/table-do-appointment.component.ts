@@ -35,10 +35,10 @@ export class TableDoAppointmentComponent implements OnInit {
       icon: 'question',
     }).then((result) => {
       if (result.value) {
-        if (this.userService.user.role.description === 'USER'){
+        if (this.userService.user.role === 'USER'){
           this.createUserAppointment(appointmentDate);
         }
-        if (this.userService.user.role.description === 'CENTER-ADMIN'){
+        if (this.userService.user.role === 'CENTER-ADMIN'){
           this.createCenterAdminAppointment(appointmentDate);
         }
     }
@@ -110,10 +110,10 @@ export class TableDoAppointmentComponent implements OnInit {
                     });
   }
   goAppointments(){
-    if (this.userService.user.role.description === 'USER'){
+    if (this.userService.user.role === 'USER'){
       this.router.navigate(['/appointments']);
     }
-    if (this.userService.user.role.description === 'CENTER-ADMIN'){
+    if (this.userService.user.role === 'CENTER-ADMIN'){
       this.router.navigate(['/admin/appointments']);
     }
   }

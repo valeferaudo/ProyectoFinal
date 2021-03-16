@@ -28,8 +28,8 @@ authCtrl.login = async(req = request,res = response)=>{
                 msg:"Wrong email or password"
             });
         }
-        const userRoleHistorial = await UserRoleHistorial.find({user:userDB.id}).sort({'sinceDate' : -1}).limit(1)
-        if(userRoleHistorial.role !== type){
+        const userRoleHistorial = await UserRoleHistorial.find({user:userDB.id}).sort({'sinceDate' : -1}).limit(1);
+        if(userRoleHistorial[0].role !== type){
             return res.status(403).json({
                 ok:false,
                 msg:'User does not have permission in this module'
@@ -65,10 +65,20 @@ authCtrl.renewToken = async (req,res)=>{
     const token =  await generateJWT(uid)    
 
 //OBTENER USUARIO
-    const user = await User.findById(uid,{uid:1,name:1,address:1,phone:1,email:1,role:1})
-                            .populate('role','description')
-    if(!user){
+    var userDB = await User.findById(uid,{uid:1,name:1,secondName:1,address:1,phone:1,email:1,role:1})
+                        .populate('role')
+    const userRoleHistorial = await UserRoleHistorial.find({user:uid}).sort({'sinceDate' : -1}).limit(1);
+    if(!userDB){
         return console.log('NO ENCUENTRA USUARIO')
+    }
+    const user = {
+        uid: userDB.id,
+        name: userDB.name,
+        secondName: userDB.secondName,
+        address: userDB.address,
+        phone: userDB.phone,
+        email: userDB.email,
+        role: userRoleHistorial[0].role
     }
     res.json({
         ok:true,

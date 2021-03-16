@@ -1,1 +1,77 @@
-<p>home works!</p>
+<h2 class="font-weight-bold">BIENVENIDO</h2>
+<div class="card-group">
+    <div class="card col-6 m-4 text-center">
+        <div class="card-img card-inverse bg-app">
+            <img src="../assets/img/icons/avatar-user.jpg" class="img-circle pt-2" width="100">
+            <h2 class="card-title">{{userLogged.name}} {{userLogged.secondName}}</h2>
+        </div>
+        <div class="card-body text-center bg-white">
+            <div class="row">
+                <div class="col">
+                    <h3 class="m-b-0">12K</h3>
+                    <h5 class="font-light">Turnos</h5></div>
+                <div class="col">
+                    <h3 class="m-b-0">420</h3>
+                    <h5 class="font-light">Canchas</h5></div>
+                <div class="col">
+                    <h3 class="m-b-0">5</h3>
+                    <h5 class="font-light">Deportes</h5></div>
+            </div>
+            <hr>
+                <h3>Por comenzar</h3>
+                <app-table-appointment [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
+                <hr>
+                <h3>Reservado</h3>
+                <app-table-appointment [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <select class="custom-select pull-right">
+                <option selected="">Today</option>
+                <option value="1">Weekly</option>
+            </select>
+            <h4 class="card-title">Clima</h4>
+            <div class="d-flex align-items-center flex-row m-t-30">
+                <div class="p-2 display-5 text-info"><i class="wi wi-day-showers"></i> <span>73<sup>°</sup></span></div>
+                <div class="p-2">
+                    <h3 class="m-b-0">Sabado</h3><small>Rosario, Santa Fe, Argentina</small></div>
+                </div>
+                <table class="table no-border">
+                    <tbody>
+                        <tr>
+                            <td>Wind</td>
+                            <td class="font-medium">ESE 17 mph</td>
+                        </tr>
+                        <tr>
+                            <td>Humidity</td>
+                            <td class="font-medium">83%</td>
+                        </tr>
+                        <tr>
+                            <td>Pressure</td>
+                    <td class="font-medium">28.56 in</td>
+                </tr>
+                <tr>
+                    <td>Cloud Cover</td>
+                    <td class="font-medium">78%</td>
+                </tr>
+                <tr>
+                    <td>Ceiling</td>
+                    <td class="font-medium">25760 ft</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <ul class="list-unstyled row text-center city-weather-days">
+            <li class="col"><i class="wi wi-day-sunny"></i><span>09:30</span>
+                <h3>70<sup>°</sup></h3></li>
+                <li class="col"><i class="wi wi-day-cloudy"></i><span>11:30</span>
+                    <h3>72<sup>°</sup></h3></li>
+                    <li class="col"><i class="wi wi-day-hail"></i><span>13:30</span>
+                        <h3>75<sup>°</sup></h3></li>
+                        <li class="col"><i class="wi wi-day-sprinkle"></i><span>15:30</span>
+                <h3>76<sup>°</sup></h3></li>
+            </ul>
+        </div>
+    </div>
+</div>

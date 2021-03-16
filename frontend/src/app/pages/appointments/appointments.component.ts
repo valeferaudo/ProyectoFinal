@@ -13,14 +13,16 @@ export class AppointmentsComponent {
   inProgressAppointments = [];
   aboutToStartAppointments = [];
 
-  constructor(private appointmenService: AppointmentService) {
-                this.appointmenService.getAppointments()
+  constructor(private appointmentService: AppointmentService) {
+      this.getAppointments()
+  }
+  getAppointments(){
+    this.appointmentService.getAppointments()
                                       .subscribe(resp => {
                                         this.reservedAppointments = resp.reservedAppointments;
                                         this.completedAppointments = resp.completedAppointments;
                                         this.inProgressAppointments = resp.inProgressAppointments;
                                         this.aboutToStartAppointments = resp.aboutToStartAppointments;
                                       });
-
-               }
+  }
 }

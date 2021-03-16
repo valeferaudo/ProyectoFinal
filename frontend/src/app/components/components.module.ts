@@ -14,7 +14,12 @@ import { TableDoAppointmentComponent } from './table-do-appointment/table-do-app
 import { ChartBarComponent } from './charts/chart-bar/chart-bar.component'
 import { ChartLineComponent } from './charts/chart-line/chart-line.component'
 import { ChartDoughnutComponent } from './charts/chart-doughnut/chart-doughnut.component'
-import { ChartRadarComponent } from './charts/chart-radar/chart-radar.component'
+import { ChartRadarComponent } from './charts/chart-radar/chart-radar.component';
+import { ForgetPasswordModalComponent } from './modals/forget-password-modal/forget-password-modal.component';
+import { ChangePasswordModalComponent } from './modals/change-password-modal/change-password-modal.component';
+import { FullScreenLoaderComponent } from './loaders/full-screen-loader/full-screen-loader.component';
+import { LineLoaderComponent } from './loaders/line-loader/line-loader.component'
+import { MaterialModule } from '../material.module';
 
 
 @NgModule({
@@ -26,14 +31,19 @@ import { ChartRadarComponent } from './charts/chart-radar/chart-radar.component'
     ChartBarComponent,
     ChartLineComponent,
     ChartDoughnutComponent,
-    ChartRadarComponent
+    ChartRadarComponent,
+    ForgetPasswordModalComponent,
+    ChangePasswordModalComponent,
+    FullScreenLoaderComponent,
+    LineLoaderComponent
 
   ],
   imports: [
     CommonModule,
     PipesModule,
     ReactiveFormsModule,
-    ChartsModule
+    ChartsModule,
+    MaterialModule
   ],
   exports: [
     UserSettingComponent,
@@ -43,7 +53,11 @@ import { ChartRadarComponent } from './charts/chart-radar/chart-radar.component'
     ChartBarComponent,
     ChartLineComponent,
     ChartDoughnutComponent,
-    ChartRadarComponent
+    ChartRadarComponent,
+    ForgetPasswordModalComponent,
+    ChangePasswordModalComponent,
+    FullScreenLoaderComponent,
+    LineLoaderComponent
   ]
 })
 export class ComponentsModule { }

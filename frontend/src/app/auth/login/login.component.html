@@ -2,31 +2,53 @@
     <div class="login-register" style="background-image:url(../../../assets/images/background/login-register.jpg);">
         <div class="login-box card">
             <div class="card-body">
-                <form class="form-horizontal form-material" [formGroup]="loginForm" (submit)="signIn()">
-                    <h3 class="box-title m-b-20 text-center">Ingresar</h3>
-                    <div class="form-group ">
-                        <div class="col-xs-12">
-                            <input class="form-control" type="text" formControlName="email" placeholder="Email"> </div>
+                <form class="form" [formGroup]="loginForm" (submit)="signIn()">
+                    <h2 class="card-title m-b-20 text-center font-weight-bold">INGRESO</h2>
+                    <div class="form-group mb-1" [class.has-danger]="getFieldValid('email')">
+                        <div class="col">
+                            <label class="font-bold">Email</label>
+                            <input class="form-control" 
+                            type="text" 
+                            placeholder=""
+                            formControlName="email"
+                            [class.form-control-danger]="getFieldValid('email')">
+                            <small *ngIf="getFieldValid('email')" class="text-danger">
+                                *Ingrese el <strong>email</strong>.
+                            </small>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <input class="form-control" type="password" formControlName="password" placeholder="Contraseña"> </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
+                    <div class="form-group mb-1">
+                        <div class="col">
+                            <label class="font-bold">Contraseña</label>
+                            <div class="input-group">
+                                <input class="form-control" 
+                                [type]="passwordIsVisible ? 'text' : 'password'"
+                                placeholder=""
+                                        formControlName="password" 
+                                        [class.is-invalid]="getFieldValid('password')">
+                                <!-- <i class="fa fa-eye-slash" aria-hidden="true"></i> -->
+                                <div class="input-group-addon pointer" (click)="showPassword()">
+                                    <i [ngClass]="(passwordIsVisible) ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                                </div> 
+                            </div>
+                            <small *ngIf="getFieldValid('password')" class="text-danger">
+                                    *Ingrese la <strong>contraseña</strong>.
+                            </small>
+                        </div>
+                        <div class="col-md-12 mt-1">
                             <div class="checkbox checkbox-primary pull-left mb-0">
                                 <input id="checkbox-signup" 
-                                        type="checkbox" 
-                                        class="filled-in chk-col-light-blue"
-                                        formControlName="remember"> 
-                            <label for="checkbox-signup">Recordar usuario</label>
-                        </div>
-                            <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> ¿Olvidó su contraseña?</a> 
+                                type="checkbox" 
+                                class="filled-in chk-col-light-blue"
+                                formControlName="remember"> 
+                                <label for="checkbox-signup">Recordar usuario</label>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group text-center">
-                        <div class="col-xs-12 p-b-20">
-                            <button class="btn btn-block btn-lg btn-info btn-rounded" type="submit">Ingresar</button>
+                    <div class="form-group text-center mt-5">
+                        <div class="col" style="display: flex;align-items: center;" >
+                            <a (click)="goRecoverPassword()" href="javascript:void(0)" id="to-recover" class="text-dark pull-left"><i class="fa fa-lock m-r-5"></i>¿Olvidó su contraseña?</a> 
+                            <button class="btn  btn-info btn-rounded pull-right ml-4" type="submit">Ingresar</button>
                         </div>
                     </div>
                     <div class="form-group m-b-0">
@@ -35,8 +57,8 @@
                         </div>
                     </div>
                 </form>
-                <!-- MODAL DE RECUPERO DE PASSWORD -->
             </div>
         </div>
     </div>
 </section>
+<app-forget-password-modal *ngIf="hiddenEmailModal" [hiddenEmailModal]="!hiddenEmailModal" (closeModalOutput)="closeRecoverPasswordModal($event)"></app-forget-password-modal>

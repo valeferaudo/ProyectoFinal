@@ -24,10 +24,10 @@ export class CardFieldComponent {
                }
 
   navigateField(id){
-    if (this.user.role.description === 'USER'){
+    if (this.user.role === 'USER'){
       this.router.navigateByUrl(`/appointment/${id}`);
     }
-    else if (this.user.role.description === 'CENTER-ADMIN'){
+    else if (this.user.role === 'CENTER-ADMIN'){
       this.router.navigateByUrl(`/admin/appointment/${id}`);
     }
 

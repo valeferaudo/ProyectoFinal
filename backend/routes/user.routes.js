@@ -23,8 +23,8 @@ router.put('/:id',[validateJWT,
                 check('secondName','Second name field is required').not().isEmpty(),
                 check('phone','Phone field is required').not().isEmpty(),
                 check('email','Email field is incorrect').isEmail(),
-                check('password','Password field is required').not().isEmpty(),
                 validateFields],userCtrl.updateUser);
+router.put('/password/:id',[validateJWT],userCtrl.changePassword);
 router.put('/favorite/:id',[validateJWT],userCtrl.favoriteUser);
 router.put('/delete/:id',[validateJWT],userCtrl.deleteUser);
 router.put('/activate/:id',[validateJWT],userCtrl.activateUser);

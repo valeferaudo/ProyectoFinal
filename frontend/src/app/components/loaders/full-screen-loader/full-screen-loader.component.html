@@ -1,0 +1,8 @@
+<div class="windows-loader" *ngIf="loaderService.showFullScreenLoader">
+    <div class="loader__spinner">
+        <mat-progress-spinner color="accent" mode="indeterminate"></mat-progress-spinner>
+    </div>
+    <div class="loader__messages">
+        <p>{{this.message}}</p>
+    </div>
+</div>

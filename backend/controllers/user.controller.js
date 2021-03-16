@@ -3,7 +3,7 @@ const Field = require ('../models/field.model');
 const SportCenter = require ('../models/sportCenter.model');
 const { request, response} = require ('express');
 const userCtrl = {};
-const bycript = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 const { sendNewUserEmail } = require ('../helpers/emails/newUserEmail');
 const { sendAcceptUser } = require ('../helpers/emails/acceptUserEmail');
@@ -27,7 +27,7 @@ userCtrl.getUser = async (req = request,res = response)=>{
         
     } catch (error) {
         console.log(error);
-        res.stat(500).json({
+        res.status(500).json({
             ok:false,
             msg:'An unexpected error occurred'
         })
@@ -104,8 +104,8 @@ userCtrl.createUser = async (req = request, res = response) =>{
             state: initialState,
         });
 
-        const salt = bycript.genSaltSync();
-        user.password = bycript.hashSync(password,salt);
+        const salt = bcrypt.genSaltSync();
+        user.password = bcrypt.hashSync(password,salt);
         await user.save();
         userDB = await User.findOne({email:user.email});
         const userRoleHistorial = new UserRoleHistorial({
@@ -154,33 +154,38 @@ userCtrl.updateUser = async (req = request, res = response) =>{
                 })
             }
         }
-        if(changes.password === null){
-            delete changes.password
-        }else{
-            const salt = bycript.genSaltSync();
-            changes.password = bycript.hashSync(changes.password,salt);
-        }
-        if(changes.role !== 'CENTER-SUPER-ADMIN' && changes.role !== 'CENTER-ADMIN'){
-            return res.status(400).json({
-                ok:false,
-                msg:'User role is wrong'
-            });
+        // if(changes.password === null){
+        //     delete changes.password
+        // }else{
+        //     const salt = bcrypt.genSaltSync();
+        //     changes.password = bcrypt.hashSync(changes.password,salt);
+        // }
+        const userRole = await UserRoleHistorial.findOne({user:uid}).sort({'sinceDate' : -1}).limit(1);
+        if (userRole.role !== 'USER'){
+            if(changes.role !== 'CENTER-SUPER-ADMIN' && changes.role !== 'CENTER-ADMIN'){
+                return res.status(403).json({
+                    ok:false,
+                    msg:'User role is wrong'
+                });
+            }
         }
         await User.findByIdAndUpdate(uid,changes,{new:true})
-        userRoleHistorial = await UserRoleHistorial.findOne({user:userDB.id}).sort({'sinceDate' : -1}).limit(1);
-        if(userRoleHistorial.role === 'USER' || userRoleHistorial.role === 'SUPER-ADMIN'){
-            return res.status(400).json({
-                ok:false,
-                msg:'User role is not allowed to change his role'
-            });
-        }
-        if(changes.role !== userRoleHistorial.role){
-            const userRoleHistorial = new UserRoleHistorial({
-                user: userDB.id,
-                sinceDate: Date.now(),
-                role: req.body.role
-            })
-            await userRoleHistorial.save();
+        if(changes.role !== undefined){
+            userRoleHistorial = await UserRoleHistorial.findOne({user:userDB.id}).sort({'sinceDate' : -1}).limit(1);
+            if(userRoleHistorial.role === 'USER' || userRoleHistorial.role === 'SUPER-ADMIN'){
+                return res.status(403).json({
+                    ok:false,
+                    msg:'User role is not allowed to change his role'
+                });
+            }
+            if(changes.role !== userRoleHistorial.role){
+                const userRoleHistorial = new UserRoleHistorial({
+                    user: userDB.id,
+                    sinceDate: Date.now(),
+                    role: req.body.role
+                })
+                await userRoleHistorial.save();
+            }
         }
         res.json({
             ok:true,
@@ -351,6 +356,52 @@ userCtrl.favoriteUser = async (req = request, res = response) =>{
         res.json({
             ok:true,
             msg:'Favorite item added'
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
+userCtrl.changePassword = async (req = request, res = response) =>{
+    const userID = req.params.id;
+    const userLoggedID = req.uid
+    const passwords = req.body;
+    try {
+        const userDB = await User.findById(userID)
+        if (!userDB) {
+            return res.status(404).json({
+                ok:false,
+                msg:'Unknown ID. Please insert a correct User ID'
+            })
+        }
+        if (userID !== userLoggedID){
+            return res.status(403).json({
+                ok:false,
+                msg:'User is not allowed to change this User'
+            });
+        }
+        //verificar contraseña vieja
+         if (!(bcrypt.compareSync(passwords.OldPassword, userDB.password))) {
+                return res.status(404).json({
+                    ok:false,
+                    msg:'Password doesen´t match'
+                })
+        }
+        if(passwords.NewPassword !== passwords.RepeatNewPassword){
+            return res.status(400).json({
+                ok:false,
+                msg:'The new passwords aren´t the same'
+            });
+        }
+        const salt = bcrypt.genSaltSync();
+        const newPassword = bcrypt.hashSync(passwords.NewPassword,salt);
+        await User.findByIdAndUpdate(userID,{ $set:{password:newPassword}},{new:true})
+        res.json({
+            ok:true,
+            msg: 'Updated User Password',
         })
     } catch (error) {
         console.log(error);

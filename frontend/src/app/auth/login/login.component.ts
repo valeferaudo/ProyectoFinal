@@ -14,7 +14,8 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
   loginForm: FormGroup;
-
+  passwordIsVisible: boolean;
+  hiddenEmailModal: boolean = false;
   constructor(private fb: FormBuilder,
               private userService: UserService,
               private router: Router,
@@ -26,7 +27,8 @@ export class LoginComponent implements OnInit {
 
   createForm(){
     this.loginForm = this.fb.group({
-      email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
+      // email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
+      email: [ 'sol.salin@gmail.com', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       remember: [true, , ]
     });
@@ -35,6 +37,12 @@ export class LoginComponent implements OnInit {
 
 
   signIn(){
+    if (this.loginForm.invalid){
+      Object.values(this.loginForm.controls).forEach(control=>{
+        control.markAsTouched();
+      })
+      return;
+    }
     this.userService.signIn(this.loginForm.value, 'USER')
                       .subscribe(resp => {
                         if (this.loginForm.get('remember').value){
@@ -52,7 +60,33 @@ export class LoginComponent implements OnInit {
                         }, 2000);
                       }, (err) => {
                         console.log(err);
+                        console.log('hola')
                         this.errorService.showErrors('MEJORAR ERRORES',99)
                       });
   }
+  getFieldValid(field : string){
+    return this.loginForm.get(field).invalid &&
+            this.loginForm.get(field).touched
+ }
+ showPassword(){
+  this.passwordIsVisible = !this.passwordIsVisible;
+}
+goRecoverPassword(){
+  this.sweetAlertService.showSwalConfirmation({
+    title: '¿Desea recuperar la contraseña?',
+    text: ``,
+    icon: 'question'})
+  .then((result) => {
+    if (result.value) {
+                   setTimeout(() => {
+                     this.hiddenEmailModal=true
+                   }, 200);
+                }
+    }
+  )
+}
+
+closeRecoverPasswordModal(closeModal){
+  this.hiddenEmailModal = closeModal
+}
 }

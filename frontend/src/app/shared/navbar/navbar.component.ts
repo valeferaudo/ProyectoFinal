@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { User } from 'src/app/models/user.model';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -9,11 +10,13 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-
+  userLogged : User;
   constructor(private router: Router,
     private userService: UserService,
     private activatedRoute: ActivatedRoute,
-    private sweetAlertService: SweetAlertService) { }
+    private sweetAlertService: SweetAlertService) {
+      this.userLogged = this.userService.user;
+     }
 
 
 searchField(text: string){
@@ -41,5 +44,7 @@ logOut(){
   }
 });
 }
+goProfile(){
 
+}
 }

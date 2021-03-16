@@ -2,50 +2,63 @@
     <div class="login-register" style="background-image:url(./assets/images/background/login-register.jpg);">
         <div class="login-box card">
             <div class="card-body">
-                <form class="form-horizontal form-material" [formGroup]="registerForm" (submit)="signUp()" >
-                    <h3 class="box-title m-b-20 text-center">Registro</h3>
-                    <div class="form-group" [class.has-danger]="getFieldValid('name')">
-                        <input type="text" class="form-control" placeholder="Nombre" formControlName="name" [class.form-control-danger]="getFieldValid('name')">
+                <form class="form" [formGroup]="registerForm" (submit)="signUp()" >
+                    <h2 class="card-title m-b-20 text-center font-weight-bold">REGISTRO</h2>
+                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('name')">
+                        <label class="font-bold">Nombre</label>
+                        <input type="text" class="form-control"  formControlName="name" [class.form-control-danger]="getFieldValid('name')">
                         <small *ngIf="getFieldValid('name')" class="text-danger">
-                            *Ingrese el nombre
+                            *Ingrese el <strong>nombre</strong>.
                         </small>
                     </div>
-                    <div class="form-group" [class.has-danger]="getFieldValid('address')">
-                        <input type="text" class="form-control" placeholder="Dirección" formControlName="address" [class.is-invalid]="getFieldValid('address')">
+                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('secondName')">
+                        <label class="font-bold">Apellido</label>
+                        <input type="text" class="form-control"  formControlName="secondName" [class.form-control-danger]="getFieldValid('secondName')">
+                        <small *ngIf="getFieldValid('secondName')" class="text-danger">
+                            *Ingrese el <strong>apellido</strong>.
+                        </small>
+                    </div>
+                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('address')">
+                        <label class="font-bold">Dirección</label>
+                        <input type="text" class="form-control" formControlName="address" [class.form-control-danger]="getFieldValid('address')">
                         <small *ngIf="getFieldValid('address')" class="text-danger">
-                            *Ingrese la dirección
+                            *Ingrese la <strong>dirección</strong>.
                         </small>
                     </div>
-                    <div class="form-group" [class.has-danger]="getFieldValid('phone')">
-                        <input type="number" class="form-control" placeholder="Teléfono" formControlName="phone" [class.is-invalid]="getFieldValid('phone')">
+                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('phone')">
+                        <label class="font-bold">Teléfono</label>
+                        <input type="number" class="form-control" formControlName="phone" [class.form-control-danger]="getFieldValid('phone')">
                         <small *ngIf="getFieldValid('phone')" class="text-danger">
-                            *Ingrese el teléfono
+                            *Ingrese el <strong>teléfono</strong>.
                         </small>
                     </div>
-                    <div class="form-group" [class.has-danger]="getFieldValid('email')">
-                        <input type="text" class="form-control" placeholder="Email" formControlName="email" [class.is-invalid]="getFieldValid('email')">
+                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('email')">
+                        <label class="font-bold">Email</label>
+                        <input type="text" class="form-control" formControlName="email" [class.form-control-danger]="getFieldValid('email')">
                         <small *ngIf="getFieldValid('email')" class="text-danger">
-                            *Ingrese el email correctamente
+                            *Ingrese el <strong>email</strong> correctamente.
                         </small>
                     </div>
-                    <div class="form-group" [class.has-danger]="getFieldValid('password')">
-                        <input type="password" class="form-control" placeholder="Contraseña" formControlName="password" [class.is-invalid]="getFieldValid('password')">
+                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('password')">
+                        <label class="font-bold">Contraseña</label>
+                        <input type="password" class="form-control" formControlName="password" [class.form-control-danger]="getFieldValid('password')">
                         <small *ngIf="getFieldValid('password')" class="text-danger">
-                            *Ingrese la contraseña
+                            *Ingrese la <strong>contraseña</strong>.
                         </small>
                     </div>
-                    <div class="form-group" [class.has-danger]="getFieldValid('password2')">
-                        <input type="password" class="form-control" placeholder="Repetir contraseña" formControlName="password2" [class.is-invalid]="getFieldValid('password2')">
+                    <div class="form-group col mb-3" [class.has-danger]="getFieldValid('password2')">
+                        <label class="font-bold">Repita contraseña</label>
+                        <input type="password" class="form-control" formControlName="password2" [class.form-control-danger]="getFieldValid('password2')">
                         <small *ngIf="pass2Valid" class="text-danger">
-                            *Las contraseñas no coinciden
+                            *Las <strong>contraseñas</strong> no <strong>coinciden</strong>.
                         </small>                   
                     </div>
-                    <div class="form-group text-center p-b-20">
+                    <div class="form-group col mb-1 text-center p-b-10">
                         <div class="col-xs-12">
-                            <button class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light" type="submit">Registrarse</button>
+                            <button class="btn btn-info  btn-md btn-rounded text-uppercase waves-effect waves-light" type="submit">Registrarse</button>
                         </div>
                     </div>
-                    <div class="form-group m-b-0">
+                    <div class="form-group col m-b-0">
                         <div class="col-sm-12 text-center">
                             ¿Ya tienes cuenta? <a [routerLink]="['/login']" class="text-info m-l-5"><b>Ingresar</b></a>
                         </div>

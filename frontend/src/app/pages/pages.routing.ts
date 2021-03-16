@@ -11,7 +11,7 @@ import { Routes } from '@angular/router';
 export const PagesRoutes: Routes = [
    {path: '', pathMatch: 'full', redirectTo: 'home'},
    {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-   {path: 'user', component: UsersComponent,  canActivate: [AuthGuard]},
+   {path: 'user/:id', component: UsersComponent,  canActivate: [AuthGuard]},
    {path: 'about', component: AboutComponent,  canActivate: [AuthGuard]},
    {path: 'fields', component: FieldsComponent,  canActivate: [AuthGuard]},
    {path: 'appointments', component: AppointmentsComponent, canActivate: [AuthGuard]},

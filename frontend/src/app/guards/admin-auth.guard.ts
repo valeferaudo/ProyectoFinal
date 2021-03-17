@@ -21,7 +21,7 @@ export class AdminAuthGuard implements CanActivate {
                   this.router.navigateByUrl('/admin/login');
                 }
                 this.user = this.userService.user;
-                if (this.user.role !== 'CENTER-ADMIN' && this.user.role !== 'CENTER-SUPER-ADMIN'){
+                if (this.user.role !== 'CENTER-ADMIN' && this.user.role !== 'CENTER-SUPER-ADMIN' && this.user.role !== 'SUPER-ADMIN'){
                   this.router.navigateByUrl('/home');
                 }
             }));

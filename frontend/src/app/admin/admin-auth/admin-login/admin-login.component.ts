@@ -13,6 +13,9 @@ import { UserService } from 'src/app/services/user.service';
 export class AdminLoginComponent implements OnInit {
 
   loginForm: FormGroup;
+  passwordIsVisible: boolean;
+  hiddenEmailModal: boolean = false;
+
   constructor(private router: Router,
               private fb: FormBuilder,
               private userService: UserService,
@@ -28,12 +31,19 @@ export class AdminLoginComponent implements OnInit {
     this.loginForm = this.fb.group({
       email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      remember: [false]
+      remember: [true]
     });
   }
   login(){
-     this.userService.signIn(this.loginForm.value, 'CENTER-ADMIN')
+    if (this.loginForm.invalid){
+      Object.values(this.loginForm.controls).forEach(control=>{
+        control.markAsTouched();
+      })
+      return;
+    }
+     this.userService.signIn(this.loginForm.value, 'CENTER')
                       .subscribe(resp => {
+                        console.log(resp)
                         if (this.loginForm.get('remember').value){
                           localStorage.setItem('email', this.loginForm.get('email').value);
                         }else{
@@ -44,13 +54,37 @@ export class AdminLoginComponent implements OnInit {
                           text:'',
                           icon: 'success',
                         })
+                        this.router.navigateByUrl('/admin/home');
                         setTimeout(() => {
-                          this.router.navigateByUrl('/admin/home');
                         }, 2000);
                       }, (err) => {
                         console.log(err);
                         this.errorService.showErrors('mejorar',99)
                       });
   }
-
+  getFieldValid(field : string){
+    return this.loginForm.get(field).invalid &&
+            this.loginForm.get(field).touched
+  }
+  showPassword(){
+    this.passwordIsVisible = !this.passwordIsVisible;
+  }
+  goRecoverPassword(){
+    this.sweetAlertService.showSwalConfirmation({
+      title: '¿Desea recuperar la contraseña?',
+      text: ``,
+      icon: 'question'})
+    .then((result) => {
+      if (result.value) {
+                     setTimeout(() => {
+                       this.hiddenEmailModal=true
+                     }, 200);
+                  }
+      }
+    )
+  }
+  
+  closeRecoverPasswordModal(closeModal){
+    this.hiddenEmailModal = closeModal
+  }
 }

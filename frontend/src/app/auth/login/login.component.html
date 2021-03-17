@@ -2,7 +2,7 @@
     <div class="login-register" style="background-image:url(../../../assets/images/background/login-register.jpg);">
         <div class="login-box card">
             <div class="card-body">
-                <form class="form" [formGroup]="loginForm" (submit)="signIn()">
+                <form class="form" [formGroup]="loginForm" (submit)="login()">
                     <h2 class="card-title m-b-20 text-center font-weight-bold">INGRESO</h2>
                     <div class="form-group mb-1" [class.has-danger]="getFieldValid('email')">
                         <div class="col">
@@ -36,27 +36,40 @@
                             </small>
                         </div>
                         <div class="col-md-12 mt-1">
+                            <a (click)="goRecoverPassword()" href="javascript:void(0)" id="to-recover" class="text-dark pull-left">
+                                <i class="fa fa-lock m-r-5"></i>¿Olvidó su contraseña?
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group mt-5">
+                        <div class="col" style="display: flex;align-items: center;" >
                             <div class="checkbox checkbox-primary pull-left mb-0">
                                 <input id="checkbox-signup" 
                                 type="checkbox" 
                                 class="filled-in chk-col-light-blue"
                                 formControlName="remember"> 
-                                <label for="checkbox-signup">Recordar usuario</label>
+                                <label for="checkbox-signup">Recordar email</label>
+                            </div>
+                            <div class="col pull-right">
+                                <button class="btn btn-lg btn-info ml-4" type="submit">Ingresar</button>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group text-center mt-5">
-                        <div class="col" style="display: flex;align-items: center;" >
-                            <a (click)="goRecoverPassword()" href="javascript:void(0)" id="to-recover" class="text-dark pull-left"><i class="fa fa-lock m-r-5"></i>¿Olvidó su contraseña?</a> 
-                            <button class="btn  btn-info btn-rounded pull-right ml-4" type="submit">Ingresar</button>
-                        </div>
-                    </div>
+                    <hr>
                     <div class="form-group m-b-0">
                         <div class="col-sm-12 text-center">
                             ¿Todavía no tiene cuenta? <a [routerLink]="['/register']"  class="text-info m-l-5"><b> Registrarse</b></a>
                         </div>
                     </div>
                 </form>
+                <hr>
+                <div class="form-group m-b-0 mt-4">
+                    <div class="row">
+                        <div class="col text-center">
+                            ¿Unirse a <span class="font-bold"> SporTurno</span>? <a [routerLink]="['/admin/register']"  class="text-info m-l-5"><b> Centro deportivo</b></a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

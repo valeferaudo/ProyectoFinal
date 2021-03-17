@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
 
 
 
-  signIn(){
+  login(){
     if (this.loginForm.invalid){
       Object.values(this.loginForm.controls).forEach(control=>{
         control.markAsTouched();

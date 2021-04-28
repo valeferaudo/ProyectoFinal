@@ -16,6 +16,14 @@ import { AdminFieldComponent } from './admin-pages/admin-field/admin-field.compo
 import { AdminFieldsComponent } from './admin-pages/admin-fields/admin-fields.component';
 import { ComponentsModule } from '../components/components.module';
 import { PipesModule } from '../pipes/pipes.module';
+import { UsersComponent } from './super-admin-pages/users/users.component';
+import { SportsComponent } from './super-admin-pages/sports/sports.component';
+import { ServicesComponent } from './super-admin-pages/services/services.component';
+import { FeaturesComponent } from './super-admin-pages/features/features.component';
+import { SportCentersComponent } from './super-admin-pages/sport-centers/sport-centers.component';
+import { SportCenterComponent } from './admin-pages/sport-center/sport-center.component';
+import { MaterialModule } from '../material.module';
+import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-requests.component';
 
 
 @NgModule({
@@ -26,7 +34,14 @@ import { PipesModule } from '../pipes/pipes.module';
      AdminDoAppointmentsComponent,
      AdminSettingComponent,
      AdminFieldComponent,
-     AdminFieldsComponent
+     AdminFieldsComponent,
+     UsersComponent,
+     SportsComponent,
+     ServicesComponent,
+     FeaturesComponent,
+     SportCentersComponent,
+     SportCenterComponent,
+     AdminRequestsComponent,
   ],
   imports: [
     CommonModule,
@@ -36,6 +51,7 @@ import { PipesModule } from '../pipes/pipes.module';
     FormsModule,
     ReactiveFormsModule,
     PipesModule,
+    MaterialModule
   ],
   exports: [
      AdminComponent,

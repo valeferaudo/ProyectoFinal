@@ -13,7 +13,7 @@ const UserSchema = new Schema({
     favorites:{type: Array, default:[]},
     sportCenter:{type:Schema.Types.ObjectId,ref:'SportCenter',default:null},
     state:{type:Boolean, default: true},
-    // role:{type:Schema.Types.ObjectId,ref:'UserType',required:true},
+    role:{type:String,required:true},
 },{collection:'users'})
 
 UserSchema.method('toJSON',function(){

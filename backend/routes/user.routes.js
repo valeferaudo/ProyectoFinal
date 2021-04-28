@@ -25,10 +25,10 @@ router.put('/:id',[validateJWT,
                 check('email','Email field is incorrect').isEmail(),
                 validateFields],userCtrl.updateUser);
 router.put('/password/:id',[validateJWT],userCtrl.changePassword);
-router.put('/favorite/:id',[validateJWT],userCtrl.favoriteUser);
+router.put('/favorite/:id',[validateJWT],userCtrl.addFavorite);
 router.put('/delete/:id',[validateJWT],userCtrl.deleteUser);
 router.put('/activate/:id',[validateJWT],userCtrl.activateUser);
-router.put('/accept/:id',[validateJWT],userCtrl.activateSuperCenterAdmin);
+router.put('/acceptBlock/:id',[validateJWT],userCtrl.activateBlockSuperCenterAdmin);
 
 
 module.exports = router;

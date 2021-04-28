@@ -15,9 +15,13 @@ import { RegisterComponent } from './auth/register/register.component';
 import { PagesRoutes } from './pages/pages.routing';
 import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
 import { AdminRoutes } from './admin/admin.routing';
+import { InitialHomeComponent } from './shared/initial-home/initial-home.component';
+import { AboutComponent } from './shared/about/about.component';
 
 const routes: Routes = [
-  {path: '', component: PagesComponent, children: PagesRoutes},
+  {path: '', component: InitialHomeComponent},
+  // {path: 'about', component: AboutComponent},
+  {path: 'user', component: PagesComponent, children: PagesRoutes},
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {path: 'admin/login', component: AdminLoginComponent},

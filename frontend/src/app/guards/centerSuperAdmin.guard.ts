@@ -7,7 +7,7 @@ import { UserService } from '../services/user.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AdminAuthGuard implements CanActivate {
+export class CenterSuperAdminGuard implements CanActivate {
   user: User;
   constructor(private userService: UserService,
               private router: Router){
@@ -21,8 +21,20 @@ export class AdminAuthGuard implements CanActivate {
                   this.router.navigateByUrl('/admin/login');
                 }
                 this.user = this.userService.user;
-                if (this.user.role !== 'CENTER-ADMIN' && this.user.role !== 'CENTER-SUPER-ADMIN' && this.user.role !== 'SUPER-ADMIN'){
-                  this.router.navigateByUrl('/home');
+                if (this.user.role !== 'CENTER-SUPER-ADMIN'){
+                  if(this.user.role === 'USER'){
+                    this.router.navigateByUrl('/user');
+                  }
+                  else if(this.user.role === 'CENTER-ADMIN'){
+                    this.router.navigateByUrl('/admin');
+                  }
+                  else if(this.user.role === 'SUPER-ADMIN'){
+                    this.router.navigateByUrl('/admin/super/users');
+                  }
+                }
+                console.log(this.user)
+                if (this.user.sportCenter === undefined){
+                  this.router.navigateByUrl('/admin');
                 }
             }));
   }

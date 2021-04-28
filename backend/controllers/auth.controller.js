@@ -28,12 +28,22 @@ authCtrl.login = async(req = request,res = response)=>{
                 msg:"Wrong email or password"
             });
         }
-        const userRoleHistorial = await UserRoleHistorial.find({user:userDB.id}).sort({'sinceDate' : -1}).limit(1);
-        if(userRoleHistorial[0].role !== type){
-            return res.status(403).json({
-                ok:false,
-                msg:'User does not have permission in this module'
-            });
+        //SI SE LOGUEA UN USUARIO COMUN --> 'USER' ; SI SE LOGUEA OTRO --> 'CENTER'
+        if(type === 'CENTER'){
+            if(userDB.role !== 'CENTER-ADMIN' && userDB.role !== 'CENTER-SUPER-ADMIN' && userDB.role !== 'SUPER-ADMIN'){
+                return res.status(403).json({
+                    ok:false,
+                    msg:'User does not have permission in this module'
+                });
+            }
+        }
+        if(type === 'USER'){
+            if(userDB.role !== 'USER'){
+                return res.status(403).json({
+                    ok:false,
+                    msg:'User does not have permission in this module'
+                });
+            }
         }
         if(userDB.status === false){
             return res.status(403).json({
@@ -41,14 +51,21 @@ authCtrl.login = async(req = request,res = response)=>{
                 msg:'User is not allowed'
             });
         }
+        var needSportCenter = false;
+        if(userDB.role === 'CENTER-SUPER-ADMIN'){
+            if(userDB.sportCenter === null){
+                needSportCenter = true;
+            }
+        }
 //GENERAR JWT
         const token =  await generateJWT(userDB.id)
-
+        //filtrar el userDB porq muestra todo aca, (psw)
         res.json({
             ok: true,
             msg:"User logged in",
             token: token,
-            uid
+            user: userDB,
+            needSportCenter: needSportCenter
         })
     } catch (error) {
         console.log(error);
@@ -65,12 +82,13 @@ authCtrl.renewToken = async (req,res)=>{
     const token =  await generateJWT(uid)    
 
 //OBTENER USUARIO
-    var userDB = await User.findById(uid,{uid:1,name:1,secondName:1,address:1,phone:1,email:1,role:1})
-                        .populate('role')
-    const userRoleHistorial = await UserRoleHistorial.find({user:uid}).sort({'sinceDate' : -1}).limit(1);
+    var userDB = await User.findById(uid,{uid:1,name:1,secondName:1,address:1,phone:1,email:1,role:1,sportCenter:1})
+                        // .populate('role')
+    // const userRoleHistorial = await UserRoleHistorial.find({user:uid}).sort({'sinceDate' : -1}).limit(1);
     if(!userDB){
         return console.log('NO ENCUENTRA USUARIO')
     }
+    console.log(userDB)
     const user = {
         uid: userDB.id,
         name: userDB.name,
@@ -78,7 +96,8 @@ authCtrl.renewToken = async (req,res)=>{
         address: userDB.address,
         phone: userDB.phone,
         email: userDB.email,
-        role: userRoleHistorial[0].role
+        role: userDB.role,
+        sportCenter: userDB.sportCenter
     }
     res.json({
         ok:true,

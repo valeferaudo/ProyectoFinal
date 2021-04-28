@@ -12,6 +12,7 @@ export class User{
         public password?: string,
         public role?: string,
         public uid?: string,
+        public sportCenter?: string
         ){}
 
     /*Feature for user's image (add image in constructor) use this with the instance

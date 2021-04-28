@@ -65,6 +65,7 @@ export class AdminRegisterComponent {
                           this.router.navigateByUrl('/admin/login');
                         }, 2000);
                       }, (err) => {
+                        console.log(err)
                         this.errorService.showErrors('error',99)
                       });
    }

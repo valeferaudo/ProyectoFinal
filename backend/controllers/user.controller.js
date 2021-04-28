@@ -5,8 +5,12 @@ const { request, response} = require ('express');
 const userCtrl = {};
 const bcrypt = require('bcryptjs');
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
+
+//Mails
 const { sendNewUserEmail } = require ('../helpers/emails/newUserEmail');
 const { sendAcceptUser } = require ('../helpers/emails/acceptUserEmail');
+const { sendBlockUser } = require ('../helpers/emails/blockUserEmail');
+
 
 
 userCtrl.getUser = async (req = request,res = response)=>{
@@ -34,21 +38,31 @@ userCtrl.getUser = async (req = request,res = response)=>{
     }
 }
 userCtrl.getUsers = async (req = request,res = response)=>{
+    userLoggedID = req.uid
     active = parseInt(req.query.active);
     blocked = parseInt(req.query.blocked);
+    centerSuperAdmin = parseInt(req.query.centerSuperAdmin);
     try {
-        var users;
+        var deleted;
+        var roleCenterAdmin;
+        var roleCenterSuperAdmin;
+        var roleUser;
+        //FALTA EL FILTRADO BIEN 
         if(active === 1 && blocked === 0){
-            users = await User.find({deletedDate: null})
-
+            deleted = null;
         }
         else if(active === 0 && blocked === 1){
-            users = await User.find({deletedDate: {$ne:null}})
+            deleted = !null;
+            // users = await User.find({deletedDate: {$ne:null}, email:{$ne: 'admin@admin.com'},id:{$ne: userLoggedID}})
         }
         else if(active === 1 && blocked === 1){
-            users = await User.find()
-
+            // deleted = 
+            // users = await User.find({email:{$ne: 'admin@admin.com'},id:{$ne: userLoggedID}})
         }
+        const users = await User.find({deletedDate: null, 
+                                id:{$ne: userLoggedID},
+                                $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}]})
+        
         res.json({
             ok: true,
             msg:'Found users',
@@ -63,7 +77,6 @@ userCtrl.getUsers = async (req = request,res = response)=>{
         })
     }
 }
-
 userCtrl.createUser = async (req = request, res = response) =>{
     const {email, password, role} = req.body
     try {
@@ -102,19 +115,13 @@ userCtrl.createUser = async (req = request, res = response) =>{
             email: req.body.email,
             password: req.body.password,
             state: initialState,
+            role: req.body.role
         });
-
+        
         const salt = bcrypt.genSaltSync();
         user.password = bcrypt.hashSync(password,salt);
         await user.save();
-        userDB = await User.findOne({email:user.email});
-        const userRoleHistorial = new UserRoleHistorial({
-            user: userDB.id,
-            sinceDate: Date.now(),
-            role: role
-        })
-        await userRoleHistorial.save();
-        if(role === 'CENTER-SUPER-ADMIN'){
+        if(req.body.role === 'CENTER-SUPER-ADMIN'){
             sendNewUserEmail(user);
         }
         res.json({
@@ -160,8 +167,8 @@ userCtrl.updateUser = async (req = request, res = response) =>{
         //     const salt = bcrypt.genSaltSync();
         //     changes.password = bcrypt.hashSync(changes.password,salt);
         // }
-        const userRole = await UserRoleHistorial.findOne({user:uid}).sort({'sinceDate' : -1}).limit(1);
-        if (userRole.role !== 'USER'){
+        // const userRole = await UserRoleHistorial.findOne({user:uid}).sort({'sinceDate' : -1}).limit(1);
+        if (userDB.role !== 'USER'){
             if(changes.role !== 'CENTER-SUPER-ADMIN' && changes.role !== 'CENTER-ADMIN'){
                 return res.status(403).json({
                     ok:false,
@@ -169,24 +176,18 @@ userCtrl.updateUser = async (req = request, res = response) =>{
                 });
             }
         }
-        await User.findByIdAndUpdate(uid,changes,{new:true})
         if(changes.role !== undefined){
-            userRoleHistorial = await UserRoleHistorial.findOne({user:userDB.id}).sort({'sinceDate' : -1}).limit(1);
-            if(userRoleHistorial.role === 'USER' || userRoleHistorial.role === 'SUPER-ADMIN'){
+            if(userDB.role === 'USER' || userDB.role === 'SUPER-ADMIN'){
                 return res.status(403).json({
                     ok:false,
                     msg:'User role is not allowed to change his role'
                 });
             }
-            if(changes.role !== userRoleHistorial.role){
-                const userRoleHistorial = new UserRoleHistorial({
-                    user: userDB.id,
-                    sinceDate: Date.now(),
-                    role: req.body.role
-                })
-                await userRoleHistorial.save();
+            if(changes.role === userDB.role){
+                delete changes.role
             }
         }
+        await User.findByIdAndUpdate(uid,changes,{new:true})
         res.json({
             ok:true,
             msg:'Updated User'
@@ -261,29 +262,28 @@ userCtrl.activateUser = async (req = request, res = response) =>{
     }
 }
 
-userCtrl.activateSuperCenterAdmin = async (req = request, res = response) =>{
+userCtrl.activateBlockSuperCenterAdmin = async (req = request, res = response) =>{
     const superAdminID = req.uid;
     const uid = req.params.id;
     try {
-        const adminDBRole = await UserRoleHistorial.findOne({user:superAdminID}).sort({'sinceDate' : -1}).limit(1);
-        if(adminDBRole.role !== 'SUPER-ADMIN'){
+        const superAdminBD = await User.findById(superAdminID)
+        if(superAdminBD.role !== 'SUPER-ADMIN'){
             return res.status(403).json({
                 ok:false,
                 msg:'This User role doesn´t have the permissions'
             })
         }
-        const userRole = await UserRoleHistorial.findOne({user:uid}).sort({'sinceDate' : -1}).limit(1);
-        if(userRole.role !== 'CENTER-SUPER-ADMIN'){
-            return res.status(404).json({
-                ok:false,
-                msg:'This User role doesn´t have to be accepted'
-            })
-        }
-        const userDB = await User.findById(uid);
+        const userDB = await User.findById(uid)
         if(!userDB){
             return res.status(404).json({
                 ok:false,
                 msg:'Unknown ID. Please insert a correct User ID'
+            })
+        }
+        if(userDB.role !== 'CENTER-SUPER-ADMIN'){
+            return res.status(404).json({
+                ok:false,
+                msg:'This User role doesn´t have to be accepted'
             })
         }
         if(userDB.deletedDate !== null){
@@ -292,9 +292,14 @@ userCtrl.activateSuperCenterAdmin = async (req = request, res = response) =>{
                 msg:'This User is deleted'
             })
         }
-        userDB.state = true;
+        userDB.state = !userDB.state;
         await User.findByIdAndUpdate(uid,userDB,{new:true});
-        sendAcceptUser(userDB)
+        if (userDB.state === true){
+            sendAcceptUser(userDB)
+        }
+        else{
+            sendBlockUser(userDB)
+        }
         res.json({
             ok:true,
             msg:'Activated CENTER-SUPER-ADMIN User'
@@ -307,22 +312,21 @@ userCtrl.activateSuperCenterAdmin = async (req = request, res = response) =>{
         })
     }
 }
-userCtrl.favoriteUser = async (req = request, res = response) =>{
+userCtrl.addFavorite = async (req = request, res = response) =>{
     const userID = req.uid;
     const newFavorite = req.params.id;
     try {
-        const adminDBRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(adminDBRole.role !== 'USER'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions to add favorites'
-            })
-        }
         const userDB = await User.findById(userID);
         if(!userDB){
             return res.status(404).json({
                 ok:false,
                 msg:'Unknown ID. Please insert a correct User ID'
+            })
+        }
+        if(userDB.role !== 'USER'){
+            return res.status(403).json({
+                ok:false,
+                msg:'This User role doesn´t have the permissions to add favorites'
             })
         }
         if(userDB.deletedDate !== null){

@@ -15,6 +15,7 @@ export class AdminLoginComponent implements OnInit {
   loginForm: FormGroup;
   passwordIsVisible: boolean;
   hiddenEmailModal: boolean = false;
+  hiddenSportCenterModal: boolean = false;
 
   constructor(private router: Router,
               private fb: FormBuilder,
@@ -30,7 +31,7 @@ export class AdminLoginComponent implements OnInit {
   createLoginForm(){
     this.loginForm = this.fb.group({
       email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['123456789', Validators.required],
       remember: [true]
     });
   }
@@ -43,7 +44,6 @@ export class AdminLoginComponent implements OnInit {
     }
      this.userService.signIn(this.loginForm.value, 'CENTER')
                       .subscribe(resp => {
-                        console.log(resp)
                         if (this.loginForm.get('remember').value){
                           localStorage.setItem('email', this.loginForm.get('email').value);
                         }else{
@@ -54,9 +54,19 @@ export class AdminLoginComponent implements OnInit {
                           text:'',
                           icon: 'success',
                         })
-                        this.router.navigateByUrl('/admin/home');
-                        setTimeout(() => {
-                        }, 2000);
+                        if(resp.user.role === 'SUPER-ADMIN'){
+                          this.router.navigateByUrl('/admin/super/users');
+                        }
+                        else{
+                          setTimeout(() => {
+                            if (resp.needSportCenter === true){
+                              this.hiddenSportCenterModal=true;
+                            }
+                            else{
+                              this.router.navigateByUrl('/admin');
+                            }
+                          }, 1000);
+                        }
                       }, (err) => {
                         console.log(err);
                         this.errorService.showErrors('mejorar',99)
@@ -86,5 +96,8 @@ export class AdminLoginComponent implements OnInit {
   
   closeRecoverPasswordModal(closeModal){
     this.hiddenEmailModal = closeModal
+  }
+  closeSportCenterModal(closeModal){
+    this.hiddenSportCenterModal = closeModal
   }
 }

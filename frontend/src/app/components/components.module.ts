@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // MODULOS
-import { ReactiveFormsModule } from '@angular/forms'; 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
 import { PipesModule } from '../pipes/pipes.module';
 import { ChartsModule } from 'ng2-charts';
 
@@ -20,6 +20,8 @@ import { ChangePasswordModalComponent } from './modals/change-password-modal/cha
 import { FullScreenLoaderComponent } from './loaders/full-screen-loader/full-screen-loader.component';
 import { LineLoaderComponent } from './loaders/line-loader/line-loader.component'
 import { MaterialModule } from '../material.module';
+import { TableUserComponent } from './table-user/table-user.component';
+import { SportCenterModalComponent } from './modals/sport-center-modal/sport-center-modal.component';
 
 
 @NgModule({
@@ -35,10 +37,13 @@ import { MaterialModule } from '../material.module';
     ForgetPasswordModalComponent,
     ChangePasswordModalComponent,
     FullScreenLoaderComponent,
-    LineLoaderComponent
+    LineLoaderComponent,
+    TableUserComponent,
+    SportCenterModalComponent
 
   ],
   imports: [
+    FormsModule,
     CommonModule,
     PipesModule,
     ReactiveFormsModule,
@@ -57,7 +62,9 @@ import { MaterialModule } from '../material.module';
     ForgetPasswordModalComponent,
     ChangePasswordModalComponent,
     FullScreenLoaderComponent,
-    LineLoaderComponent
+    LineLoaderComponent,
+    TableUserComponent,
+    SportCenterModalComponent
   ]
 })
 export class ComponentsModule { }

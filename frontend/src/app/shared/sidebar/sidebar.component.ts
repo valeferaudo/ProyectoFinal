@@ -11,11 +11,20 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class SidebarComponent implements OnInit {
 
+  userLogged: User;
+  sportCenterID: string;
   constructor(private sweetAlertService: SweetAlertService,
     private userService: UserService,
-    private router: Router) { }
+    private router: Router) { 
+      this.getUserLogged();
+    }
 
   ngOnInit(): void {
+  }
+  getUserLogged(){
+    this.userLogged = this. userService.user;
+    this.sportCenterID = this.userLogged.sportCenter;
+    console.log(this.sportCenterID)
   }
   logout(){
     this.sweetAlertService.showSwalConfirmation({
@@ -37,5 +46,12 @@ export class SidebarComponent implements OnInit {
 
     });
   }
-
+  goToUsers(){
+    if(this.userLogged.role === 'CENTER-SUPER-ADMIN'){
+      this.router.navigateByUrl('/admin/users');
+    }
+    else if (this.userLogged.role === 'SUPER-ADMIN'){
+      this.router.navigateByUrl('/admin/super/users');
+    }
+  }
 }

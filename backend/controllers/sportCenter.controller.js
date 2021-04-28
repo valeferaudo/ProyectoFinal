@@ -5,6 +5,7 @@ const User = require ('../models/user.model');
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 const {request, response} = require('express');
 const sportCenterCtrl ={};
+var ObjectId = require('mongodb').ObjectID;
 
 
 sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
@@ -60,36 +61,44 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
 
 sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
     const userID = req.uid
-    const userBody = req.body
+    const sportCenterBody = req.body
     try {
-        const userRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(userRole.role !== 'CENTER-SUPER-ADMIN'){
+        const userDB = await User.findById(userID);
+        if(!userDB){
+            if (!user) {
+                return res.status(404).json({
+                    ok:false,
+                    msg:'Unknown ID. Please insert a correct User ID'
+                })
+            }
+        }
+        if(userDB.role !== 'CENTER-SUPER-ADMIN'){
             return res.status(403).json({
                 ok:false,
                 msg:'This User role doesn´t have the permissions to create Sport Center'
             })
         }
-        const sportCenterDB = await SportCenter.findOne({name: userBody.name});
-        if (!sportCenterDB){
+        const sportCenterDB = await SportCenter.findOne({name: sportCenterBody.name});
+        if (sportCenterDB){
             return res.status(400).json({
                 ok:false,
                 msg:'A Sport Center already exists with this name'
             })
         }
         sportCenter = new SportCenter({
-            name: req.body.name,
-            address: req.body.address,
-            phone: req.body.phone,
-            aditionalElectricityHour: req.body.aditionalElectricityHour,
-            aditionalElectricity: req.body.aditionalElectricity,
-            mercadoPago: req.body.mercadoPago
+            name: sportCenterBody.name,
+            address: sportCenterBody.address,
+            phone: sportCenterBody.phone,
+            aditionalElectricityHour: sportCenterBody.aditionalElectricityHour,
+            aditionalElectricity: sportCenterBody.aditionalElectricity,
+            mercadoPago: sportCenterBody.mercadoPago
         });
         await sportCenter.save();
         const sportCenterCreated = await SportCenter.findOne({name: sportCenter.name});
-        const userObject = {
-            sportCenter: sportCenterCreated.id
-        }
-        userDB = await User.findByIdAndUpdate({userID},{$set: userObject});
+        // const userObject = {
+        //     sportCenter: ObjectId(`${sportCenterCreated._id}`)
+        // }
+        await User.findByIdAndUpdate(userID,{$set: {sportCenter:sportCenterCreated.id}});
         res.json({
             ok:true,
             msg: 'Created Sport Center',

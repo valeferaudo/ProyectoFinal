@@ -5945,3 +5945,32 @@ input[type="number"] {
 .bg-app{
   background: #343a40;
 }
+
+/* TOOLTIP */
+.tooltip-box{
+  display: none;
+  position: absolute;
+  background-color: black;
+  line-height: 20px;
+  z-index: 500;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  left: -15px;
+  bottom: 30px;
+}
+.tooltip-box::after{
+  content: "";
+  display: block;
+  border-top: 7px solid black;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  position: absolute;
+  bottom: -7px;
+}
+/* PARA UN SCROLL MAS LINDO Y SUAVE */
+html{
+  scroll-behavior: smooth;
+}

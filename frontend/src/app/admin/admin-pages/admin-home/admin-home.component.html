@@ -1,1 +1,4 @@
-<p>admin-home works!</p>
+<h1>ARMAR EL HOME</h1>
+<mat-slide-toggle>Slide me!</mat-slide-toggle>
+
+<app-sport-center-modal *ngIf="hiddenSportCenterModal" [hiddenSportCenterModal]="!hiddenSportCenterModal" (closeModalOutput)="closeSportCenterModal($event)"></app-sport-center-modal>

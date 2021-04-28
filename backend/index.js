@@ -1,7 +1,8 @@
 const express = require ('express');
 require('dotenv').config();
 const {dbConnection} = require ('./database/config');
-const {fillDayCollection} = require ('./seeders/daySeeder')
+const {fillDayCollection} = require ('./seeders/daySeeder');
+const { fillSuperAdmin } = require ('./seeders/adminSeeder');
 const cors = require ('cors')
 
 
@@ -12,6 +13,7 @@ const app = express();
 dbConnection();
 
 //Seeders
+fillSuperAdmin();
 fillDayCollection();
 
 //settings

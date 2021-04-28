@@ -10,6 +10,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 import { AdminNavbarComponent } from './admin-navbar/admin-navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { InitialHomeComponent } from './initial-home/initial-home.component';
+import { FaqComponent } from './faq/faq.component';
 
 
 
@@ -21,7 +23,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     NavbarComponent,
     FooterComponent,
     AdminNavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    InitialHomeComponent,
+    FaqComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +36,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     NavbarComponent,
     FooterComponent,
     AdminNavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    InitialHomeComponent,
+    FaqComponent
   ]
 })
 export class SharedModule { }

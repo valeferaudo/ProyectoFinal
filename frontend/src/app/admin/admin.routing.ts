@@ -1,21 +1,50 @@
 import { Routes } from '@angular/router';
 import { AdminHomeComponent } from './admin-pages/admin-home/admin-home.component';
-import {AdminAuthGuard } from '../guards/admin-auth.guard';
 import { AdminAppointmentsComponent } from './admin-pages/admin-appointments/admin-appointments.component';
 import { AdminSettingComponent } from './admin-pages/admin-setting/admin-setting.component';
 import { AdminFieldComponent } from './admin-pages/admin-field/admin-field.component';
 import { AdminFieldsComponent } from './admin-pages/admin-fields/admin-fields.component';
 import { AdminDoAppointmentsComponent } from './admin-pages/admin-do-appointments/admin-do-appointments.component';
+import { UsersComponent } from './super-admin-pages/users/users.component';
+//GUARDS
+//Solo 'SUPER-ADMIN'
+import { SuperAdminGuard } from '../guards/super-admin.guard';
+//Solo 'CENTER-SUPER-ADMIN'
+import {CenterSuperAdminGuard } from '../guards/centerSuperAdmin.guard';
+//Todos
+import { AdminGuard } from '../guards/admin.guard';
+//Solo 'CENTER-SUPER-ADMIN' Y 'CENTER-ADMIN'
+import { CenterGuard } from '../guards/center.guard';
+import { SportsComponent } from './super-admin-pages/sports/sports.component';
+import { ServicesComponent } from './super-admin-pages/services/services.component';
+import { FeaturesComponent } from './super-admin-pages/features/features.component';
+import { SportCentersComponent } from './super-admin-pages/sport-centers/sport-centers.component';
+import { SportCenterComponent } from './admin-pages/sport-center/sport-center.component';
+import { HomeGuard } from '../guards/home.guard';
+
+
 
 export const AdminRoutes: Routes = [
-     {path: '', pathMatch: 'full', redirectTo: 'home'},
-     {path: 'home', component: AdminHomeComponent, canActivate: [AdminAuthGuard]},
-     {path: 'settings', component: AdminSettingComponent, canActivate: [AdminAuthGuard]},
-     {path: 'field', component: AdminFieldComponent, canActivate: [AdminAuthGuard]},
-     {path: 'field/:id', component: AdminFieldComponent, canActivate: [AdminAuthGuard]},
-     {path: 'fields', component: AdminFieldsComponent, canActivate: [AdminAuthGuard]},
-     {path: 'appointments', component: AdminAppointmentsComponent, canActivate: [AdminAuthGuard]},
-     {path: 'appointment/:id', component: AdminDoAppointmentsComponent, canActivate: [AdminAuthGuard]},
+     // {path: '', pathMatch: 'full', redirectTo: 'home'},
+     // {path: 'home', component: AdminHomeComponent, canActivate: [HomeGuard]},
+     {path: '', component: AdminHomeComponent, canActivate: [HomeGuard]},
+     {path: 'settings', component: AdminSettingComponent, canActivate: [AdminGuard]},
+     {path: 'field', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
+     {path: 'field/:id', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
+     {path: 'fields', component: AdminFieldsComponent, canActivate: [AdminGuard]},
+     {path: 'appointments', component: AdminAppointmentsComponent, canActivate: [CenterGuard]},
+     {path: 'appointment/:id', component: AdminDoAppointmentsComponent, canActivate: [CenterGuard]},
+     {path: 'users', component: UsersComponent, canActivate: [AdminGuard]},
+     {path: 'sportcenter/:id', component: SportCenterComponent, canActivate: [CenterGuard]},
+
+     
+     //rutas del SUPER-ADMIN
+     {path: 'super/users', component: UsersComponent, canActivate: [SuperAdminGuard]},
+     {path: 'super/sports', component: SportsComponent, canActivate: [SuperAdminGuard]},
+     {path: 'super/services', component: ServicesComponent, canActivate: [SuperAdminGuard]},
+     {path: 'super/features', component: FeaturesComponent, canActivate: [SuperAdminGuard]},
+     {path: 'super/sportcenter/:id', component: SportCenterComponent, canActivate: [SuperAdminGuard]},
+     {path: 'super/sportcenters', component: SportCentersComponent, canActivate: [SuperAdminGuard]},
 ];
 
 

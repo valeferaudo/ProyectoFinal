@@ -5,7 +5,9 @@ import { CommonModule } from '@angular/common';
 //MODULOS
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-
+import {MatMenuModule} from '@angular/material/menu';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [],
@@ -17,11 +19,11 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     // MatButtonModule,
      MatProgressSpinnerModule,
     // MatSelectModule,
-    // MatCheckboxModule,
+     MatCheckboxModule,
      MatProgressBarModule,
-    // MatSlideToggleModule,
+     MatSlideToggleModule,
     // MatSliderModule,
-    // MatMenuModule,
+     MatMenuModule,
     // MatRadioModule
   ],
   exports:[
@@ -31,11 +33,11 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     // MatButtonModule,
      MatProgressSpinnerModule,
     // MatSelectModule,
-    // MatCheckboxModule,
+     MatCheckboxModule,
      MatProgressBarModule,
-    // MatSlideToggleModule,
+     MatSlideToggleModule,
     // MatSliderModule,
-    // MatMenuModule,
+     MatMenuModule,
     // MatRadioModule
     
   ],

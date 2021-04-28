@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { User } from 'src/app/models/user.model';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-admin-home',
@@ -7,9 +9,29 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminHomeComponent implements OnInit {
 
-  constructor() { }
+  user: User;
+  hiddenSportCenterModal: boolean = false;
+
+  doNotCloseMenu = (event) => event.stopPropagation();
+
+  constructor(private userService: UserService) {
+    this.getUserLogged();
+   }
 
   ngOnInit(): void {
   }
-
+  getUserLogged(){
+    this.user = this.userService.user;
+    this.createSportCenter();
+  }
+  createSportCenter(){
+    if(this.user.role === 'CENTER-SUPER-ADMIN'){
+      if(this.user.sportCenter === undefined || this.user.sportCenter === null){
+        this.hiddenSportCenterModal=true;
+      }
+    }
+  }
+  closeSportCenterModal(closeModal){
+    this.hiddenSportCenterModal = closeModal
+  }
 }

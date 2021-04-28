@@ -10,7 +10,7 @@ import { SharedModule } from '../shared/shared.module';
 import { PagesComponent } from './pages.component';
 import { HomeComponent } from './home/home.component';
 import { UsersComponent } from './users/users.component';
-import { AboutComponent } from './about/about.component';
+import { AboutComponent } from '../shared/about/about.component';
 import { FieldsComponent } from './fields/fields.component';
 import { DoAppointmentComponent } from './do-appointment/do-appointment.component';
 import { AppointmentsComponent } from './appointments/appointments.component';

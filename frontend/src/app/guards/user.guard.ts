@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
@@ -7,7 +8,7 @@ import { UserService } from '../services/user.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class UserGuard implements CanActivate {
 
   user: User;
 
@@ -24,7 +25,12 @@ export class AuthGuard implements CanActivate {
           }
           this.user = this.userService.user;
           if (this.user.role !== 'USER'){
-                this.router.navigateByUrl('/admin/home');
+            if(this.user.role === 'CENTER-ADMIN' || this.user.role === 'CENTER-SUPER-ADMIN'){
+              this.router.navigateByUrl('/admin');
+            }
+            else if(this.user.role === 'SUPER-ADMIN'){
+              this.router.navigateByUrl('/admin/super/users');
+            }
             }
       }));
   }

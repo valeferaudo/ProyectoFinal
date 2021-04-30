@@ -195,7 +195,6 @@ userCtrl.createUser = async (req = request, res = response) =>{
         })
     }
 }
-
 userCtrl.updateUser = async (req = request, res = response) =>{
     const uid = req.params.id
     const email = req.body.email
@@ -220,6 +219,7 @@ userCtrl.updateUser = async (req = request, res = response) =>{
                 })
             }
         }
+        //quitar porque no dejo modificar las contraseañas por aca solo lo puede hacer el mismo usuario
         // if(changes.password === null){
         //     delete changes.password
         // }else{
@@ -235,6 +235,7 @@ userCtrl.updateUser = async (req = request, res = response) =>{
                 });
             }
         }
+        //porque ahgo esto??
         if(changes.role !== undefined){
             if(userDB.role === 'USER' || userDB.role === 'SUPER-ADMIN'){
                 return res.status(403).json({
@@ -320,18 +321,9 @@ userCtrl.activateUser = async (req = request, res = response) =>{
         })
     }
 }
-
 userCtrl.activateBlockSuperCenterAdmin = async (req = request, res = response) =>{
-    const superAdminID = req.uid;
     const uid = req.params.id;
     try {
-        const superAdminBD = await User.findById(superAdminID)
-        if(superAdminBD.role !== 'SUPER-ADMIN'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions'
-            })
-        }
         const userDB = await User.findById(uid)
         if(!userDB){
             return res.status(404).json({
@@ -376,18 +368,6 @@ userCtrl.addFavorite = async (req = request, res = response) =>{
     const newFavorite = req.params.id;
     try {
         const userDB = await User.findById(userID);
-        if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
-        }
-        if(userDB.role !== 'USER'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions to add favorites'
-            })
-        }
         if(userDB.deletedDate !== null){
             return res.status(403).json({
                 ok:false,
@@ -430,7 +410,6 @@ userCtrl.addFavorite = async (req = request, res = response) =>{
 }
 userCtrl.changePassword = async (req = request, res = response) =>{
     const userID = req.params.id;
-    const userLoggedID = req.uid
     const passwords = req.body;
     try {
         const userDB = await User.findById(userID)
@@ -439,12 +418,6 @@ userCtrl.changePassword = async (req = request, res = response) =>{
                 ok:false,
                 msg:'Unknown ID. Please insert a correct User ID'
             })
-        }
-        if (userID !== userLoggedID){
-            return res.status(403).json({
-                ok:false,
-                msg:'User is not allowed to change this User'
-            });
         }
         //verificar contraseña vieja
          if (!(bcrypt.compareSync(passwords.OldPassword, userDB.password))) {

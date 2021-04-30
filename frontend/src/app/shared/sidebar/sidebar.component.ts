@@ -16,15 +16,14 @@ export class SidebarComponent implements OnInit {
   constructor(private sweetAlertService: SweetAlertService,
     private userService: UserService,
     private router: Router) { 
-      this.getUserLogged();
     }
-
+    
   ngOnInit(): void {
+    this.getUserLogged();
   }
   getUserLogged(){
     this.userLogged = this. userService.user;
     this.sportCenterID = this.userLogged.sportCenter;
-    console.log(this.sportCenterID)
   }
   logout(){
     this.sweetAlertService.showSwalConfirmation({

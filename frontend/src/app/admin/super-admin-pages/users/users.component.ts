@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserFilter } from 'src/app/interfaces/filters/userFilter.interface';
 import { User } from 'src/app/models/user.model';
+import { LoaderService } from 'src/app/services/loader.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -19,22 +20,27 @@ export class UsersComponent implements OnInit {
     state: '',
     userType: 'SUPER-ADMIN'
   }
-  selectedFilters = '';
+  selectedFilters: string [] = [];
   userStates = ['Activo', 'Bloqueado']
   doNotCloseMenu = (event) => event.stopPropagation();
   userStateSelected : '' | 'Activo' | 'Bloqueado' = '';
 
-  constructor(private userService: UserService) { 
+  constructor(private userService: UserService,
+              private loaderService: LoaderService) {}
+              
+  ngOnInit(): void {
     this.getUsers();
   }
 
-  ngOnInit(): void {
-  }
-
   getUsers(){
+    this.loaderService.openLineLoader();
     this.userService.getUsers(this.filters)
                     .subscribe((resp:any)=>{
-                      this.users = resp.param
+                      if(resp.ok){
+                        this.loaderService.closeLineLoader();
+                        this.users = resp.param.users;
+                        this.selectedFilters = resp.param.selectedFilters
+                      }
                     })
   }
   searchUsers(text: string){
@@ -46,13 +52,12 @@ export class UsersComponent implements OnInit {
     //ACA VALIDAR SI BUSCO POR ALGUN TIPO Y SINO BUSCA QUE LIMPIE EL CHECK M
   }
   filterUsers(){
-    this.selectedFilters = this.userStateSelected;
     this.fillFilterObject();
     this.getUsers();
   }
   clearFilter(){
     this.userStateSelected = '';
-    this.selectedFilters = '';
+    this.selectedFilters = [];
     this.fillFilterObject();
     this.getUsers();
   }

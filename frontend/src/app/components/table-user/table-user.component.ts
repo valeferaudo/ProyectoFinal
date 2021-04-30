@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
 import { ErrorsService } from 'src/app/services/errors.service';
@@ -16,8 +16,7 @@ export class TableUserComponent implements OnInit {
   @Input() users: User [];
   @Input() type= '';
   // @Input() totalPages;
-  // @Output() fillBlocked = new EventEmitter();
-  // @Output() fillActive = new EventEmitter();
+  @Output() getUsers = new EventEmitter<boolean>();
 
   page = 1; 
   userLogged: User;
@@ -72,9 +71,11 @@ export class TableUserComponent implements OnInit {
         this.loaderService.openLineLoader();
         this.userService.acceptBlockUser(user.uid)
                         .subscribe( (resp: any)=>{
+                          if(resp.ok){
                             this.loaderService.closeLineLoader();
                             this.sweetAlertService.showSwalResponse(swalResponseObject)
-                            this.getUsers();
+                            this.getUsers.emit(true)
+                          }
                         }, (err) => {
                           console.log(err)
                           this.errorService.showServerError()
@@ -85,12 +86,7 @@ export class TableUserComponent implements OnInit {
     )
   }
 
-  getUsers(){
-    this.userService.getUsers()
-                    .subscribe((resp:any)=>{
-                      this.users = resp.param
-                    })
-  }
+
   deleteUser(id: string){
     if(id === this.userLogged.uid){
       this.sweetAlertService.showSwalConfirmation({
@@ -102,7 +98,7 @@ export class TableUserComponent implements OnInit {
           this.loaderService.openLineLoader();
           this.userService.deleteUser(id)
                           .subscribe( (resp: any)=>{
-                            if (resp.success === true){
+                            if (resp.ok === true){
                               this.loaderService.closeLineLoader();
                               this.sweetAlertService.showSwalResponse({
                                 title: 'Cuenta dada de baja',
@@ -112,7 +108,7 @@ export class TableUserComponent implements OnInit {
                                   this.userService.logOut()
                              }, 1000);
                             }
-                            else if(resp.success === false){
+                            else if(resp.ok === false){
                               this.loaderService.closeLineLoader();
                               this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
                             }
@@ -134,24 +130,14 @@ export class TableUserComponent implements OnInit {
           this.loaderService.openLineLoader();
           this.userService.deleteUser(id)
                           .subscribe( (resp: any)=>{
-                            if (resp.success === true){
+                            if (resp.ok === true){
                               this.sweetAlertService.showSwalResponse({
                                 title: 'Cuenta dada de baja',
                                 text:'Está siendo redirigido/a',
                                 icon: "success"});
-                              this.userService.getUsers()
-                                            .subscribe((resp:any) =>{
-                                              if(resp.success === true){
-                                                this.users = resp.param;
-                                                this.loaderService.closeLineLoader();
-                                              }
-                                              else if (resp.success === false){
-                                                this.loaderService.closeLineLoader();
-                                                this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
-                                              }
-                                            })
+                                this.getUsers.emit(true)
                             }
-                            else if(resp.success === false){
+                            else if(resp.ok === false){
                               this.loaderService.closeLineLoader();
                               this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
                             }

@@ -97,7 +97,6 @@ export class UserService {
     return this.http.put(`${baseUrl}/users/password/${this.user.uid}`,body)
   }
   acceptBlockUser(id){
-    console.log(id)
     const body = {};
     return this.http.put(`${baseUrl}/users/acceptBlock/${id}`,body);
   }

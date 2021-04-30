@@ -1,7 +1,7 @@
 const User = require ('../models/user.model');
 const Field = require ('../models/field.model');
 const SportCenter = require ('../models/sportCenter.model');
-const { request, response} = require ('express');
+const { request, response, text} = require ('express');
 const userCtrl = {};
 const bcrypt = require('bcryptjs');
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
@@ -39,39 +39,98 @@ userCtrl.getUser = async (req = request,res = response)=>{
 }
 userCtrl.getUsers = async (req = request,res = response)=>{
     userLoggedID = req.uid
-    active = parseInt(req.query.active);
-    blocked = parseInt(req.query.blocked);
-    centerSuperAdmin = parseInt(req.query.centerSuperAdmin);
+    searchText = req.query.text;
+    state = req.query.state;
+    userType = req.query.userType;
     try {
-        var deleted;
-        var roleCenterAdmin;
-        var roleCenterSuperAdmin;
-        var roleUser;
-        //FALTA EL FILTRADO BIEN 
-        if(active === 1 && blocked === 0){
-            deleted = null;
+        let users;
+        let booleanState;
+        let selectedFilters;
+        if(state === 'Activo'){
+            booleanState = true;
         }
-        else if(active === 0 && blocked === 1){
-            deleted = !null;
-            // users = await User.find({deletedDate: {$ne:null}, email:{$ne: 'admin@admin.com'},id:{$ne: userLoggedID}})
+        else if(state === 'Bloqueado'){
+            booleanState = false;
         }
-        else if(active === 1 && blocked === 1){
-            // deleted = 
-            // users = await User.find({email:{$ne: 'admin@admin.com'},id:{$ne: userLoggedID}})
+
+        if(searchText === '' && state === '' ){
+            users = await User.find({deletedDate: null, 
+                id:{$ne: userLoggedID},
+                $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
+            });
+            selectedFilters = [];
         }
-        const users = await User.find({deletedDate: null, 
-                                id:{$ne: userLoggedID},
-                                $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}]})
-        
+        else if(searchText !== '' && state === ''){
+            users = await User.find({deletedDate: null, 
+                id:{$ne: userLoggedID},
+                $or: [
+                    {"name" : new RegExp(searchText, 'i')},
+                    {"lastName" : new RegExp(searchText, 'i')},
+                    {$expr: {
+                        "$regexMatch": {
+                            "input": { "$concat": ["$name", " ", "$lastName"] },
+                            "regex": searchText,
+                            "options": "i"
+                        }
+                    }},
+                    {$expr: {
+                        "$regexMatch": {
+                            "input": { "$concat": ["$lastName", " ", "$name"] },
+                            "regex": searchText,
+                            "options": "i"
+                        }
+                    }}
+                ],
+                $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
+            })
+            selectedFilters = ['Texto: ', searchText];
+        }
+        else if(text === '' && state !== ''){
+            users = await User.find({deletedDate: null, 
+                                            id:{$ne: userLoggedID},
+                                            $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
+                                            state:booleanState
+                                        })
+            selectedFilters = ['Estado: ',state];
+        }
+        else if(text !== '' && state !== ''){
+            users = await User.find({deletedDate: null, 
+                                            id:{$ne: userLoggedID},
+                                            $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
+                                            state:booleanState,
+                                            $or: [
+                                                {"name" : new RegExp(searchText, 'i')},
+                                                {"lastName" : new RegExp(searchText, 'i')},
+                                                {$expr: {
+                                                    "$regexMatch": {
+                                                        "input": { "$concat": ["$name", " ", "$lastName"] },
+                                                        "regex": searchText,
+                                                        "options": "i"
+                                                    }
+                                                }},
+                                                {$expr: {
+                                                    "$regexMatch": {
+                                                        "input": { "$concat": ["$lastName", " ", "$name"] },
+                                                        "regex": searchText,
+                                                        "options": "i"
+                                                    }
+                                                }}
+                                            ],
+            })
+            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
+        }
         res.json({
             ok: true,
             msg:'Found users',
-            param: users
+            param: {
+                users,
+                selectedFilters
+            }
         })
         
     } catch (error) {
         console.log(error);
-        res.stat(500).json({
+        res.status(500).json({
             ok:false,
             msg:'An unexpected error occurred'
         })
@@ -109,7 +168,7 @@ userCtrl.createUser = async (req = request, res = response) =>{
         }
         user = new User({
             name: req.body.name,
-            secondName: req.body.secondName,
+            lastName: req.body.lastName,
             phone: req.body.phone,
             address: req.body.address,
             email: req.body.email,

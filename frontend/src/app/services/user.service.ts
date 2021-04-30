@@ -7,6 +7,7 @@ import { LoginForm } from '../interfaces/loginForm.interface';
 import { RegisterForm } from '../interfaces/registerForm.interface';
 import { User } from '../models/user.model';
 import { environment } from 'src/environments/environment.prod';
+import { UserFilter } from '../interfaces/filters/userFilter.interface';
 
 const baseUrl = environment.base_url;
 
@@ -38,17 +39,11 @@ export class UserService {
   }
 
   validateToken(): Observable<boolean>{
-    const token = localStorage.getItem('x-token') || '';
-    return this.http.get(`${baseUrl}/login/renew`, {
-                          headers: {
-                            'x-token': token
-                          }
-                        })
-              .pipe(tap((resp: any) => {
+    return this.http.get(`${baseUrl}/login/renew`)
+              .pipe(map((resp: any) => {
                         const{name,secondName, uid, email, role, phone, address, sportCenter} = resp.user;
                         this.user  = new User( name, secondName, address, phone, email, '', role, uid,sportCenter);
                         localStorage.setItem('token', resp.token);
-            }), map(resp => {
                         return true;
             }), catchError(error => {
                         return of(false);
@@ -67,32 +62,27 @@ export class UserService {
     localStorage.removeItem('x-token');
   }
   createUser(user){
-    const token = localStorage.getItem('x-token') || '';
-    return this.http.get(`${baseUrl}/users/` ,{ headers: {'x-token': token}});
+    return this.http.get(`${baseUrl}/users/`);
   }
   deleteUser(userID){
-    const token = localStorage.getItem('x-token') || '';
-    return this.http.get(`${baseUrl}/users/` ,{ headers: {'x-token': token}});
+    return this.http.get(`${baseUrl}/users/`);
   }
   getUserTypes(){
-    const token = localStorage.getItem('x-token') || '';
-    return this.http.get(`${baseUrl}/users/` ,{ headers: {'x-token': token}});
+    return this.http.get(`${baseUrl}/users/`);
   }
   getUser(userID){
-    const token = localStorage.getItem('x-token') || '';
-    return this.http.get(`${baseUrl}/users/` ,{ headers: {'x-token': token}});
+    return this.http.get(`${baseUrl}/users/`);
   }
-  getUsers(){
-    const token = localStorage.getItem('x-token') || '';
+  getUsers(filters: UserFilter){
     let params = new HttpParams();
-    params = params.append('active','1');
-    params = params.append('blocked','1' );
-    params = params.append('centerSuperAdmin','1' );
-    return this.http.get(`${baseUrl}/users/` ,{params, headers: {'x-token': token}});
+    console.log(filters)
+    params = params.append('text',filters.text);
+    params = params.append('state',filters.state);
+    params = params.append('userType', filters.userType );
+    return this.http.get(`${baseUrl}/users/` ,{params});
   }
   updateUser(id: string, data){
-    const token = localStorage.getItem('x-token') || '';
-    return this.http.put(`${baseUrl}/users/${id}`, data, { headers: {'x-token': token}});
+    return this.http.put(`${baseUrl}/users/${id}`, data);
   }
 
   recoverPassword(email){
@@ -104,16 +94,11 @@ export class UserService {
       NewPassword: newPasswords.password,
       RepeatNewPassword: newPasswords.password2
     }
-    const token = localStorage.getItem('x-token') || '';
-    const headers = new HttpHeaders({
-      'x-token': token
-    });
-    return this.http.put(`${baseUrl}/users/password/${this.user.uid}`,body,{headers})
+    return this.http.put(`${baseUrl}/users/password/${this.user.uid}`,body)
   }
   acceptBlockUser(id){
     console.log(id)
-    const token = localStorage.getItem('x-token') || '';
     const body = {};
-    return this.http.put(`${baseUrl}/users/acceptBlock/${id}`,body, {headers: {'x-token': token}});
+    return this.http.put(`${baseUrl}/users/acceptBlock/${id}`,body);
   }
 }

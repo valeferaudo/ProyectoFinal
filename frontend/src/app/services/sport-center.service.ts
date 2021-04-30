@@ -12,7 +12,6 @@ export class SportCenterService {
   constructor(private http: HttpClient) {}
 
   createSportCenter(dataForm){
-    const token = localStorage.getItem('x-token') || '';
-    return this.http.post(`${baseUrl}/sportcenters/`, dataForm,{ headers: {'x-token': token}});
+    return this.http.post(`${baseUrl}/sportcenters/`, dataForm );
   }
 }

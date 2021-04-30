@@ -23,9 +23,6 @@ export class UploadFileService {
 
       const resp = await fetch(url, {
         method: 'PUT',
-        headers: {
-          'x-token': localStorage.getItem('token') || ''
-        },
         body: formData
       });
       //Desaencapsula la data

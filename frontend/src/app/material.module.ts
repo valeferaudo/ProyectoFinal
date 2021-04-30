@@ -8,6 +8,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatButtonModule} from '@angular/material/button';
 
 @NgModule({
   declarations: [],
@@ -16,7 +18,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     // MatStepperModule,
     // MatFormFieldModule,
     // MatIconModule,
-    // MatButtonModule,
+     MatButtonModule,
      MatProgressSpinnerModule,
     // MatSelectModule,
      MatCheckboxModule,
@@ -24,13 +26,13 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
      MatSlideToggleModule,
     // MatSliderModule,
      MatMenuModule,
-    // MatRadioModule
+     MatRadioModule
   ],
   exports:[
     // MatStepperModule,
     // MatFormFieldModule,
     // MatIconModule,
-    // MatButtonModule,
+     MatButtonModule,
      MatProgressSpinnerModule,
     // MatSelectModule,
      MatCheckboxModule,
@@ -38,7 +40,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
      MatSlideToggleModule,
     // MatSliderModule,
      MatMenuModule,
-    // MatRadioModule
+     MatRadioModule
     
   ],
 })

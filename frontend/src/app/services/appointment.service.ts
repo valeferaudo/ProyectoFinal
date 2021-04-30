@@ -11,30 +11,26 @@ export class AppointmentService {
   constructor(private http: HttpClient) { }
 
   getAppointments(){
-        const token = localStorage.getItem('token') || '';
-        return this.http.get('http://localhost:3000/api/appointments/user', {headers: {'x-token': token}})
+        return this.http.get('http://localhost:3000/api/appointments/user')
                         .pipe(map((data: any) => {
                             return data.appointments;
                           }));
-    }
-    getAvailableAppointments(form: DatesForm, id: string){
-      const token = localStorage.getItem('token') || '';
+  }
+  getAvailableAppointments(form: DatesForm, id: string){
       let params = new HttpParams();
       params = params.append('dateSince', form.sinceDate);
       params = params.append('dateUntil', form.untilDate);
-      return this.http.get(`http://localhost:3000/api/appointments/available/${id}`, { params , headers: {'x-token': token}})
+      return this.http.get(`http://localhost:3000/api/appointments/available/${id}`, { params })
                         .pipe(map((data: any) => {
                             return data.available;
                           }));
-    }
+  }
 
-    createAppointments(appointment){
-      const token = localStorage.getItem('token') || '';
-      return this.http.post('http://localhost:3000/api/appointments', appointment, {headers: {'x-token': token}} );
-    }
+  createAppointments(appointment){
+      return this.http.post('http://localhost:3000/api/appointments', appointment);
+  }
 
-    deleteAppointment(id: string){
-      const token = localStorage.getItem('token') || '';
-      return this.http.delete(`http://localhost:3000/api/appointments/${id}`, {headers: {'x-token': token}} );
-    }
+  deleteAppointment(id: string){
+      return this.http.delete(`http://localhost:3000/api/appointments/${id}`);
+  }
 }

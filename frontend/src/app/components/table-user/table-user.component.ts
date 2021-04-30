@@ -25,9 +25,6 @@ export class TableUserComponent implements OnInit {
   searchText: string = '';
   refresh: boolean = false;
 
-  userTypeSelected;
-  userTypes= ['Activos','Bloqueados']
-  doNotCloseMenu = (event) => event.stopPropagation();
 
   constructor(private router: Router,
               private userService: UserService,

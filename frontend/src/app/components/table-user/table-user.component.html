@@ -1,57 +1,3 @@
-<div class="col-12">
-    <div class="row">
-      <div class="col-sm-9 col-md-9 p-0">
-        <h3 class="mt-0"><span class="card-title">USUARIOS</span>
-            <div id="example_filter" class="search-entry">
-                <!-- <h6 class="pull-left">
-                    <strong class="search-title-text">Buscar:</strong>
-                    <input type="search" class="" [value]="searchText" placeholder="" #text (keyup.enter)="searchUsers(text.value)" >
-                    <i class="fas fa-search pointer" (click)="searchUsers(text.value)"></i>
-                </h6> -->
-            </div>
-        </h3>
-      </div>
-      <div class="col-sm-3 col-md-3 p-0">
-        <!-- <a class="text-info pointer d-flex pull-right entry-button" (click)="refreshTable()">Limpiar</a> -->
-      </div>
-    </div>
-</div>
-<div>
-    <!-- <article class="filters">
-        <p class="filters__title">Filtrar</p>
-        <div class="filters__items-container">
-            <div class="filters__items-container__item"> -->
-                <!-- FILTER BUTTON -->
-                <!-- <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuInvitados">
-                    <span class="filters__items-container__item__button__resume">Estado</span>
-                    <span class="filters__items-container__item__button__name">Estado</span>
-            </button> -->
-            <!-- FILTER MENU -->
-            <!-- <mat-menu #menuInvitados="matMenu" (closed)="setCheckValue()">
-                <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)"> -->
-                            <!-- VALUES -->
-                    <!-- <div class="filters__items-container__item__menu__boolean-container">
-                        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="userTypeSelected">
-                            <mat-radio-button class="example-radio-button" *ngFor="let userType of userTypes" [value]="userType">
-                                    {{userType}}
-                            </mat-radio-button>
-                        </mat-radio-group>
-                    </div>
-                </div> -->
-            <!-- ACTIONS -->
-            <!-- <div class="filters__items-container__item__actions-container"> -->
-                <!-- <button mat-button (click)="clearFilter(filter)" type="button"
-                    class="filters__items-container__item__actions-container__button">Limpiar</button> -->
-                    <!-- <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterUsers()">Aplicar</button>
-                </div>
-            </mat-menu>
-        </div>
-    </div>
-</article> -->
-</div>
-
-<hr>
-
 <div class="table-responsive animated fadeIn" *ngIf="users.length!==0">
     <table id="myTable" class="table table-hover color-table inverse-table">
         <thead>
@@ -87,23 +33,6 @@
         </tbody>
     </table>
 </div>
-<!-- <div class="row" *ngIf="users.length!==0 && totalPages > 1">
-    <div class="col-md-12 text-center">
-            <ul class="pagination justify-content-center">
-                <li class="page-item">
-                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === 1" (click)="getMoreUsers(1)"><i class="fas fa-backward"></i></button>
-                </li>
-                <li class="page-item" *ngIf="page !== 1" (click)="getMoreUsers(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
-                <li class="page-item" [class.active]="page === page">
-                <a class="page-link">{{page}}</a>
-                </li>
-                <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="getMoreUsers(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
-                <li class="page-item">
-                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="getMoreUsers(totalPages)"><i class="fas fa-forward"></i></button>
-                </li>
-            </ul>
-    </div>
-</div> -->
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="users.length === 0"> 
     <i class="ti-user"></i> No se encontraron <strong>Usuarios {{type}}</strong>
 </div>

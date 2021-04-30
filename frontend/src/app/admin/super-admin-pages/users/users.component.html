@@ -1,11 +1,61 @@
-<div class="mb-4">
+<div>
     <div class="row">
         <div class="col-md-6">
-            <h2 class="card-title"><strong>Nuevos usuarios </strong></h2>
+            <h2 class="card-title"><strong>Listado de usuarios </strong></h2>
         </div>
     </div>
-    <hr>
 </div>
+<hr>
+<div class="col-12 mb-2">
+    <div class="row">
+      <div class="col-sm-9 col-md-9 p-0">
+            <div id="example_filter" class="search-entry">
+                <h6 class="pull-left">
+                    <strong class="search-title-text">Buscar:</strong>
+                    <input type="search" class="" [value]="searchText" placeholder="" #text (keyup.enter)="searchUsers(text.value)" >
+                    <i class="fas fa-search pointer" (click)="searchUsers(text.value)"></i>
+                </h6>
+            </div>
+      </div>
+      <div class="col-sm-3 col-md-3 p-0">
+        <a class="text-info pointer d-flex pull-right entry-button" (click)="refreshTable()">Limpiar</a>
+      </div>
+    </div>
+    <article class="filters mt-2">
+        <h6 class="pull-left">
+            <strong class="search-title-text">Filtrar:</strong>
+        </h6>
+        <div class="filters__items-container">
+            <div class="filters__items-container__item">
+                <!-- FILTER BUTTON -->
+                <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuInvitados">
+                    <span class="filters__items-container__item__button__resume">Estado</span>
+                    <span class="filters__items-container__item__button__name">Estado</span>
+            </button>
+            <!-- FILTER MENU -->
+            <mat-menu #menuInvitados="matMenu" (closed)="setCheckValue()">
+                <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                            <!-- VALUES -->
+                    <div class="filters__items-container__item__menu__boolean-container">
+                        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="userStateSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let userState of userStates" [value]="userState">
+                                    {{userState}}
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
+            <!-- ACTIONS -->
+            <div class="filters__items-container__item__actions-container">
+                 <button mat-button (click)="clearFilter()" type="button"
+                    class="filters__items-container__item__actions-container__button">Limpiar</button>
+                    <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterUsers()">Aplicar</button>
+                </div>
+            </mat-menu>
+        </div>
+    </div>
+</article>
+</div>
+<p *ngIf="selectedFilters !== ''">Filtrando por: {{selectedFilters}}</p>
 <app-table-user [users]="users"></app-table-user>
 <app-full-screen-loader [message]="'¡Buscando usuarios. Por favor espere!'"></app-full-screen-loader>
 <!-- <app-data-loader></app-data-loader> -->

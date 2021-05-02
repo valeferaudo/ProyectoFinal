@@ -1,0 +1,41 @@
+<div class="background-modal" [class.hidden]="hiddenModal" >
+    <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="display: block" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 *ngIf="mode === 'create'" class="modal-title font-bold" id="exampleModalLabel">Crear Servicio</h4>
+              <h4 *ngIf="mode === 'update'" class="modal-title" id="exampleModalLabel">Actualizar Servicio</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <p *ngIf="mode === 'create'">Complete los datos del servicio.</p>
+                <p *ngIf="mode === 'update'">Modifique los datos del servicio.</p>
+              <form [formGroup]="featureForm">
+                <div class="form-group">
+                  <label for="name" class="col-form-label">Nombre:</label>
+                  <input type="text" class="form-control" id="name" formControlName="name" [class.is-invalid]="getFieldValid('name')">
+                  <p class="text-danger" *ngIf="getFieldValid('name')">
+                    *Ingrese el <strong>nombre</strong>.
+                  </p>
+                </div>
+                <div class="form-group">
+                    <label for="description" class="col-form-label">Descripción:</label>
+                    <input type="text" class="form-control" id="description" formControlName="description" [class.is-invalid]="getFieldValid('description')">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button *ngIf="mode === 'create'" type="button" class="btn btn-info" (click)="createFeature()">Crear</button>
+              <button *ngIf="mode === 'update'" type="button" class="btn btn-info" (click)="updateFeature()" [hidden]="formsEquals">Modificar</button>
+              <button type="button" class="btn btn-danger"  (click)="closedModal()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<app-line-loader></app-line-loader>

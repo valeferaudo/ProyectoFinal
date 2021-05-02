@@ -25,11 +25,10 @@ export class SportModalComponent implements OnInit {
               private fb: FormBuilder,
               private errorService: ErrorsService,
               private loaderService: LoaderService,
-              private sweetAlertService: SweetAlertService) { 
-      this.createPasswordForm();
-    }
+              private sweetAlertService: SweetAlertService) {}
     
-    ngOnInit(): void {
+  ngOnInit(): void {
+    this.createSportForm();
     this.getMode();
   }
   getMode(){
@@ -41,7 +40,7 @@ export class SportModalComponent implements OnInit {
       this.listenerForm();
     }
   }
-  createPasswordForm(){
+  createSportForm(){
     this.sportForm = this.fb.group({
       name:["",[Validators.required],],
       description:["",[],]

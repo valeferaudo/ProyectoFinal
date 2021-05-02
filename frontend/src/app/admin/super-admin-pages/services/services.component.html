@@ -95,7 +95,7 @@
     </table>
 </div>
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="services.length === 0"> 
-    <i class="ti-user"></i> No se encontraron <strong>Servicios</strong>
+    <i class="fas fa-times"></i> No se encontraron <strong>Servicios</strong>
 </div>
 
 <app-service-modal *ngIf="hiddenModal" [hiddenModal]="!hiddenModal" [mode]="modalMode" [serviceSelected]="serviceSelected"

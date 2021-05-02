@@ -1,15 +1,15 @@
-const Service = require ('../models/service.model');
+const Feature = require ('../models/feature.model');
 const { request, response} = require ('express');
-const serviceCtrl = {};
+const featureCtrl = {};
 
 
-serviceCtrl.getService = async (req = request,res = response)=>{
-}
-serviceCtrl.getServices = async (req = request,res = response)=>{
+featureCtrl.getFeature = async (req = request,res = response)=>{}
+
+featureCtrl.getFeatures = async (req = request,res = response)=>{
     searchText = req.query.text;
     state = req.query.state;
     try {
-        let services;
+        let features;
         let booleanState;
         let selectedFilters;
         if(state === 'Activo'){
@@ -20,27 +20,27 @@ serviceCtrl.getServices = async (req = request,res = response)=>{
         }
 
         if(searchText === '' && state === '' ){
-            services = await Service.find();
+            features = await Feature.find();
             selectedFilters = [];
         }
         else if(searchText !== '' && state === ''){
-            services = await Service.find({name : new RegExp(searchText, 'i')})
+            features = await Feature.find({name : new RegExp(searchText, 'i')})
             selectedFilters = ['Texto: ', searchText];
         }
         else if(searchText === '' && state !== ''){
-            services = await Service.find({state:booleanState})
+            features = await Feature.find({state:booleanState})
             selectedFilters = ['Estado: ',state];
         }
         else if(searchText !== '' && state !== ''){
-            services = await Service.find({name : new RegExp(searchText, 'i'),
+            features = await Feature.find({name : new RegExp(searchText, 'i'),
                                     state:booleanState})
             selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
         }
         res.json({
             ok: true,
-            msg:'Found services',
+            msg:'Found features',
             param: {
-                services,
+                features,
                 selectedFilters
             }
         })
@@ -50,21 +50,21 @@ serviceCtrl.getServices = async (req = request,res = response)=>{
         errorResponse(res);
     }
 }
-serviceCtrl.createService = async (req = request, res = response) =>{
+featureCtrl.createFeature = async (req = request, res = response) =>{
     const {name} = req.body
     try {
-        const existsName = await Service.findOne({name});
+        const existsName = await Feature.findOne({name});
         if(existsName){
             return existsNameResponse(res);
         }
-        service = new Service({
+        feature = new Feature({
             name: req.body.name,
             description: req.body.description,
         });
-        await service.save();
+        await feature.save();
         res.json({
             ok:true,
-            msg: 'Created Service',
+            msg: 'Created Feature',
         })
     } catch (error) {
         console.log(error);
@@ -72,69 +72,69 @@ serviceCtrl.createService = async (req = request, res = response) =>{
     }
 }
 
-serviceCtrl.updateService = async (req = request, res = response) =>{
-    const serviceID = req.params.id
+featureCtrl.updateFeature = async (req = request, res = response) =>{
+    const featureID = req.params.id
     const name = req.body.name
     try {
-        const serviceDB = await Service.findById(serviceID);
-        if(!serviceDB){
+        const featureDB = await Feature.findById(featureID);
+        if(!featureDB){
             return unknownIDResponse(res);
         }
         const changes = req.body;
         //si no modifica el name (porque sino chocan por ser iguales)
-        if(changes.name === serviceDB.name){
+        if(changes.name === featureDB.name){
             delete changes.name
         }else{
-            const nameExists = await Service.findOne({name});
+            const nameExists = await Feature.findOne({name});
             if(nameExists){
                 return existsNameResponse(res);
             }
         }
-        await Service.findByIdAndUpdate(serviceID,changes,{new:true})
+        await Feature.findByIdAndUpdate(featureID,changes,{new:true})
         res.json({
             ok:true,
-            msg:'Updated Service'
+            msg:'Updated Feature'
         })
     } catch (error) {
         console.log(error);
         errorResponse(res);
     }
 }
-serviceCtrl.activateBlockService = async (req= request, res= response) => {
-    const serviceID = req.params.id;
+featureCtrl.activateBlockFeature = async (req= request, res= response) => {
+    const featureID = req.params.id;
     const action= req.body.action;
     try {
-        const serviceDB = await Service.findById(serviceID)
-        if(!serviceDB){
+        const featureDB = await Feature.findById(featureID)
+        if(!featureDB){
             return unknownIDResponse(res);
         }
         if (action === 'block'){
-            if(serviceDB.state === false){
-                return serviceBlockedResponse(res);
+            if(featureDB.state === false){
+                return featureBlockedResponse(res);
             }
             else{
-                serviceDB.state = false;
+                featureDB.state = false;
             }
         }
         else if (action === 'active'){
-            if(serviceDB.state === true){
-                return serviceActiveResponse(res);
+            if(featureDB.state === true){
+                return featureActiveResponse(res);
             }
             else{
-                serviceDB.state = true;
+                featureDB.state = true;
             }
         }
-        await Service.findByIdAndUpdate(serviceID,serviceDB,{new:true});
+        await Feature.findByIdAndUpdate(featureID,featureDB,{new:true});
         if (action === 'block'){
             res.json({
                 ok:true,
-                msg:'Blocked Service'
+                msg:'Blocked Feature'
             })
         }
         else if(action === 'active'){
             res.json({
                 ok:true,
-                msg:'Activated Service'
+                msg:'Activated Feature'
             })
         }
     } catch (error) {
@@ -160,21 +160,21 @@ function existsNameResponse(res){
     return res.status(400).json({
         ok:false,
         code: 10,
-        msg:'A Service already exists with this name'
+        msg:'A Feature already exists with this name'
     })
 }
-function serviceBlockedResponse(res){
+function featureBlockedResponse(res){
     return res.status(404).json({
         ok:false,
         code: 6,
-        msg:'This Sport is blocked'
+        msg:'This Feature is blocked'
     })
 }
-function serviceActiveResponse(res){
+function featureActiveResponse(res){
     return res.status(404).json({
         ok:false,
         code: 7,
-        msg:'This Sport is active'
+        msg:'This Feature is active'
     })
 }
-module.exports = serviceCtrl;
+module.exports = featureCtrl;

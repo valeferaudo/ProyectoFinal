@@ -24,6 +24,7 @@ import { TableUserComponent } from './table-user/table-user.component';
 import { SportCenterModalComponent } from './modals/sport-center-modal/sport-center-modal.component';
 import { SportModalComponent } from './modals/sport-modal/sport-modal.component';
 import { ServiceModalComponent } from './modals/service-modal/service-modal.component';
+import { FeatureModalComponent } from './modals/feature-modal/feature-modal.component';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { ServiceModalComponent } from './modals/service-modal/service-modal.comp
     TableUserComponent,
     SportCenterModalComponent,
     SportModalComponent,
-    ServiceModalComponent
+    ServiceModalComponent,
+    FeatureModalComponent
 
   ],
   imports: [
@@ -70,7 +72,8 @@ import { ServiceModalComponent } from './modals/service-modal/service-modal.comp
     TableUserComponent,
     SportCenterModalComponent,
     SportModalComponent,
-    ServiceModalComponent
+    ServiceModalComponent,
+    FeatureModalComponent
   ]
 })
 export class ComponentsModule { }

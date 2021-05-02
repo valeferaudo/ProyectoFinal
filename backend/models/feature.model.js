@@ -4,7 +4,8 @@ const {Schema , model} = mongoose;
 
 const FeatureSchema = new Schema({
     name:{type:String, required: true, unique:true},
-    description:{type:String}
+    description:{type:String},
+    state:{type:Boolean, default:true}
 },{collection:'features'})
 
 FeatureSchema.method('toJSON',function(){

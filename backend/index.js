@@ -29,6 +29,7 @@ app.use(express.json());
 app.use('/api/users',require('./routes/user.routes'));
 app.use('/api/sports',require('./routes/sport.routes'));
 app.use('/api/services',require('./routes/service.routes'));
+app.use('/api/features',require('./routes/feature.routes'));
 app.use('/api/sportcenters',require('./routes/sportCenter.routes'));
 app.use('/api/specialschedules',require('./routes/specialSchedule.routes'));
 app.use('/api/login',require('./routes/auth.routes'))

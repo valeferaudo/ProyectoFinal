@@ -1,48 +1,48 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Service } from 'src/app/models/service.model';
+import { Feature } from 'src/app/models/feature.model';
 import { ErrorsService } from 'src/app/services/errors.service';
+import { FeatureService } from 'src/app/services/feature.service';
 import { LoaderService } from 'src/app/services/loader.service';
-import { ServiceService } from 'src/app/services/service.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 
 @Component({
-  selector: 'app-service-modal',
-  templateUrl: './service-modal.component.html',
-  styleUrls: ['./service-modal.component.css']
+  selector: 'app-feature-modal',
+  templateUrl: './feature-modal.component.html',
+  styleUrls: ['./feature-modal.component.css']
 })
-export class ServiceModalComponent implements OnInit {
+export class FeatureModalComponent implements OnInit {
 
   @Input() hiddenModal: boolean;
   @Input() mode: 'create' | 'update';
-  @Input() serviceSelected: Service;
+  @Input() featureSelected: Feature;
   @Output() closeModal = new EventEmitter<string>();
-  @Output() getServices = new EventEmitter<string>();
+  @Output() getFeatures = new EventEmitter<string>();
 
-  serviceForm: FormGroup
-  service: Service;
+  featureForm: FormGroup;
+  feature: Feature;
   formsEquals: boolean = true;
-  constructor(private serviceService: ServiceService,
+  constructor(private featureService: FeatureService,
               private fb: FormBuilder,
               private errorService: ErrorsService,
               private loaderService: LoaderService,
               private sweetAlertService: SweetAlertService) {}
     
-  ngOnInit(): void {
-    this.createServiceForm();
-    this.getMode();
+    ngOnInit(): void {
+      this.createFeatureForm();
+      this.getMode();
   }
   getMode(){
     if(this.mode === 'update'){
-      this.serviceForm.patchValue({
-        name: this.serviceSelected.name,
-        description: this.serviceSelected.description
+      this.featureForm.patchValue({
+        name: this.featureSelected.name,
+        description: this.featureSelected.description
       })
       this.listenerForm();
     }
   }
-  createServiceForm(){
-    this.serviceForm = this.fb.group({
+  createFeatureForm(){
+    this.featureForm = this.fb.group({
       name:["",[Validators.required],],
       description:["",[],]
     })
@@ -50,30 +50,30 @@ export class ServiceModalComponent implements OnInit {
   closedModal(){
     this.closeModal.emit()
   }
-  createService(){
-    if (this.serviceForm.invalid){
-      Object.values(this.serviceForm.controls).forEach(control => {
+  createFeature(){
+    if (this.featureForm.invalid){
+      Object.values(this.featureForm.controls).forEach(control => {
         control.markAsTouched();
       });
       return;
     }
     this.sweetAlertService.showSwalConfirmation({
-      title: '¿Crear servicio?',
+      title: '¿Crear característica?',
       text: ``,
       icon: 'question'})
     .then((result) => {
       if (result.value) {
         this.loaderService.openLineLoader();
-        this.serviceService.createService(this.serviceForm.value)
+        this.featureService.createFeature(this.featureForm.value)
                     .subscribe((resp: any) =>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.sweetAlertService.showSwalResponse({
-                          title: 'Servicio creado',
+                          title: 'Característica creada',
                           text:'',
                           icon: 'success'
                         })
-                        this.getServices.emit();
+                        this.getFeatures.emit();
                         this.closedModal();
                       }
                     },(err)=>{
@@ -84,30 +84,30 @@ export class ServiceModalComponent implements OnInit {
       }
     })
   }
-  updateService(){
-    if (this.serviceForm.invalid){
-      Object.values(this.serviceForm.controls).forEach(control => {
+  updateFeature(){
+    if (this.featureForm.invalid){
+      Object.values(this.featureForm.controls).forEach(control => {
         control.markAsTouched();
       });
       return;
     }
     this.sweetAlertService.showSwalConfirmation({
-      title: '¿Editar servicio?',
+      title: '¿Editar característica?',
       text: ``,
       icon: 'question'})
     .then((result) => {
       if (result.value) {
         this.loaderService.openLineLoader();
-        this.serviceService.updateService(this.serviceSelected.id,this.serviceForm.value)
+        this.featureService.updateFeature(this.featureSelected.id,this.featureForm.value)
                     .subscribe((resp: any) =>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.sweetAlertService.showSwalResponse({
-                          title: 'Servicio editado',
+                          title: 'Característica editada',
                           text:'',
                           icon: 'success'
                         })
-                        this.getServices.emit();
+                        this.getFeatures.emit();
                         this.closedModal();
                       }
                     },(err)=>{
@@ -119,9 +119,9 @@ export class ServiceModalComponent implements OnInit {
     })
   }
   listenerForm(){
-    this.serviceForm.valueChanges
+    this.featureForm.valueChanges
             .subscribe(resp=>{
-              if(this.serviceSelected.name === this.serviceForm.controls['name'].value && this.serviceSelected.description === this.serviceForm.controls['description'].value){
+              if(this.featureSelected.name === this.featureForm.controls['name'].value && this.featureSelected.description === this.featureForm.controls['description'].value){
                 this.formsEquals = true;
               }
               else{
@@ -130,7 +130,8 @@ export class ServiceModalComponent implements OnInit {
             })
   }
   getFieldValid(field : string){
-    return this.serviceForm.get(field).invalid &&
-            this.serviceForm.get(field).touched
+    return this.featureForm.get(field).invalid &&
+            this.featureForm.get(field).touched
   }
+
 }

@@ -18,13 +18,16 @@ export class InterceptorService implements HttpInterceptor {
     const reqClone = req.clone({
       headers
     })
-    return next.handle(reqClone).pipe(
-      catchError(this.handleError)
-    )
-  }
+    return next.handle(reqClone);
 
-  handleError(err: HttpErrorResponse){
-    console.log(err)
-    return throwError('manejando error en interceptor')
+  //   return next.handle(reqClone).pipe(
+  //     catchError(this.handleError)
+  //   )
+  // }
+
+  // handleError(err: HttpErrorResponse){
+  //   console.log(err)
+  //   return throwError('manejando error en interceptor')
+  // }    
   }
 }

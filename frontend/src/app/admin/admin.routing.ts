@@ -28,7 +28,7 @@ export const AdminRoutes: Routes = [
      // {path: '', pathMatch: 'full', redirectTo: 'home'},
      // {path: 'home', component: AdminHomeComponent, canActivate: [HomeGuard]},
      {path: '', component: AdminHomeComponent, canActivate: [HomeGuard]},
-     {path: 'settings', component: AdminSettingComponent, canActivate: [AdminGuard]},
+     {path: 'settings', component: AdminSettingComponent, canActivate: [CenterGuard]},
      {path: 'field', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'field/:id', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'fields', component: AdminFieldsComponent, canActivate: [AdminGuard]},

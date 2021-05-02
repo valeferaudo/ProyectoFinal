@@ -15,8 +15,8 @@ export class SweetAlertService {
       text: confirmationSwalObject.text,
       icon: confirmationSwalObject.icon,
       showCancelButton: true,
-      confirmButtonColor: '#009846',
-      cancelButtonColor: '#D1D1D1',
+      confirmButtonColor: '#398bf7',
+      cancelButtonColor: '#ef5350',
       cancelButtonText: 'NO',
       confirmButtonText: 'SI'
     })

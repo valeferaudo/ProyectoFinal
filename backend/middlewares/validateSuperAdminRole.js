@@ -8,14 +8,15 @@ const validateSuperAdminRole = async (req, res, next) =>{
         if (userDB.role !== 'SUPER-ADMIN'){
             return res.status(403).json({
                 ok:false,
+                code: 1,
                 msg: 'This User doesn´t have the permissions'
-
             })
         }
         next();
     } catch (error) {
         res.status(500).json({
             ok: false,
+            code: 99,
             msg:'An unexpected error occurred'
         })
     }

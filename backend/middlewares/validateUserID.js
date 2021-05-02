@@ -8,13 +8,15 @@ const validateUserID = async (req, res, next) =>{
         if(!userDB){
             return res.status(404).json({
                 ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
+                code: 2,
+                msg:'Unknown ID'
             })
         }
         next();
     } catch (error) {
         res.status(500).json({
             ok: false,
+            code: 99,
             msg:'An unexpected error occurred'
         })
     }

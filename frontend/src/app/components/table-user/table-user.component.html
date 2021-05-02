@@ -20,11 +20,11 @@
                 <td>{{user.address}}</td>
                 <td>{{user.email}}</td>
                 <td>
-                    <button (click)="activateBlockUser(user)" *ngIf="user.state === false" class="btn btn-success badge m-1 content-tooltip" >
+                    <button (click)="activateBlockUser(user, 'active')" *ngIf="user.state === false" class="btn btn-success badge m-1 content-tooltip" >
                         <i class="fas fa-check"></i>
                         <span class="tooltip-box"></span>
                     </button>
-                    <button (click)="activateBlockUser(user)" *ngIf="user.state === true" class="btn btn-danger badge m-1 content-tooltip" >
+                    <button (click)="activateBlockUser(user, 'block')" *ngIf="user.state === true" class="btn btn-danger badge m-1 content-tooltip" >
                         <i class="fas fa-times"></i>
                         <span class="tooltip-box"></span>
                     </button>

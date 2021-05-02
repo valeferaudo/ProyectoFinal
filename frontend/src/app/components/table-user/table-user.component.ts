@@ -38,7 +38,7 @@ export class TableUserComponent implements OnInit {
   goUser(id: string){
     this.router.navigateByUrl(`/user/${id}`)
   }
-  activateBlockUser(user){
+  activateBlockUser(user, action: 'active' | 'block'){
     this.searching = true;
     var swalQuestionObject;
     var swalResponseObject;
@@ -69,7 +69,7 @@ export class TableUserComponent implements OnInit {
       .then((result) => {
       if (result.value) {
         this.loaderService.openLineLoader();
-        this.userService.acceptBlockUser(user.uid)
+        this.userService.acceptBlockUser(user.uid, action)
                         .subscribe( (resp: any)=>{
                           if(resp.ok){
                             this.loaderService.closeLineLoader();
@@ -84,68 +84,5 @@ export class TableUserComponent implements OnInit {
                   }
       }
     )
-  }
-
-
-  deleteUser(id: string){
-    if(id === this.userLogged.uid){
-      this.sweetAlertService.showSwalConfirmation({
-        title: '¿Desea dar de baja su cuenta?',
-        text: ``,
-        icon: 'question',})
-        .then((result) => {
-        if (result.value) {
-          this.loaderService.openLineLoader();
-          this.userService.deleteUser(id)
-                          .subscribe( (resp: any)=>{
-                            if (resp.ok === true){
-                              this.loaderService.closeLineLoader();
-                              this.sweetAlertService.showSwalResponse({
-                                title: 'Cuenta dada de baja',
-                                text:'Está siendo redirigido/a',
-                                icon: "success"})
-                              setTimeout(() => {
-                                  this.userService.logOut()
-                             }, 1000);
-                            }
-                            else if(resp.ok === false){
-                              this.loaderService.closeLineLoader();
-                              this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
-                            }
-                          }, (err) => {
-                            this.errorService.showServerError()
-                            this.loaderService.closeLineLoader();
-                          })
-                    }
-        }
-      )
-    }
-    else if (id !== this.userLogged.uid){
-      this.sweetAlertService.showSwalConfirmation({
-        title: '¿Desea dar de baja la cuenta?',
-        text: ``,
-        icon: 'question',})
-        .then((result) => {
-        if (result.value) {
-          this.loaderService.openLineLoader();
-          this.userService.deleteUser(id)
-                          .subscribe( (resp: any)=>{
-                            if (resp.ok === true){
-                              this.sweetAlertService.showSwalResponse({
-                                title: 'Cuenta dada de baja',
-                                text:'Está siendo redirigido/a',
-                                icon: "success"});
-                                this.getUsers.emit(true)
-                            }
-                            else if(resp.ok === false){
-                              this.loaderService.closeLineLoader();
-                              this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
-                            }
-                          })
-                    }
-        }
-      )
-    }
-
   }
 }

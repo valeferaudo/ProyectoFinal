@@ -1,14 +1,11 @@
-const User = require ('../models/user.model');
 const Service = require ('../models/service.model');
-const SportCenterService = require ('../models/sportCenterService.model')
 const { request, response} = require ('express');
-const userCtrl = {};
+const serviceCtrl = {};
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 const { sendNewServiceEmail } = require ('../helpers/emails/newServiceEmail');
-const { sendAcceptService } = require ('../helpers/emails/acceptServiceEmail');
 
 
-userCtrl.getService = async (req = request,res = response)=>{
+serviceCtrl.getService = async (req = request,res = response)=>{
     userID = req.uid;
     serviceID = req.params.id;
     try {
@@ -47,90 +44,89 @@ userCtrl.getService = async (req = request,res = response)=>{
         })
     }
 }
-userCtrl.getServices = async (req = request,res = response)=>{
+serviceCtrl.getServices = async (req = request,res = response)=>{
+    searchText = req.query.text;
+    state = req.query.state;
     try {
-        const services = await Service.find();
+        let services;
+        let booleanState;
+        let selectedFilters;
+        if(state === 'Activo'){
+            booleanState = true;
+        }
+        else if(state === 'Bloqueado'){
+            booleanState = false;
+        }
+
+        if(searchText === '' && state === '' ){
+            services = await Service.find();
+            selectedFilters = [];
+        }
+        else if(searchText !== '' && state === ''){
+            services = await Service.find({name : new RegExp(searchText, 'i')})
+            selectedFilters = ['Texto: ', searchText];
+        }
+        else if(searchText === '' && state !== ''){
+            services = await Service.find({state:booleanState})
+            selectedFilters = ['Estado: ',state];
+        }
+        else if(searchText !== '' && state !== ''){
+            services = await Service.find({name : new RegExp(searchText, 'i'),
+                                    state:booleanState})
+            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
+        }
         res.json({
             ok: true,
-            msg:'Found Services',
-            param: services
+            msg:'Found services',
+            param: {
+                services,
+                selectedFilters
+            }
         })
         
     } catch (error) {
         console.log(error);
-        res.stat(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
-
-userCtrl.createService = async (req = request, res = response) =>{
+serviceCtrl.createService = async (req = request, res = response) =>{
     const {name} = req.body
-    userID = req.uid
     try {
         const existsName = await Service.findOne({name});
         if(existsName){
-            return res.status(400).json({
-                ok:false,
-                msg:'A Service already exists with this name'
-            })
-        }
-        const userRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if (userRole.role !== 'CENTER-SUPER-ADMIN'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions to create Sport Center Service'
-            })
+            return existsNameResponse(res);
         }
         service = new Service({
             name: req.body.name,
             description: req.body.description,
         });
         await service.save();
-        sendNewServiceEmail(service);
         res.json({
             ok:true,
             msg: 'Created Service',
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 
-userCtrl.updateService = async (req = request, res = response) =>{
-    const userID = req.uid;
+serviceCtrl.updateService = async (req = request, res = response) =>{
     const serviceID = req.params.id
     const name = req.body.name
     try {
         const serviceDB = await Service.findById(serviceID);
         if(!serviceDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Service ID'
-            })
-        }
-        const userRoleHistorial = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(userRoleHistorial.role !== 'SUPER-ADMIN'){
-            return res.status(400).json({
-                ok:false,
-                msg:'User role is not allowed to update Service'
-            });
+            return unknownIDResponse(res);
         }
         const changes = req.body;
+        //si no modifica el name (porque sino chocan por ser iguales)
         if(changes.name === serviceDB.name){
-            delete changes.email
+            delete changes.name
         }else{
-            const existsName = await Service.findOne({name});
-            if(existsName){
-                return res.status(400).json({
-                    ok:false,
-                    msg:'A Service already exists with this name'
-                })
+            const nameExists = await Service.findOne({name});
+            if(nameExists){
+                return existsNameResponse(res);
             }
         }
         await Service.findByIdAndUpdate(serviceID,changes,{new:true})
@@ -140,83 +136,84 @@ userCtrl.updateService = async (req = request, res = response) =>{
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
-userCtrl.deleteService = async (req = request, res = response) =>{
-    const userID = req.uid;
-    const serviceID = req.params.id
-    try {
-        const serviceBD = await Service.findById(serviceID);
-        if(!serviceBD){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Service ID'
-            })
-        }
-        const userRoleHistorial = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(userRoleHistorial.role !== 'SUPER-ADMIN'){
-            return res.status(400).json({
-                ok:false,
-                msg:'User role is not allowed to update Service'
-            });
-        }
-        //ACA ELIMINAR TODASLAS RELACIONES ENTRE SERVICIO Y CENTRO DEPORTIVO
-        await SportCenterService.remove({service:serviceID});
-        await Service.findByIdAndDelete(serviceID)
-        res.json({
-            ok:true,
-            msg:'Deleted Service'
-        })
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
-    }
-}
-userCtrl.activateService = async (req = request, res = response) =>{
-    const superAdminID = req.uid;
+serviceCtrl.activateBlockService = async (req= request, res= response) => {
     const serviceID = req.params.id;
+    const action= req.body.action;
     try {
-        const adminDBRole = await UserRoleHistorial.findOne({user:superAdminID}).sort({'sinceDate' : -1}).limit(1);
-        if(adminDBRole.role !== 'SUPER-ADMIN'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions'
-            })
+        const serviceDB = await Service.findById(serviceID)
+        if(!serviceDB){
+            return unknownIDResponse(res);
         }
-        serviceDB = await Service.findById(serviceID);
-        if(!serviceBD){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Service ID'
-            })
+        if (action === 'block'){
+            if(serviceDB.state === false){
+                return serviceBlockedResponse(res);
+            }
+            else{
+                serviceDB.state = false;
+            }
         }
-        if(userDB.state === true){
-            return res.status(403).json({
-                ok:false,
-                msg:'This Service is already active'
-            })
+        else if (action === 'active'){
+            if(serviceDB.state === true){
+                return serviceActiveResponse(res);
+            }
+            else{
+                serviceDB.state = true;
+            }
         }
-        serviceBD.state = true;
         await Service.findByIdAndUpdate(serviceID,serviceDB,{new:true});
-        sendAcceptService(serviceDB);
-        res.json({
-            ok:true,
-            msg:'Activated Service'
-        })
+        if (action === 'block'){
+            res.json({
+                ok:true,
+                msg:'Blocked Service'
+            })
+        }
+        else if(action === 'active'){
+            res.json({
+                ok:true,
+                msg:'Activated Service'
+            })
+        }
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
-module.exports = userCtrl;
+function errorResponse(res){
+    res.status(500).json({
+        ok:false,
+        code: 99,
+        msg:'An unexpected error occurred'
+    })
+}
+function unknownIDResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 3,
+        msg:'Unknown ID. Please insert a correct ID'
+    })
+}
+function existsNameResponse(res){
+    return res.status(400).json({
+        ok:false,
+        code: 10,
+        msg:'A Service already exists with this name'
+    })
+}
+function serviceBlockedResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 6,
+        msg:'This Sport is blocked'
+    })
+}
+function serviceActiveResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 7,
+        msg:'This Sport is active'
+    })
+}
+module.exports = serviceCtrl;

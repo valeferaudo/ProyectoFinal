@@ -43,15 +43,15 @@ export class UserSettingComponent {
     }
     else{
       this.userID = this.activatedRoute.snapshot.params.id;
-      if (this.userID !== this.userLogged.uid){
-        if(this.userLogged.role !== 'CENTER-SUPER-ADMIN'){
-          this.sweetAlertService.showSwalError({
-            title:'Acceso Prohibido',
-            icon:'error',
-            text:''
-          })
-        }
-      }
+      // if (this.userID !== this.userLogged.uid){
+      //   if(this.userLogged.role === 'USER'){
+      //     this.sweetAlertService.showSwalError({
+      //       title:'Acceso Prohibido',
+      //       icon:'error',
+      //       text:''
+      //     })
+      //   }
+      // }
     }
   }
   getUserLogged(){
@@ -61,7 +61,7 @@ export class UserSettingComponent {
   createForm(){
     this.userForm = this.fb.group({
       name: [{value: this.userLogged.name, disabled: true}, [Validators.required]],
-      secondName:[{value: this.userLogged.secondName, disabled: true}, [Validators.required]],
+      lastName:[{value: this.userLogged.lastName, disabled: true}, [Validators.required]],
       address: [{value: this.userLogged.address, disabled: true},[]],
       phone: [{value: this.userLogged.phone, disabled: true}, [Validators.required]],
       email: [{value: this.userLogged.email, disabled: true}, [Validators.required, Validators.email]],
@@ -104,7 +104,7 @@ export class UserSettingComponent {
     if (this.userLogged.role === 'USER'){
       var userUpdated = {
         name: this.userForm.controls['name'].value,
-        secondName: this.userForm.controls['secondName'].value,
+        lastName: this.userForm.controls['lastName'].value,
         email: this.userLogged.email,
         phone: this.userForm.controls['phone'].value,
         address: this.userForm.controls['address'].value,

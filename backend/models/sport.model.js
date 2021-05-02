@@ -5,6 +5,7 @@ const {Schema , model} = mongoose;
 const SportSchema = new Schema({
     name:{type:String, required: true},
     description:{type:String},
+    deletedDate:{type: Date, default:null},
 },{collection:'sports'})
 
 SportSchema.method('toJSON',function(){

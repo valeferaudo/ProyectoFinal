@@ -4,7 +4,6 @@ const SportCenter = require ('../models/sportCenter.model');
 const { request, response, text} = require ('express');
 const userCtrl = {};
 const bcrypt = require('bcryptjs');
-const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 
 //Mails
 const { sendNewUserEmail } = require ('../helpers/emails/newUserEmail');
@@ -18,10 +17,7 @@ userCtrl.getUser = async (req = request,res = response)=>{
     try {
         const user = await User.findById(uid)
         if (!user) {
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
+            return unknownIDResponse(res);
         }
         res.json({
             ok: true,
@@ -31,10 +27,7 @@ userCtrl.getUser = async (req = request,res = response)=>{
         
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.getUsers = async (req = request,res = response)=>{
@@ -54,14 +47,14 @@ userCtrl.getUsers = async (req = request,res = response)=>{
         }
 
         if(searchText === '' && state === '' ){
-            users = await User.find({deletedDate: null, 
+            users = await User.find({
                 id:{$ne: userLoggedID},
                 $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
             });
             selectedFilters = [];
         }
         else if(searchText !== '' && state === ''){
-            users = await User.find({deletedDate: null, 
+            users = await User.find({
                 id:{$ne: userLoggedID},
                 $or: [
                     {"name" : new RegExp(searchText, 'i')},
@@ -85,16 +78,16 @@ userCtrl.getUsers = async (req = request,res = response)=>{
             })
             selectedFilters = ['Texto: ', searchText];
         }
-        else if(text === '' && state !== ''){
-            users = await User.find({deletedDate: null, 
+        else if(searchText === '' && state !== ''){
+            users = await User.find({ 
                                             id:{$ne: userLoggedID},
                                             $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
                                             state:booleanState
                                         })
             selectedFilters = ['Estado: ',state];
         }
-        else if(text !== '' && state !== ''){
-            users = await User.find({deletedDate: null, 
+        else if(searchText !== '' && state !== ''){
+            users = await User.find({
                                             id:{$ne: userLoggedID},
                                             $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
                                             state:booleanState,
@@ -130,10 +123,7 @@ userCtrl.getUsers = async (req = request,res = response)=>{
         
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.createUser = async (req = request, res = response) =>{
@@ -141,10 +131,7 @@ userCtrl.createUser = async (req = request, res = response) =>{
     try {
         const existsEmail = await User.findOne({email});
         if(existsEmail){
-            return res.status(400).json({
-                ok:false,
-                msg:'An user already exists with this email'
-            })
+            return existsEmailResponse(res);
         }
         var initialState = false;
         switch (role) {
@@ -161,10 +148,7 @@ userCtrl.createUser = async (req = request, res = response) =>{
                     initialState = true;
                     break;
                 default:
-                    return res.status(400).json({
-                        ok:false,
-                        msg:'User role is wrong'
-                    });
+                    wrongRoleResponse(res);
         }
         user = new User({
             name: req.body.name,
@@ -189,10 +173,7 @@ userCtrl.createUser = async (req = request, res = response) =>{
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.updateUser = async (req = request, res = response) =>{
@@ -201,10 +182,7 @@ userCtrl.updateUser = async (req = request, res = response) =>{
     try {
         const userDB = await User.findById(uid);
         if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
+            return unknownIDResponse(res);
         }
         const changes = req.body;
         //si no modifica el email (porque sino chocan por ser iguales)
@@ -213,35 +191,23 @@ userCtrl.updateUser = async (req = request, res = response) =>{
         }else{
             const existsEmail = await User.findOne({email});
             if(existsEmail){
-                return res.status(400).json({
-                    ok:false,
-                    msg:'An user already exists with this email'
-                })
+                return existsEmailResponse(res);
             }
         }
-        //quitar porque no dejo modificar las contraseañas por aca solo lo puede hacer el mismo usuario
-        // if(changes.password === null){
-        //     delete changes.password
-        // }else{
-        //     const salt = bcrypt.genSaltSync();
-        //     changes.password = bcrypt.hashSync(changes.password,salt);
-        // }
-        // const userRole = await UserRoleHistorial.findOne({user:uid}).sort({'sinceDate' : -1}).limit(1);
-        if (userDB.role !== 'USER'){
-            if(changes.role !== 'CENTER-SUPER-ADMIN' && changes.role !== 'CENTER-ADMIN'){
-                return res.status(403).json({
-                    ok:false,
-                    msg:'User role is wrong'
-                });
-            }
-        }
-        //porque ahgo esto??
+        //Si un center-admin o super-center-admin cambia de role, si o si tiene que ser a center-super-admin o a center-admin
+        // un user o super-admin no puede cambiar su role.
         if(changes.role !== undefined){
-            if(userDB.role === 'USER' || userDB.role === 'SUPER-ADMIN'){
+            if (userDB.role !== 'USER' || userDB.role !== 'SUPER-ADMIN'){
+                if(changes.role !== 'CENTER-SUPER-ADMIN' && changes.role !== 'CENTER-ADMIN'){
+                    return wrongRoleResponse(res);
+                }
+            }
+            else{
                 return res.status(403).json({
                     ok:false,
-                    msg:'User role is not allowed to change his role'
-                });
+                    code: 1,
+                    msg: 'This User doesn´t have the permissions'
+                })
             }
             if(changes.role === userDB.role){
                 delete changes.role
@@ -254,10 +220,7 @@ userCtrl.updateUser = async (req = request, res = response) =>{
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.deleteUser = async (req = request, res = response) =>{
@@ -265,16 +228,10 @@ userCtrl.deleteUser = async (req = request, res = response) =>{
     try {
         const userDB = await User.findById(uid);
         if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
+            return unknownIDResponse(res);
         }
         if(userDB.deletedDate !== null){
-            return res.status(404).json({
-                ok:false,
-                msg:'This User is already blocked'
-            })
+            return userBlockedResponse(res);
         }
         userDB.deletedDate = Date.now();
         await User.findByIdAndUpdate(uid,userDB,{new:true})
@@ -285,10 +242,7 @@ userCtrl.deleteUser = async (req = request, res = response) =>{
         
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.activateUser = async (req = request, res = response) =>{
@@ -296,16 +250,10 @@ userCtrl.activateUser = async (req = request, res = response) =>{
     try {
         const userDB = await User.findById(uid);
         if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
+            return unknownIDResponse(res);
         }
         if(userDB.deletedDate === null){
-            return res.status(404).json({
-                ok:false,
-                msg:'This User is already active'
-            })
+            return userActiveResponse(res);
         }
         userDB.deletedDate = null;
         await User.findByIdAndUpdate(uid,userDB,{new:true})
@@ -315,52 +263,66 @@ userCtrl.activateUser = async (req = request, res = response) =>{
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.activateBlockSuperCenterAdmin = async (req = request, res = response) =>{
     const uid = req.params.id;
+    const action= req.body.action;
+    console.log(action)
     try {
         const userDB = await User.findById(uid)
         if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
+            return unknownIDResponse(res);
         }
         if(userDB.role !== 'CENTER-SUPER-ADMIN'){
             return res.status(404).json({
                 ok:false,
-                msg:'This User role doesn´t have to be accepted'
+                code: 8,
+                msg:'This User doesn´t have to be accepted'
             })
         }
-        if(userDB.deletedDate !== null){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User is deleted'
-            })
+        if (action === 'block'){
+            if(userDB.deletedDate !== null){
+                return userBlockedResponse(res);
+            }
+            else{
+                userDB.deletedDate = new Date();
+            }
         }
+        else if (action === 'active'){
+            if(userDB.deletedDate === null){
+                return userActiveResponse(res);
+            }
+            else{
+                userDB.deletedDate = null;
+            }
+        }
+
         userDB.state = !userDB.state;
         await User.findByIdAndUpdate(uid,userDB,{new:true});
-        if (userDB.state === true){
-            sendAcceptUser(userDB)
-        }
-        else{
+        // if (userDB.state === true){
+            //ACA VAN LOS ENVIOS DE MAIL---- PROBE PONIENDOLOS ABAJO PPERO NO TESTIE
+        // }
+        // else{
+        // }
+        if (action === 'block'){
             sendBlockUser(userDB)
+            res.json({
+                ok:true,
+                msg:'Blocked CENTER-SUPER-ADMIN User'
+            })
         }
-        res.json({
-            ok:true,
-            msg:'Activated CENTER-SUPER-ADMIN User'
-        })
+        else if(action === 'active'){
+            sendAcceptUser(userDB)
+            res.json({
+                ok:true,
+                msg:'Activated CENTER-SUPER-ADMIN User'
+            })
+        }
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.addFavorite = async (req = request, res = response) =>{
@@ -369,18 +331,12 @@ userCtrl.addFavorite = async (req = request, res = response) =>{
     try {
         const userDB = await User.findById(userID);
         if(userDB.deletedDate !== null){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User is deleted'
-            })
+            return userBlockedResponse(res);
         }
         const fieldDB = await Field.findById(newFavorite);
         const sportCenterDB = await SportCenter.findById(newFavorite);
         if (fieldDB === {} || sportCenterDB === {}){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Field ID or SportCenter ID'
-            })
+            return unknownIDResponse(res);
         }
         if (userDB.favorites.includes(newFavorite)){
             for (let i = 0; i < userDB.favorites.length; i++) {
@@ -395,17 +351,14 @@ userCtrl.addFavorite = async (req = request, res = response) =>{
         }
         this.userDB.favorites.push(newFavorite);
         await User.findByIdAndUpdate(uid,userDB,{new:true});
-        sendAcceptUser(userDB)
+        // sendAcceptUser(userDB)
         res.json({
             ok:true,
             msg:'Favorite item added'
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 userCtrl.changePassword = async (req = request, res = response) =>{
@@ -414,23 +367,14 @@ userCtrl.changePassword = async (req = request, res = response) =>{
     try {
         const userDB = await User.findById(userID)
         if (!userDB) {
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
+            return unknownIDResponse(res);
         }
         //verificar contraseña vieja
          if (!(bcrypt.compareSync(passwords.OldPassword, userDB.password))) {
-                return res.status(404).json({
-                    ok:false,
-                    msg:'Password doesen´t match'
-                })
+            return wrongPasswordResponse(res);
         }
         if(passwords.NewPassword !== passwords.RepeatNewPassword){
-            return res.status(400).json({
-                ok:false,
-                msg:'The new passwords aren´t the same'
-            });
+            return wrongPasswordResponse(res);
         }
         const salt = bcrypt.genSaltSync();
         const newPassword = bcrypt.hashSync(passwords.NewPassword,salt);
@@ -441,10 +385,56 @@ userCtrl.changePassword = async (req = request, res = response) =>{
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
+}
+function errorResponse(res){
+    res.status(500).json({
+        ok:false,
+        code: 99,
+        msg:'An unexpected error occurred'
+    })
+}
+function unknownIDResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 3,
+        msg:'Unknown ID. Please insert a correct ID'
+    })
+}
+function existsEmailResponse(res){
+    return res.status(400).json({
+        ok:false,
+        code: 4,
+        msg:'An user already exists with this email'
+    })
+}
+function wrongRoleResponse(res){
+    return res.status(400).json({
+        ok:false,
+        code: 5,
+        msg:'User role is wrong'
+    });
+}
+function userBlockedResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 6,
+        msg:'This User is blocked'
+    })
+}
+function userActiveResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 7,
+        msg:'This User is active'
+    })
+}
+function wrongPasswordResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 9,
+        msg:'Password doesen´t match'
+    })
 }
 module.exports = userCtrl;

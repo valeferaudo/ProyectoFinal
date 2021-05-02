@@ -5,7 +5,7 @@ const base_url = environment.base_url;
 export class User{
     constructor(
         public name: string,
-        public secondName: string,
+        public lastName: string,
         public address: string,
         public phone: number,
         public email: string,

@@ -5,7 +5,7 @@ const {Schema , model} = mongoose;
 const ServiceSchema = new Schema({
     name:{type:String, required: true, unique:true},
     description:{type:String},
-    state:{type:Boolean, default:false}
+    state:{type:Boolean, default:true}
 },{collection:'services'})
 
 ServiceSchema.method('toJSON',function(){

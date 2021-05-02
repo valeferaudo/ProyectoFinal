@@ -62,7 +62,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a [routerLink]="['/admin/settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                                <a *ngIf="userLogged.role !== 'SUPER-ADMIN'" [routerLink]="['/admin/settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                                     <i class="ti-settings"></i>
                                     Configuración
                                 </a>

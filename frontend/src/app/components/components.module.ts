@@ -22,6 +22,8 @@ import { LineLoaderComponent } from './loaders/line-loader/line-loader.component
 import { MaterialModule } from '../material.module';
 import { TableUserComponent } from './table-user/table-user.component';
 import { SportCenterModalComponent } from './modals/sport-center-modal/sport-center-modal.component';
+import { SportModalComponent } from './modals/sport-modal/sport-modal.component';
+import { ServiceModalComponent } from './modals/service-modal/service-modal.component';
 
 
 @NgModule({
@@ -39,7 +41,9 @@ import { SportCenterModalComponent } from './modals/sport-center-modal/sport-cen
     FullScreenLoaderComponent,
     LineLoaderComponent,
     TableUserComponent,
-    SportCenterModalComponent
+    SportCenterModalComponent,
+    SportModalComponent,
+    ServiceModalComponent
 
   ],
   imports: [
@@ -64,7 +68,9 @@ import { SportCenterModalComponent } from './modals/sport-center-modal/sport-cen
     FullScreenLoaderComponent,
     LineLoaderComponent,
     TableUserComponent,
-    SportCenterModalComponent
+    SportCenterModalComponent,
+    SportModalComponent,
+    ServiceModalComponent
   ]
 })
 export class ComponentsModule { }

@@ -13,7 +13,7 @@ const fillSuperAdmin = async () => {
         const passwordHash = bcrypt.hashSync('123456789',salt);
         const superAdmin = new User({
             name: 'Admin',
-            secondName: 'Admin',
+            lastName: 'Admin',
             phone: '5555555555',
             address: 'No Address',
             email: 'admin@admin.com',

@@ -75,7 +75,6 @@ export class UserService {
   }
   getUsers(filters: UserFilter){
     let params = new HttpParams();
-    console.log(filters)
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
     params = params.append('userType', filters.userType );
@@ -96,8 +95,10 @@ export class UserService {
     }
     return this.http.put(`${baseUrl}/users/password/${this.user.uid}`,body)
   }
-  acceptBlockUser(id){
-    const body = {};
+  acceptBlockUser(id, action){
+    let body = {
+      action: action
+    };
     return this.http.put(`${baseUrl}/users/acceptBlock/${id}`,body);
   }
 }

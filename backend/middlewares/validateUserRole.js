@@ -8,6 +8,7 @@ const validateUserRole = async (req, res, next) =>{
         if (userDB.role !== 'USER'){
             return res.status(403).json({
                 ok:false,
+                code: 1,
                 msg: 'This User doesn´t have the permissions'
 
             })
@@ -16,6 +17,7 @@ const validateUserRole = async (req, res, next) =>{
     } catch (error) {
         res.status(500).json({
             ok: false,
+            code: 99,
             msg:'An unexpected error occurred'
         })
     }

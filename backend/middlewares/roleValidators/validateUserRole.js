@@ -1,5 +1,5 @@
 //Valida que sea usuario de tipo USER
-const User = require ('../models/user.model');
+const User = require ('../../models/user.model');
 
 const validateUserRole = async (req, res, next) =>{
     const uid = req.uid

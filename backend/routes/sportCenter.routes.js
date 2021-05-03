@@ -8,26 +8,44 @@ const {check} = require ('express-validator')
 const {validateFields} = require ('../middlewares/validateFields')
 const sportCenterCtrl = require ('../controllers/sportCenter.controller');
 const {validateJWT} = require('../middlewares/validateJWT');
+const { validateSuperAdminRole } = require('../middlewares/roleValidators/validateSuperAdminRole');
+const { validateUserID } = require('../middlewares/validateUserID');
+const { validateUserOrSuperAdmin } = require ('../middlewares/roleValidators/validateUserOrSuperAdmin');
+const sportCtrl = require('../controllers/sport.controller');
 
 
-router.get('/',[validateJWT],sportCenterCtrl.getSportCenters);
-router.get('/:id',[validateJWT],sportCenterCtrl.getSportCenter);
+router.get('/',[validateJWT,
+            validateUserID,
+            validateUserOrSuperAdmin],sportCenterCtrl.getSportCenters);
+router.get('/:id',[validateJWT,
+            validateUserID],sportCenterCtrl.getSportCenter);
 router.post('/',[validateJWT,
-                check('name','Name field is required').not().isEmpty(),
-                check('address','Address field is required').not().isEmpty(),
-                check('phone','Phone field is required').not().isEmpty(),
-                validateFields],sportCenterCtrl.createSportCenter);
+            validateUserID,
+            check('name','Name field is required').not().isEmpty(),
+            check('address','Address field is required').not().isEmpty(),
+            check('phone','Phone field is required').not().isEmpty(),
+            validateFields],sportCenterCtrl.createSportCenter);
  router.put('/:id',[validateJWT,
-                 check('name','Name field is required').not().isEmpty(),
-                 check('address','Address field is required').not().isEmpty(),
-                 check('phone','Phone field is required').not().isEmpty(),
-                 validateFields],sportCenterCtrl.updateSportCenter);
-router.put('/delete/:id',[validateJWT],sportCenterCtrl.deleteSportCenter);
-router.post('/:id/service/',[validateJWT,
-                            check('service','Service field is required').not().isEmpty(),
-                            validateFields],sportCenterCtrl.addService);
-router.put('/:id/service/:service',[validateJWT],sportCenterCtrl.updateService);
-router.delete('/:id/service/:service',[validateJWT],sportCenterCtrl.deleteService);
+            validateUserID,
+            check('name','Name field is required').not().isEmpty(),
+            check('address','Address field is required').not().isEmpty(),
+            check('phone','Phone field is required').not().isEmpty(),
+            validateFields],sportCenterCtrl.updateSportCenter);
+router.put('/delete/:id',[validateJWT,
+            validateUserID],sportCenterCtrl.deleteSportCenter);
+router.put('/activateBlock/:id',[validateJWT,
+            validateUserID,
+            validateSuperAdminRole],sportCenterCtrl.activateBlockSportCenter);
+
+// router.post('/:id/service/',[validateJWT,
+//             validateUserID,
+//             check('service','Service field is required').not().isEmpty(),
+//             validateFields],sportCenterCtrl.addService);
+// router.put('/:id/service/:service',[validateJWT,
+//             validateUserID],sportCenterCtrl.updateService);
+// router.delete('/:id/service/:service',[validateJWT,
+//             validateUserID],sportCenterCtrl.deleteService);
+
 // router.put('/activate/:id',[validateJWT],sportCenterCtrl.activateUser);
 
 

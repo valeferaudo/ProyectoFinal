@@ -1,5 +1,5 @@
 //Valida que sea usuario sea el mismo.
-const User = require ('../models/user.model');
+const User = require ('../../models/user.model');
 
 const validateSameUser = async (req, res, next) =>{
     const uid = req.uid;

@@ -2,60 +2,89 @@ const SportCenter = require ('../models/sportCenter.model');
 const SportCenterService = require ('../models/sportCenterService.model');
 const Service = require ('../models/service.model');
 const User = require ('../models/user.model');
+const Field = require ('../models/field.model')
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 const {request, response} = require('express');
 const sportCenterCtrl ={};
-var ObjectId = require('mongodb').ObjectID;
 
 
 sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
     sportCenterID = req.params.id;
-    userID = req.uid;
     try {
         const sportCenter = await SportCenter.findById(sportCenterID)
         if (!sportCenter) {
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Sport Center ID'
-            })
+            return unknownIDResponse(res);
         }
-        const user = await User.findById(uid)
-        if (user.sportCenter !== sportCenterID) {
-            return res.status(403).json({
-                ok:false,
-                msg: 'This User role doesn´t have the permissions to this Sport Center'
-            })
-        }
+        // const fields = await Field.find({sportCenter:sportCenterID})
+        //faltan obtener deportes, caracterisitcas y servicios para mostrar.
         res.json({
             ok: true,
-            msg:'Found Sport Center',
-            param: sportCenter
+            msg:'Found SportCenter',
+            param: {sportCenter: sportCenter}
         })
         
     } catch (error) {
         console.log(error);
-        res.stat(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
     //FALTAN FILTROS
+    searchText = req.query.text;
+    state = req.query.state;
     try {
-        const sportCenters = await SportCenter.find()
+        let sportCenters;
+        let booleanState;
+        let selectedFilters;
+        if(state === 'Activo'){
+            booleanState = true;
+        }
+        else if(state === 'Bloqueado'){
+            booleanState = false;
+        }
+
+        if(searchText === '' && state === '' ){
+            sportCenters = await SportCenter.find();
+            selectedFilters = [];
+        }
+        else if(searchText !== '' && state === ''){
+            sportCenters = await SportCenter.find({ 
+                                        name: new RegExp(searchText, 'i')
+            })
+            selectedFilters = ['Texto: ', searchText];
+        }
+        else if(searchText === '' && state !== ''){
+            if(booleanState){
+                sportCenters = await SportCenter.find({deletedDate: null})
+            }
+            else{
+                sportCenters = await SportCenter.find({deletedDate: {$ne: null} })
+            }
+            selectedFilters = ['Estado: ',state];
+        }
+        else if(text !== '' && state !== ''){
+            if(booleanState){
+                sportCenters = await SportCenter.find({deletedDate: null,
+                                            name: new RegExp(searchText, 'i')})
+            }
+            else{
+                sportCenters = await SportCenter.find({deletedDate: {$ne: null},
+                                            name: new RegExp(searchText, 'i')})
+            }
+            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
+        }
         res.json({
             ok: true,
-            msg:'Found Sport Centers',
-            param: sportCenters
+            msg:'Found SportCenters',
+            param: {
+                sportCenters: sportCenters,
+                selectedFilters: selectedFilters
+            }
         })
         
     } catch (error) {
         console.log(error);
-        res.stat(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
+        errorResponse(res);
     }
 }
 
@@ -111,7 +140,51 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
         })
     }
 }
+sportCenterCtrl.activateBlockSportCenter = async (req = request, res = response) =>{
+    const sportCenterID = req.params.id;
+    const action= req.body.action;
+    try {
+        const sportCenterDB = await SportCenter.findById(sportCenterID)
+        if(!sportCenterDB){
+            return unknownIDResponse(res);
+        }
+        if (action === 'block'){
+            if(sportCenterDB.deletedDate !== null){
+                return sportCenterBlockedResponse(res);
+            }
+            else{
+                sportCenterDB.deletedDate = new Date();
+                //ACA FALTA DAR DE BAJA TODO LO REFERIDO A ESTE CENTRO DEPORTIVO
+            }
+        }
+        else if (action === 'active'){
+            if(sportCenterDB.deletedDate === null){
+                return sportCenterActiveResponse(res);
+            }
+            else{
+                sportCenterDB.deletedDate = null;
+            }
+        }
+        await SportCenter.findByIdAndUpdate(sportCenterID,sportCenterDB,{new:true});
+        if (action === 'block'){
+            res.json({
+                ok:true,
+                msg:'Blocked SportCenter'
+            })
+        }
+        else if(action === 'active'){
+            res.json({
+                ok:true,
+                msg:'Activated SportCenter'
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
 
+//ESTO NO SE SI SE USA TODO
 sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
     const userID = req.uid
     const sportCenterID = req.params.id;
@@ -392,5 +465,33 @@ sportCenterCtrl.deleteService = async (req = request, res = response) =>{
             msg:'An unexpected error occurred'
         })
     }
+}
+function errorResponse(res){
+    res.status(500).json({
+        ok:false,
+        code: 99,
+        msg:'An unexpected error occurred'
+    })
+}
+function unknownIDResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 3,
+        msg:'Unknown ID. Please insert a correct ID'
+    })
+}
+function sportCenterBlockedResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 6,
+        msg:'This SportCenter is blocked'
+    })
+}
+function sportCenterActiveResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 7,
+        msg:'This SportCenter is active'
+    })
 }
 module.exports = sportCenterCtrl;

@@ -45,12 +45,4 @@ export class SidebarComponent implements OnInit {
 
     });
   }
-  goToUsers(){
-    if(this.userLogged.role === 'CENTER-SUPER-ADMIN'){
-      this.router.navigateByUrl('/admin/users');
-    }
-    else if (this.userLogged.role === 'SUPER-ADMIN'){
-      this.router.navigateByUrl('/admin/super/users');
-    }
-  }
 }

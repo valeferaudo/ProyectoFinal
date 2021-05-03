@@ -8,7 +8,7 @@ const {check} = require ('express-validator')
 const {validateFields} = require ('../middlewares/validateFields')
 const serviceCtrl = require ('../controllers/service.controller');
 const {validateJWT} = require('../middlewares/validateJWT');
-const { validateSuperAdminRole } = require('../middlewares/validateSuperAdminRole');
+const { validateSuperAdminRole } = require('../middlewares/roleValidators/validateSuperAdminRole');
 const { validateUserID } = require('../middlewares/validateUserID');
 
 router.get('/',[validateJWT,

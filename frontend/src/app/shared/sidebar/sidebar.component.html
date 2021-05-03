@@ -16,8 +16,9 @@
                     </a>
                 </li>
                 <li class="nav-devider" *ngIf="userLogged.role !== 'SUPER-ADMIN'"></li>
-                    
-                    <li> <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-campground"></i><span class="hide-menu"> Canchas</span></a>
+                    <!-- CANCHAS -->
+                    <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 
+                        <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-campground"></i><span class="hide-menu"> Canchas</span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li>
                                 <a [routerLink]="['/admin/fields']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
@@ -33,6 +34,7 @@
                             </li>
                         </ul>
                     </li>
+                    <!-- TURNOS -->
                     <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 
                         <a class="has-arrow waves-effect waves-dark" aria-expanded="false">
                             <i class="fas fa-thumbtack px-1"></i>
@@ -53,44 +55,49 @@
                             </li>
                         </ul>
                     </li>
-                    <li> <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-users text-center"></i><span class="hide-menu"> Usuarios</span></a>
+                    <!-- USUARIOS -->
+                    <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'"> 
+                        <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-users text-center"></i><span class="hide-menu"> Usuarios</span></a>
                         <ul aria-expanded="false" class="collapse">
-                            <li *ngIf="userLogged.role === 'SUPER-ADMIN' || userLogged.role === 'CENTER-SUPER-ADMIN'">
-                                <a (click)="goToUsers()" class="pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                            <li>
+                                <a [routerLink]="['/admin/users']" class="pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                                     <i class="fas fa-list-ul"></i> 
                                     Lista de usuarios
                                 </a>
                             </li>
                             <li>
-                                <a *ngIf="userLogged.role !== 'SUPER-ADMIN'" [routerLink]="['/admin/settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                                <a [routerLink]="['/admin/settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                                     <i class="ti-settings"></i>
                                     Configuración
                                 </a>
                             </li>
-                            <li>
-                                <a (click)="logout()" class="pointer text-danger" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                                    <i class="fa fa-power-off"></i>
-                                    Cerrar sesión
-                                </a>
-                            </li>
                         </ul>
                     </li>
+                    <li *ngIf="userLogged.role === 'SUPER-ADMIN'"> 
+                        <a class="waves-effect waves-dark" [routerLink]="['/admin/super/users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                            <i class="fas fa-certificate"></i>
+                            <span class="hide-menu"> Usuarios</span>
+                        </a>
+                    </li>
+                    <!-- REPORTES -->
                     <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'"> 
                         <a class="waves-effect waves-dark" [routerLink]="['/admin/reports']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="far fa-file-pdf px-1"></i>
                             <span class="hide-menu"> Reportes</span>
                         </a>
                     </li>
+                    <!-- SOLICITUDES -->
                     <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'"> 
                         <a class="waves-effect waves-dark" [routerLink]="['/admin/requests']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="far fa-file-pdf px-1"></i>
                             <span class="hide-menu"> Solicitudes</span>
                         </a>
                     </li>
+                    <!-- CENTRO DEPORTIVOS -->
                     <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' || userLogged.role === 'CENTER-ADMIN'"> 
                         <a class="waves-effect waves-dark" [routerLink]="['/admin','sportcenter',sportCenterID]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="fas fa-home"></i>
-                            <span class="hide-menu"> Centro deportivos</span>
+                            <span class="hide-menu"> Centro deportivo</span>
                         </a>
                     </li>
                     <li *ngIf="userLogged.role === 'SUPER-ADMIN'"> 
@@ -99,18 +106,21 @@
                             <span class="hide-menu"> Centros deportivos</span>
                         </a>
                     </li>
+                    <!-- DEPORTES -->
                     <li *ngIf="userLogged.role === 'SUPER-ADMIN'"> 
                         <a class="waves-effect waves-dark" [routerLink]="['/admin/super/sports']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="fas fa-dumbbell"></i>
                             <span class="hide-menu"> Deportes</span>
                         </a>
                     </li>
+                    <!-- SERVICIOS -->
                     <li *ngIf="userLogged.role === 'SUPER-ADMIN'"> 
                         <a class="waves-effect waves-dark" [routerLink]="['/admin/super/services']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="fas fa-store"></i>
                             <span class="hide-menu"> Servicios</span>
                         </a>
                     </li>
+                    <!-- CARACTERISITCAS -->
                     <li *ngIf="userLogged.role === 'SUPER-ADMIN'"> 
                         <a class="waves-effect waves-dark" [routerLink]="['/admin/super/features']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="fas fa-certificate"></i>
@@ -119,10 +129,5 @@
                     </li>
             </ul>
         </nav>
-        <!-- End Sidebar navigation -->
     </div>
-    <!-- End Sidebar scroll-->
 </aside>
-<!-- ============================================================== -->
-<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-<!-- ============================================================== -->

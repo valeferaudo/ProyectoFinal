@@ -1,1 +1,103 @@
-<p>HACER LISTADOS Y PARA CREAR O EDITAR QUE SE ABRAN MODALES!! ESTO APLICARLO A TODO LO QUE HACE EL SUPER-ADMIN</p>
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="card-title"><strong>Listado de centros deportivos.</strong></h2>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="col-12 mb-2">
+    <div class="row">
+      <div class="col-sm-9 col-md-9 p-0">
+            <div id="example_filter" class="search-entry">
+                <h6 class="pull-left">
+                    <strong class="search-title-text">Buscar:</strong>
+                    <input type="search" class="" [value]="searchText" placeholder="" #text (keyup.enter)="searchSportCenters(text.value)" >
+                    <i class="fas fa-search pointer" (click)="searchSportCenters(text.value)"></i>
+                </h6>
+            </div>
+      </div>
+      <div class="col-sm-3 col-md-3 p-0">
+        <a class="text-info pointer d-flex pull-right entry-button" (click)="refreshTable()">Limpiar</a>
+      </div>
+    </div>
+    <div class="row">
+        <article class="filters mt-2">
+            <h6 class="pull-left">
+                <strong class="search-title-text">Filtrar:</strong>
+            </h6>
+            <div class="filters__items-container ml-3">
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuInvitados">
+                        <span class="filters__items-container__item__button__resume">Estado</span>
+                        <span class="filters__items-container__item__button__name">Estado</span>
+                </button>
+                <!-- FILTER MENU -->
+                <mat-menu #menuInvitados="matMenu" (closed)="setCheckValue()">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="sportCenterStateSelected">
+                                <mat-radio-button class="example-radio-button" *ngFor="let sportCenterState of sportCenterStates" [value]="sportCenterState">
+                                        {{sportCenterState}}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                <!-- ACTIONS -->
+                <div class="filters__items-container__item__actions-container">
+                     <button mat-button (click)="clearFilter()" type="button"
+                        class="filters__items-container__item__actions-container__button">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterSportCenters()">Aplicar</button>
+                    </div>
+                </mat-menu>
+            </div>
+        </div>
+        </article>
+    </div>
+</div>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
+<div class="table-responsive animated fadeIn" *ngIf="sportCenters.length !== 0">
+    <table id="myTable" class="table table-hover color-table inverse-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th class="text-center">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let sportCenter of sportCenters; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{sportCenter.name}}</td>
+                <td>{{sportCenter.address}}</td>
+                <td>{{sportCenter.phone}}</td>
+                <td class="text-center">
+                    <button (click)="activateBlockSportCenter(sportCenter, 'active')" *ngIf="sportCenter.deletedDate !== null" class="btn btn-success badge m-1 content-tooltip" >
+                        <i class="fas fa-check"></i>
+                        <span class="tooltip-box">Activar</span>
+                    </button>
+                    <button (click)="activateBlockSportCenter(sportCenter, 'block')" *ngIf="sportCenter.deletedDate === null" class="btn btn-danger badge m-1 content-tooltip" >
+                        <i class="fas fa-times"></i>
+                        <span class="tooltip-box"></span>
+                    </button>
+                    <button (click)="goSportCenter(sportCenter)"  class="btn btn-info badge m-1 content-tooltip text-center">
+                        <i class="fas fa-eye"></i>
+                        <span class="tooltip-box"></span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0"> 
+    <i class="fas fa-times"></i> No se encontraron <strong>Centros deportivos</strong>.
+</div>
+
+<app-sport-center-info-modal *ngIf="hiddenModal" [hiddenModal]="!hiddenModal" [sportCenterSelectedID]="sportCenterID" (closeModal)="closeModal()">
+</app-sport-center-info-modal>
+<app-full-screen-loader [message]="'¡Buscando Características. Por favor espere!'"></app-full-screen-loader>
+<app-line-loader></app-line-loader>

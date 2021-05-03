@@ -22,7 +22,7 @@ userCtrl.getUser = async (req = request,res = response)=>{
         res.json({
             ok: true,
             msg:'Found user',
-            param: user
+            param: {user}
         })
         
     } catch (error) {

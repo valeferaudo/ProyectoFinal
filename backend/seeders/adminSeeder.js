@@ -22,13 +22,6 @@ const fillSuperAdmin = async () => {
             role:'SUPER-ADMIN'
         });
         await superAdmin.save();
-        // userDB = await User.findOne({email: 'admin@admin.com'});
-        //     const userRoleHistorial = new UserRoleHistorial({
-        //         user: userDB.id,
-        //         sinceDate: Date.now(),
-        //         role: 'SUPER-ADMIN'
-        //     })
-        // await userRoleHistorial.save();
     } catch (error) {
         console.log(error)
     }

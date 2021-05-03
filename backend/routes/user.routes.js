@@ -9,11 +9,11 @@ const {validateFields} = require ('../middlewares/validateFields')
 const userCtrl = require ('../controllers/user.controller');
 const {validateJWT} = require('../middlewares/validateJWT');
 const { validateUserID } = require('../middlewares/validateUserID');
-const { validateSuperRoleOrSameUser } = require('../middlewares/validateSuperRoleOrSameUser');
-const { validateSuperRole } = require('../middlewares/validateSuperRole');
-const { validateSameUser } = require('../middlewares/validateSameUser');
-const { validateSuperAdminRole } = require('../middlewares/validateSuperAdminRole');
-const { validateUserRole } = require('../middlewares/validateUserRole');
+const { validateSuperRoleOrSameUser } = require('../middlewares/roleValidators/validateSuperRoleOrSameUser');
+const { validateSuperRole } = require('../middlewares/roleValidators/validateSuperRole');
+const { validateSameUser } = require('../middlewares/roleValidators/validateSameUser');
+const { validateSuperAdminRole } = require('../middlewares/roleValidators/validateSuperAdminRole');
+const { validateUserRole } = require('../middlewares/roleValidators/validateUserRole');
 
 
 router.get('/',[validateJWT,

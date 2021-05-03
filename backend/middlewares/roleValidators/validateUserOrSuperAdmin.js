@@ -1,11 +1,11 @@
-//Valida que sea usuario de tipo SUPER-ADMIN o
-const User = require ('../models/user.model');
+//Valida que sea usuario sea el mismo.
+const User = require ('../../models/user.model');
 
-const validateSuperAdminRole = async (req, res, next) =>{
-    const uid = req.uid
+const validateUserOrSuperAdmin = async (req, res, next) =>{
+    const uid = req.uid;
     try {
         const userDB = await User.findById(uid);
-        if (userDB.role !== 'SUPER-ADMIN'){
+        if (userDB.role !== 'SUPER-ADMIN' && userDB.role !== 'USER'){
             return res.status(403).json({
                 ok:false,
                 code: 1,
@@ -23,5 +23,5 @@ const validateSuperAdminRole = async (req, res, next) =>{
 }
 
 module.exports = {
-    validateSuperAdminRole
+    validateUserOrSuperAdmin
 }

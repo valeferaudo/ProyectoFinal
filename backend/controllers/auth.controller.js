@@ -88,7 +88,6 @@ authCtrl.renewToken = async (req,res)=>{
     if(!userDB){
         return console.log('NO ENCUENTRA USUARIO')
     }
-    console.log(userDB)
     const user = {
         uid: userDB.id,
         name: userDB.name,

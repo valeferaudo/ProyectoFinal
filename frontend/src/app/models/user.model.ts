@@ -10,7 +10,7 @@ export class User{
         public phone: number,
         public email: string,
         public password?: string,
-        public role?: string,
+        public role?: 'USER' | 'SUPER-ADMIN' | 'CENTER-SUPER-ADMIN' | 'CENTER-ADMIN',
         public uid?: string,
         public sportCenter?: string
         ){}

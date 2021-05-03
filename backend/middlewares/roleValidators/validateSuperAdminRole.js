@@ -1,15 +1,15 @@
-//Valida que sea usuario de tipo SUPER-ADMIN o SUPER-CENTER-ADMIN 
-const User = require ('../models/user.model');
+//Valida que sea usuario de tipo SUPER-ADMIN o
+const User = require ('../../models/user.model');
 
-const validateSuperRole = async (req, res, next) =>{
+const validateSuperAdminRole = async (req, res, next) =>{
     const uid = req.uid
     try {
         const userDB = await User.findById(uid);
-        if (userDB.role !== 'CENTER-SUPER-ADMIN' && userDB.role !== 'SUPER-ADMIN'){
+        if (userDB.role !== 'SUPER-ADMIN'){
             return res.status(403).json({
                 ok:false,
                 code: 1,
-                msg: 'This User doesn´t have the permissions',
+                msg: 'This User doesn´t have the permissions'
             })
         }
         next();
@@ -23,5 +23,5 @@ const validateSuperRole = async (req, res, next) =>{
 }
 
 module.exports = {
-    validateSuperRole
+    validateSuperAdminRole
 }

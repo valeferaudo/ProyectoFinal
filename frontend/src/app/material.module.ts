@@ -10,17 +10,19 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatButtonModule} from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
     // MatStepperModule,
-    // MatFormFieldModule,
+     MatFormFieldModule,
     // MatIconModule,
      MatButtonModule,
      MatProgressSpinnerModule,
-    // MatSelectModule,
+     MatSelectModule,
      MatCheckboxModule,
      MatProgressBarModule,
      MatSlideToggleModule,
@@ -30,11 +32,11 @@ import {MatButtonModule} from '@angular/material/button';
   ],
   exports:[
     // MatStepperModule,
-    // MatFormFieldModule,
+     MatFormFieldModule,
     // MatIconModule,
      MatButtonModule,
      MatProgressSpinnerModule,
-    // MatSelectModule,
+     MatSelectModule,
      MatCheckboxModule,
      MatProgressBarModule,
      MatSlideToggleModule,

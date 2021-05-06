@@ -10,7 +10,11 @@ const SportCenterSchema = new Schema({
     aditionalElectricityHour:{type:String, default:null},
     aditionalElectricity:{type:Number, default:null},
     mercadoPago:{type:Boolean, default: false},
-    images: {type:Array, default:[]}
+    images: {type:Array, default:[]},
+    schedules: [{day:{type:Schema.Types.ObjectId,ref:'Day',default:null},
+                openingHour:{type: Date, default:null},
+                closingHour:{type: Date, default:null}
+            }]
 },{collection:'sportCenters'})
 
 SportCenterSchema.method('toJSON',function(){

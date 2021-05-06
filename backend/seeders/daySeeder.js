@@ -19,7 +19,7 @@ const fillDayCollection = async () => {
                 await day2.save()
                 const day3 = new Day({
                 idDia: 3,
-                name: 'Miercoles'
+                name: 'Miércoles'
               });
               await day3.save()
               const day4 = new Day({
@@ -34,7 +34,7 @@ const fillDayCollection = async () => {
                 await day5.save()
               const day6 = new Day({
                   idDia: 6,
-                  name: 'Sabado'
+                  name: 'Sábado'
               });
               await day6.save()
               const day7 = new Day({

@@ -29,7 +29,7 @@
                   </div>
                   <div class="form-group mb-1">
                     <label for="aditionalElectricity" class="col-form-label mr-2">¿Cobro adicional luz?</label>
-                    <mat-slide-toggle  color="primary" checked="slideElectricity" disabled>
+                    <mat-slide-toggle  color="primary" [checked]="slideElectricity" disabled>
                       {{slideElectricity? 'SI': 'NO'}}
                     </mat-slide-toggle>
                   </div> 
@@ -49,7 +49,7 @@
                   </div>
                   <div class="form-group mb-1">
                     <label for="mercadoPago" class="col-form-label mr-2">¿Cobro electrónico?</label>
-                    <mat-slide-toggle color="primary" checked="slideMercadoPago" disabled>
+                    <mat-slide-toggle color="primary" [checked]="slideMercadoPago" disabled>
                       {{this.slideMercadoPago? 'SI': 'NO'}}
                     </mat-slide-toggle>
                   </div> 

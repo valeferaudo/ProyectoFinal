@@ -35,4 +35,7 @@ export class FeatureService {
     };
     return this.http.put(`${baseUrl}/features/activateBlock/${id}`,body);
   }
+  getCombo(){
+    return this.http.get(`${baseUrl}/features/combo`);
+  }
 }

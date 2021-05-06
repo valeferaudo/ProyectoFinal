@@ -3,6 +3,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Field } from '../models/field.model';
 import { FieldForm } from '../interfaces/fieldForm.inteface';
+import { FieldFilter } from '../interfaces/filters/fieldFilter.interface';
+import { environment } from 'src/environments/environment';
+
+const baseUrl = environment.base_url;
 
 @Injectable({
   providedIn: 'root'
@@ -12,18 +16,29 @@ export class FieldService {
   constructor(private http: HttpClient) { }
 
   getField(id: string){
-    return this.http.get(`http://localhost:3000/api/fields/${id}`)
-                    .pipe(map((data: any) => {
-                      return data.field;
-                    }));
+    return this.http.get(`${baseUrl}/fields/${id}`)
   }
-  getFields(search: any){
-    const params = new HttpParams().set('search', search);
-    return this.http.get(`http://localhost:3000/api/fields`, { params })
-                    .pipe(map((data: any) => {
-                      return data.fields;
-                    }));
+  getFields(filters: FieldFilter){
+    let params = new HttpParams();
+    params = params.append('text',filters.text);
+    params = params.append('state',filters.state);
+    params = params.append('sportCenterID',filters.sportCenterID);
+    return this.http.get(`${baseUrl}/fields/` ,{params});
   }
+  activateBlockField(id, action){
+    let body = {
+      action: action
+    };
+    return this.http.put(`${baseUrl}/fields/activateBlock/${id}`,body);
+  }
+  createField(field: Field ){
+    return this.http.post(`${baseUrl}/fields/`, field );
+  }
+  updateField(id, form: FieldForm){
+  
+    return this.http.put(`${baseUrl}/fields/${id}`, form );
+  }
+  //no se si se usan
   getFieldsByCenterAdmin(search: any, id){
     const params = new HttpParams().set('search', search);
     return this.http.get(`http://localhost:3000/api/fields/admin/${id}`, { params })
@@ -31,30 +46,8 @@ export class FieldService {
                       return data.fields;
                     }));
   }
-  createField(form: FieldForm, uid){
-    const body = {
-      name: form.name,
-      cantMaxPlayers: form.cantMaxPlayers,
-      price: form.price,
-      openingHour: form.openingHour,
-      closingHour: form.closingHour,
-      description: form.description,
-      user: uid
-    };
-    return this.http.post(`http://localhost:3000/api/fields`, body);
-  }
   deleteField(id: string){
     return this.http.delete(`http://localhost:3000/api/fields/${id}`);
   }
-  updateField(id, form: FieldForm){
-    const body = {
-      name: form.name,
-      cantMaxPlayers: form.cantMaxPlayers,
-      price: form.price,
-      openingHour: form.openingHour,
-      closingHour: form.closingHour,
-      description: form.description
-    };
-    return this.http.put(`http://localhost:3000/api/fields/${id}`, body );
-  }
+
 }

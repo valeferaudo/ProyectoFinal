@@ -23,7 +23,9 @@ export class SidebarComponent implements OnInit {
   }
   getUserLogged(){
     this.userLogged = this. userService.user;
-    this.sportCenterID = this.userLogged.sportCenter;
+    if(this.userLogged.sportCenter !== null){
+      this.sportCenterID = this.userLogged.sportCenter.id;
+    }
   }
   logout(){
     this.sweetAlertService.showSwalConfirmation({

@@ -8,6 +8,7 @@ const UserRoleHistorial = require ('../models/userRoleHistorial.model')
 const {generateJWT} = require ('../helpers/jwt');
 //Encripta psw
 const bycript = require('bcryptjs');
+const { populate } = require('../models/user.model');
 
 authCtrl.login = async(req = request,res = response)=>{
     const { email, password} = req.body;
@@ -83,8 +84,7 @@ authCtrl.renewToken = async (req,res)=>{
 
 //OBTENER USUARIO
     var userDB = await User.findById(uid,{uid:1,name:1,secondName:1,address:1,phone:1,email:1,role:1,sportCenter:1})
-                        // .populate('role')
-    // const userRoleHistorial = await UserRoleHistorial.find({user:uid}).sort({'sinceDate' : -1}).limit(1);
+                                    .populate('sportCenter');
     if(!userDB){
         return console.log('NO ENCUENTRA USUARIO')
     }

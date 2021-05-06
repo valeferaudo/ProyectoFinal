@@ -30,4 +30,10 @@ export class SportCenterService {
     };
     return this.http.put(`${baseUrl}/sportcenters/activateBlock/${id}`,body);
   }
+  updateSportCenter(id, data){
+    return this.http.put(`${baseUrl}/sportcenters/${id}`, data);
+  }
+  updateSchedule(id, data){
+    return this.http.put(`${baseUrl}/sportcenters/schedule/${id}`, data);
+  }
 }

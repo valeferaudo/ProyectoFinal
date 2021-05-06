@@ -7,7 +7,7 @@
         <!-- Logo -->
         <!-- ============================================================== -->
         <div class="navbar-header">
-            <a class="navbar-brand" routerLink="/entry">
+            <a class="navbar-brand pointer" (click)="goHome()">
                 <!-- Logo icon --><b>
                     <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                     <!--  Logo icon -->
@@ -57,8 +57,8 @@
                                     </div>
                                 </div>
                             </li>
-                            <li role="separator" class="divider"></li>
-                            <li><a (click)="goProfile()" class="pointer text-dark"><i class="ti-settings"></i> Configuración</a></li>
+                            <li role="separator" class="divider" *ngIf="user.role !== 'SUPER-ADMIN'"></li>
+                            <li ><a *ngIf="user.role !== 'SUPER-ADMIN'" (click)="goProfile()" class="pointer text-dark"><i class="ti-settings"></i> Configuración</a></li>
                             <li role="separator" class="divider"></li>
                             <li ><a class="text-danger pointer" (click)="logout()"><i class="fa fa-power-off"></i> Cerrar Sesión</a></li>
                         </ul>

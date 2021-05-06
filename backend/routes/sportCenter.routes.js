@@ -12,6 +12,7 @@ const { validateSuperAdminRole } = require('../middlewares/roleValidators/valida
 const { validateUserID } = require('../middlewares/validateUserID');
 const { validateUserOrSuperAdmin } = require ('../middlewares/roleValidators/validateUserOrSuperAdmin');
 const sportCtrl = require('../controllers/sport.controller');
+const { validateCSAandOwner } = require('../middlewares/roleValidators/validateCSAandOwner');
 
 
 router.get('/',[validateJWT,
@@ -27,6 +28,7 @@ router.post('/',[validateJWT,
             validateFields],sportCenterCtrl.createSportCenter);
  router.put('/:id',[validateJWT,
             validateUserID,
+            validateCSAandOwner,
             check('name','Name field is required').not().isEmpty(),
             check('address','Address field is required').not().isEmpty(),
             check('phone','Phone field is required').not().isEmpty(),
@@ -36,6 +38,11 @@ router.put('/delete/:id',[validateJWT,
 router.put('/activateBlock/:id',[validateJWT,
             validateUserID,
             validateSuperAdminRole],sportCenterCtrl.activateBlockSportCenter);
+router.put('/schedule/:id',[validateJWT,
+            validateUserID,
+            validateCSAandOwner,
+            check('schedules','Schedules fields are required').not().isEmpty(),
+            validateFields],sportCenterCtrl.updateSchedule);
 
 // router.post('/:id/service/',[validateJWT,
 //             validateUserID,

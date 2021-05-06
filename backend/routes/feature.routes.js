@@ -12,7 +12,9 @@ const { validateSuperAdminRole } = require('../middlewares/roleValidators/valida
 const { validateUserID } = require('../middlewares/validateUserID');
 
 router.get('/',[validateJWT,
-            validateUserID],featureCtrl.getFeatures)
+            validateUserID],featureCtrl.getFeatures);
+router.get('/combo',[validateJWT,
+            validateUserID],featureCtrl.getCombo)
 // router.get('/id',[validateJWT],featureCtrl.getFeature)
 router.post('/',[validateJWT,
             validateUserID,

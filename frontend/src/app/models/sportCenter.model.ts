@@ -1,3 +1,5 @@
+import { Schedule } from "./schedule.model";
+
 export class SportCenter{
     constructor(
            public name: string,
@@ -10,6 +12,7 @@ export class SportCenter{
            public images?: any [],
            public state?: boolean,
            public id?: string,
+           public schedules?: Schedule[]
         ){}
 
 }

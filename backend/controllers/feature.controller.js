@@ -50,6 +50,26 @@ featureCtrl.getFeatures = async (req = request,res = response)=>{
         errorResponse(res);
     }
 }
+featureCtrl.getCombo = async (req = request, res = response)=> {
+    try {
+        let features = await Feature.find({},'id name');
+        let combo = [];
+        features.forEach(feature => {
+            let x = {id:feature.id, text:feature.name};
+            combo.push(x);
+        });
+        res.json({
+            ok: true,
+            msg:'Found feature combo',
+            param: {
+                combo
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
 featureCtrl.createFeature = async (req = request, res = response) =>{
     const {name} = req.body
     try {

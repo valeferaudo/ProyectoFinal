@@ -38,8 +38,8 @@ export class SportCenterModalComponent implements OnInit {
       name:["",[Validators.required],],
       address:["",[Validators.required],],
       phone:["",[Validators.required],],
-      aditionalElectricityHour:['20:00',[Validators.required],],
-      aditionalElectricity:[,[Validators.required],],
+      aditionalElectricityHour:[null,],
+      aditionalElectricity:['',],
       mercadoPago:[false,[Validators.required],]
     })
   }
@@ -91,7 +91,6 @@ export class SportCenterModalComponent implements OnInit {
                              setTimeout(() => {
                               this.hiddenSportCenterModal= false;
                               this.closeModalOutput.emit(this.hiddenSportCenterModal)
-                              console.log(this.userService.user)
                             }, 1500);
                         }, (err) => {
                           console.log(err)
@@ -108,7 +107,9 @@ export class SportCenterModalComponent implements OnInit {
  electricitySlideChange(event: MatSlideToggle){
    this.slideElectricity = event.checked;
    if(this.slideElectricity === false){
-     this.sportCenterForm.controls['aditionalElectricity'].reset();
+     this.sportCenterForm.patchValue({
+      aditionalElectricity:''
+     });
    }
  }
  mercadoPagoSlideChange(event: MatSlideToggle){

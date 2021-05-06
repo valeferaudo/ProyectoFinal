@@ -6039,7 +6039,9 @@ html{
     max-height: 200px;
     overflow: auto;
 }
-
+.cdk-global-overlay-wrapper, .cdk-overlay-container {
+  z-index: 10000 !important;
+  }
 .filters__items-container__item__menu__options-container__option {
     border-radius: 4px;
     padding-bottom: .5rem;

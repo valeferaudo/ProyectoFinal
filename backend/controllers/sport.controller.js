@@ -37,7 +37,7 @@ sportCtrl.getSports = async (req = request , res = response) => {
             }
             selectedFilters = ['Estado: ',state];
         }
-        else if(text !== '' && state !== ''){
+        else if(searchtext !== '' && state !== ''){
             if(booleanState){
                 sports = await Sport.find({deletedDate: null,
                                             name: new RegExp(searchText, 'i')})

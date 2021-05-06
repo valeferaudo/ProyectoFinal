@@ -18,21 +18,10 @@
                 <li class="nav-devider" *ngIf="userLogged.role !== 'SUPER-ADMIN'"></li>
                     <!-- CANCHAS -->
                     <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 
-                        <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-campground"></i><span class="hide-menu"> Canchas</span></a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li>
-                                <a [routerLink]="['/admin/fields']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                                    <i class="fas fa-list-ul"></i> 
-                                    Lista de canchas
-                                </a>
-                            </li>
-                            <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'">
-                                <a [routerLink]="['/admin/field']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                                    <i class="fas fa-plus"></i> 
-                                    Nueva cancha
-                                </a>
-                            </li>
-                        </ul>
+                        <a class="waves-effect waves-dark" aria-expanded="false" [routerLink]="['/admin/fields']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                            <i class="fas fa-campground"></i>
+                            <span class="hide-menu"> Canchas</span>
+                        </a>
                     </li>
                     <!-- TURNOS -->
                     <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 

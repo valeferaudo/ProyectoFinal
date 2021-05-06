@@ -25,5 +25,14 @@ export class AdminNavbarComponent implements OnInit {
   goProfile(){
     this.router.navigateByUrl(`/user/${this.user.uid}`)
   }
+  goHome(){
+    if(this.user.role === 'SUPER-ADMIN'){
+      this.router.navigateByUrl(`/admin/super/users`)
 
+    }
+    else if (this.user.role === 'CENTER-ADMIN' || this.user.role === 'CENTER-SUPER-ADMIN'){
+      this.router.navigateByUrl(`/admin`)
+
+    }
+  }
 }

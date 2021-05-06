@@ -20,4 +20,19 @@ export class ValidatorService {
       }
     };
   }
+  hoursOk(initHour: string, untilHour: string){
+    return(FormGroup: FormGroup) =>{
+      const initControl = FormGroup.controls[initHour];
+      const untilControl = FormGroup.controls[untilHour];
+      if(initControl.value !== null && untilControl.value !== null ){
+        const init = parseInt((initControl.value).split(':').join(''), 10);
+        const until = parseInt((untilControl.value).split(':').join(''), 10);
+        if(init <= until){
+          untilControl.setErrors(null)
+        }else{
+          untilControl.setErrors({notOk:true})
+        }
+      }
+    }
+  }
 }

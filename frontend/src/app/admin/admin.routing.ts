@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { AdminHomeComponent } from './admin-pages/admin-home/admin-home.component';
 import { AdminAppointmentsComponent } from './admin-pages/admin-appointments/admin-appointments.component';
 import { AdminSettingComponent } from './admin-pages/admin-setting/admin-setting.component';
-import { AdminFieldComponent } from './admin-pages/admin-field/admin-field.component';
 import { AdminFieldsComponent } from './admin-pages/admin-fields/admin-fields.component';
 import { AdminDoAppointmentsComponent } from './admin-pages/admin-do-appointments/admin-do-appointments.component';
 import { UsersComponent } from './super-admin-pages/users/users.component';
@@ -29,8 +28,9 @@ export const AdminRoutes: Routes = [
      // {path: 'home', component: AdminHomeComponent, canActivate: [HomeGuard]},
      {path: '', component: AdminHomeComponent, canActivate: [HomeGuard]},
      {path: 'settings', component: AdminSettingComponent, canActivate: [CenterGuard]},
-     {path: 'field', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
-     {path: 'field/:id', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
+     //borrar estas dos
+     // {path: 'field', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
+     // {path: 'field/:id', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'fields', component: AdminFieldsComponent, canActivate: [AdminGuard]},
      {path: 'appointments', component: AdminAppointmentsComponent, canActivate: [CenterGuard]},
      {path: 'appointment/:id', component: AdminDoAppointmentsComponent, canActivate: [CenterGuard]},

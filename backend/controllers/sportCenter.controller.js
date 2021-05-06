@@ -2,6 +2,7 @@ const SportCenter = require ('../models/sportCenter.model');
 const SportCenterService = require ('../models/sportCenterService.model');
 const Service = require ('../models/service.model');
 const User = require ('../models/user.model');
+const Day = require ('../models/day.model')
 const Field = require ('../models/field.model')
 const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 const {request, response} = require('express');
@@ -11,7 +12,7 @@ const sportCenterCtrl ={};
 sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
     sportCenterID = req.params.id;
     try {
-        const sportCenter = await SportCenter.findById(sportCenterID)
+        const sportCenter = await SportCenter.findById(sportCenterID).populate('schedules')
         if (!sportCenter) {
             return unknownIDResponse(res);
         }
@@ -87,7 +88,6 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
         errorResponse(res);
     }
 }
-
 sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
     const userID = req.uid
     const sportCenterBody = req.body
@@ -114,13 +114,27 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
                 msg:'A Sport Center already exists with this name'
             })
         }
+        const days = await Day.find();
+        let daysID = [];
+        days.forEach(day => {
+            daysID.push(day.id)
+        });
         sportCenter = new SportCenter({
             name: sportCenterBody.name,
             address: sportCenterBody.address,
             phone: sportCenterBody.phone,
             aditionalElectricityHour: sportCenterBody.aditionalElectricityHour,
             aditionalElectricity: sportCenterBody.aditionalElectricity,
-            mercadoPago: sportCenterBody.mercadoPago
+            mercadoPago: sportCenterBody.mercadoPago,
+            schedules:[
+                {day:daysID[0],openingHour:null,closingHour:null},
+                {day:daysID[1],openingHour:null,closingHour:null},
+                {day:daysID[2],openingHour:null,closingHour:null},
+                {day:daysID[3],openingHour:null,closingHour:null},
+                {day:daysID[4],openingHour:null,closingHour:null},
+                {day:daysID[5],openingHour:null,closingHour:null},
+                {day:daysID[6],openingHour:null,closingHour:null},
+            ]
         });
         await sportCenter.save();
         const sportCenterCreated = await SportCenter.findOne({name: sportCenter.name});
@@ -183,32 +197,12 @@ sportCenterCtrl.activateBlockSportCenter = async (req = request, res = response)
         errorResponse(res);
     }
 }
-
-//ESTO NO SE SI SE USA TODO
 sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
-    const userID = req.uid
     const sportCenterID = req.params.id;
     try {
-        const userRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(userRole.role !== 'CENTER-SUPER-ADMIN'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions to update Sport Center'
-            })
-        }
-        const userDB = await User.findById(userID);
-        if(userDB.sportCenter !== sportCenterID){
-            return res.status(404).json({
-                ok:false,
-                msg:'This User doesn´t have the permissions to update this Sport Center'
-            })
-        }
         const sportCenterDB = await SportCenter.findById(sportCenterID);
         if(!sportCenterDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Sport Center ID'
-            })
+            return unknownIDResponse(res);
         }
         const changes = req.body;
         //si no modifica el name (porque sino chocan por ser iguales)
@@ -217,16 +211,14 @@ sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
         }else{
             const existsName = await SportCenter.findOne({name: changes.name});
             if(existsName){
-                return res.status(400).json({
-                    ok:false,
-                    msg:'A Sport Center already exists with this name'
-                })
+                return existsNameResponse(res);
             }
         }
-        await SportCenter.findByIdAndUpdate(sportCenterID,changes,{new:true})
+        sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,changes,{new:true})
         res.json({
             ok:true,
-            msg:'Updated Sport Center'
+            msg:'Updated Sport Center',
+            param: { sportCenter }
         })
     } catch (error) {
         console.log(error);
@@ -236,6 +228,39 @@ sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
         })
     }
 }
+sportCenterCtrl.updateSchedule = async (req = request, res = response) =>{
+    const sportCenterID = req.params.id;
+    try {
+        let sportCenterDB = await SportCenter.findById(sportCenterID);
+        if(!sportCenterDB){
+            return unknownIDResponse(res);
+        }
+        const changes = req.body;
+        let arrayChanges = []
+        changes.schedules.forEach(item => {
+            const obj = {
+                day: item.day,
+                openingHour: setDate(item.openingHour),
+                closingHour: setDate(item.closingHour)
+            }
+            arrayChanges.push(obj)
+        });
+        sportCenter = await (await SportCenter.findByIdAndUpdate(sportCenterID,{$set:{schedules:arrayChanges}},{new:true})).populate('schedules.day')
+        res.json({
+            ok:true,
+            msg:'Updated Sport Center Schedules',
+            param: { sportCenter }
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
+
+//ESTO NO SE SI SE USA TODO
 sportCenterCtrl.deleteSportCenter = async (req = request, res = response) =>{
     const userID = req.uid;
     const sportCenterID = req.params.id;
@@ -493,5 +518,21 @@ function sportCenterActiveResponse(res){
         code: 7,
         msg:'This SportCenter is active'
     })
+}
+function existsNameResponse(res){
+    return res.status(400).json({
+        ok:false,
+        code: 4,
+        msg:'A SportCenter already exists with this name'
+    })
+}
+function setDate(hour){
+    if(hour === ''){
+        return null
+    }
+    else{
+        const date = new Date(`1970/01/01 ${hour}:00`) 
+        return new Date(date.getTime() - process.env.UTC_ARG)
+    }
 }
 module.exports = sportCenterCtrl;

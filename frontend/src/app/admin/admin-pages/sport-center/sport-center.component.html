@@ -1,1 +1,83 @@
-<p>DATOS DEL CENTRO Y QUE LO PUEDA EDITAR SOLO EL SUPER ADMIN CENTER!</p>
+<div class="text-center">
+    <div class="col">
+        <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 999;" [routerLink]="['/admin/']" >
+            <i class="fas fa-arrow-alt-circle-left"></i> Atrás
+        </button>
+    </div>
+    <h1 class="card-title"> <strong>{{sportCenter.name}}</strong>
+    </h1>
+    <!-- <h4 class="card-subtitle"><strong>subititulo</strong></h4> -->
+    <div class="row text-right justify-content-md-center action-headers" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'">
+        <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><p class="mb-0">Editar</p></a>
+        </div>
+        <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="updateSchedule()" class="text-info"><i class="far fa-clock"></i><br><p class="mb-0">Horarios</p></a>
+        </div>
+    </div>
+</div>
+<div>
+    <hr class="mb-1"> </div>
+<div class="card-body"> 
+    <form class="m-t-5 row p-0" [formGroup]="sportCenterForm" autocomplete="off">
+        <div class="form-group col-md-6 m-t-5 m-b-5" [class.has-danger]="getFieldValid('name')">
+            <label for=""><strong>Nombre</strong></label>
+            <input type="text" 
+                class="form-control form-control-line" 
+                placeholder="Ingrese un nombre"
+                formControlName="name"
+                [class.form-control-danger]="getFieldValid('name')">
+                <div class="form-control-feedback" *ngIf="getFieldValid('name')">*Ingrese el nombre</div>
+        </div>
+        <div class="form-group col-md-6 m-t-5 m-b-5">
+            <label for=""><strong>Dirección</strong></label>
+            <input type="text" 
+                class="form-control form-control-line"
+                placeholder="Ingrese una dirección"
+                formControlName="address">
+            <div class="form-control-feedback" *ngIf="getFieldValid('address')">*Ingrese la dirección</div>
+        </div>
+        <div class="form-group col-md-6 m-t-5 m-b-5" [class.has-danger]="getFieldValid('phone')">
+            <label for=""><strong>Teléfono</strong><span class="font-13 text-muted" *ngIf="editMode"> (Ej: 3492658803)</span></label>
+            <input type="text" 
+                class="form-control form-control-line"
+                formControlName="phone"
+                placeholder="Ingrese un teléfono"
+                maxlength="13"
+                [class.form-control-danger]="getFieldValid('phone')">
+                <div class="form-control-feedback" *ngIf="getFieldValid('phone')">*Ingrese el teléfono (Máx. 13 caracteres)</div> 
+        </div>
+        <div class="form-group col-md-6 m-t-5 m-b-5">
+            <label for="mercadoPago" class="col-form-label mr-2"><strong>Cobro electrónico</strong></label> <br>
+            <mat-slide-toggle color="primary" (change)="mercadoPagoSlideChange($event)" [checked]="slideMercadoPago" [disabled]="!editMode">
+              {{this.slideMercadoPago? 'SI': 'NO'}}
+            </mat-slide-toggle>
+          </div> 
+        <div class="form-group col-md-4 m-t-5 m-b-5">
+            <label for="aditionalElectricity" class="col-form-label mr-2"><strong>Cobro adicional luz</strong></label> <br>
+            <mat-slide-toggle  color="primary" (change)="electricitySlideChange($event)" [checked]="slideElectricity" [disabled]="!editMode">
+              {{slideElectricity? 'SI': 'NO'}}
+            </mat-slide-toggle>
+        </div> 
+        <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideElectricity">
+            <label for="aditionalElectricity" class="col-form-label"><strong>Monto adicional</strong></label>
+            <input type="number" class="form-control" formControlName="aditionalElectricity">
+        </div>
+        <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideElectricity">
+            <label for="aditionalElectricityHour" class="col-form-label"><strong>Hora desde</strong></label>
+            <input type="time" class="form-control"  formControlName="aditionalElectricityHour">
+        </div>
+        <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideElectricity">
+            <label for="aditionalElectricityHour" class="col-form-label"><strong>Imágenes</strong></label>
+        </div>
+    </form>
+    <div class="form-group col-md-12 text-center" style="margin-top: 5vh;" *ngIf="editMode">
+        <button (click)="updateSportCenter()" class="btn btn-info mr-1" ><i class="fas fa-edit"></i> Modificar</button>
+        <button (click)="cancel()" class="btn btn-danger"><i class="fas fa-times-circle"></i> Cancelar</button>
+    </div>            
+</div>
+
+<app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" 
+                                        [sportCenter]="sportCenter" [sportCenterID]="sportCenter.id"
+                                    (closeModal)="closeScheduleModal()" (getSportCenter)="getSportCenter()">
+</app-sport-center-schedule-modal>

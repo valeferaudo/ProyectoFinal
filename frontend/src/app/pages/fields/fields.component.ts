@@ -36,7 +36,7 @@ export class FieldsComponent implements OnInit {
         this.param = this.query;
       }
 
-      this.fieldService.getFields(this.query)
+      this.fieldService.getFields({})
                             .subscribe((resp: any) => {
                               this.fields = resp;
                               if (this.fields.length === 0){

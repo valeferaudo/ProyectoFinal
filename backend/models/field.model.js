@@ -8,6 +8,7 @@ const FieldSchema = new Schema({
     images:{type:Array},
     sizes:{type:String},
     deletedDate: {type: Date, default:null},
+    state: {type: Boolean, default:false},
     duration:{type:Number, default: 1},
     sportCenter: {type:Schema.Types.ObjectId,ref:'SportCenter',required:true},
     features: [{ type : Schema.Types.ObjectId, ref: 'Feature' }]

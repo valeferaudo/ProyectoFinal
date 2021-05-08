@@ -32,7 +32,6 @@ export class CenterSuperAdminGuard implements CanActivate {
                     this.router.navigateByUrl('/admin/super/users');
                   }
                 }
-                console.log(this.user)
                 if (this.user.sportCenter === undefined){
                   this.router.navigateByUrl('/admin');
                 }

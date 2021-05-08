@@ -20,6 +20,8 @@ import { FeaturesComponent } from './super-admin-pages/features/features.compone
 import { SportCentersComponent } from './super-admin-pages/sport-centers/sport-centers.component';
 import { SportCenterComponent } from './admin-pages/sport-center/sport-center.component';
 import { HomeGuard } from '../guards/home.guard';
+import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-requests.component';
+import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
 
 
 
@@ -36,7 +38,7 @@ export const AdminRoutes: Routes = [
      {path: 'appointment/:id', component: AdminDoAppointmentsComponent, canActivate: [CenterGuard]},
      {path: 'users', component: UsersComponent, canActivate: [AdminGuard]},
      {path: 'sportcenter/:id', component: SportCenterComponent, canActivate: [CenterGuard]},
-
+     {path: 'requests', component: AdminRequestsComponent, canActivate: [CenterSuperAdminGuard]},
      
      //rutas del SUPER-ADMIN
      {path: 'super/users', component: UsersComponent, canActivate: [SuperAdminGuard]},
@@ -45,6 +47,8 @@ export const AdminRoutes: Routes = [
      {path: 'super/features', component: FeaturesComponent, canActivate: [SuperAdminGuard]},
      {path: 'super/sportcenter/:id', component: SportCenterComponent, canActivate: [SuperAdminGuard]},
      {path: 'super/sportcenters', component: SportCentersComponent, canActivate: [SuperAdminGuard]},
+     {path: 'super/requests', component: RequestDoComponent, canActivate: [SuperAdminGuard]},
+
 ];
 
 

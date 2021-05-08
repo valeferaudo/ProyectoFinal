@@ -99,7 +99,7 @@ export class SportCenterScheduleModalComponent implements OnInit {
       },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
     }
   }
-  setHourString(date: string){
+  setHourString(date){
     if(date === null){
       return ''
     }

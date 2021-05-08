@@ -167,14 +167,14 @@ function serviceBlockedResponse(res){
     return res.status(404).json({
         ok:false,
         code: 6,
-        msg:'This Sport is blocked'
+        msg:'This Service is blocked'
     })
 }
 function serviceActiveResponse(res){
     return res.status(404).json({
         ok:false,
         code: 7,
-        msg:'This Sport is active'
+        msg:'This Service is active'
     })
 }
 module.exports = serviceCtrl;

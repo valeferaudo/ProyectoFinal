@@ -1,0 +1,43 @@
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="card-title"><strong>Solicitudes </strong></h2>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="table-responsive animated fadeIn" *ngIf="requests.length!==0">
+    <table id="myTable" class="table table-sm table-hover color-table inverse-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Email</th>
+                <th class="text-center">Estado</th>
+                <th class="text-center">Visto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of requests; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{item.section}}</td>
+                <td>{{item.description}}</td>
+                <td>{{item.creatorEmail}}</td>
+                <td class="text-center">
+                    <button *ngIf="item.state === null" class="btn" (click)="acceptBlockRequest(item,'active')"><i class="fas fa-check-circle text-success"></i></button>
+                    <i class="fas fa-check-circle text-success" *ngIf="item.state === true"></i>
+                    <button *ngIf="item.state === null" class="btn" (click)="acceptBlockRequest(item,'block')"><i class="fas fa-times-circle text-danger"></i></button>
+                    <i class="fas fa-times-circle text-danger" *ngIf="item.state === false"></i>
+                </td>
+                <td class="text-center">
+                    <i class="fas fa-check-double text-info" *ngIf="item.seen === true"></i>
+                    <button *ngIf="item.seen === false" class="btn" (click)="markAsSeen(item)"><i class="fas fa-check-double"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="requests.length === 0"> 
+    <i class="ti-equs"></i> No se encontraron <strong>Solicitudes</strong>
+</div>

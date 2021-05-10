@@ -6150,3 +6150,8 @@ html{
       -webkit-transition-duration: 0.3s;
       -o-transition-duration: 0.3s;
       transition-duration: 0.3s; }
+
+      /* Button  */
+      .btn-ok{
+        background: #007F44;
+    }

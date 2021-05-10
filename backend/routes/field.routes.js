@@ -27,7 +27,8 @@ router.put('/:id',[validateJWT,
             check('name','Name field is required').not().isEmpty(),
             check('price','Price field is required').not().isEmpty(),
             validateFields],fieldCtrl.updateField)
-
+router.put('/sport/:id',[validateJWT,
+            validateUserID],fieldCtrl.updateFieldSport);
 //No se si se usa
 router.delete('/:id',[validateJWT],fieldCtrl.deleteField)
 router.get('/admin/:id',[validateJWT],fieldCtrl.getFieldsByCenterAdmin)

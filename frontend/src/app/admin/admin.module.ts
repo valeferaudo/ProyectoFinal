@@ -25,6 +25,7 @@ import { MaterialModule } from '../material.module';
 import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-requests.component';
 import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
+import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports.component';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.compo
      AdminRequestsComponent,
      RequestDoComponent,
      AdminUsersComponent,
+     AdminReportsComponent,
   ],
   imports: [
     CommonModule,

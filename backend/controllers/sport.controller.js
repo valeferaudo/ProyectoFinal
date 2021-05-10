@@ -157,7 +157,26 @@ sportCtrl.activateBlockSport = async (req = request, res = response) =>{
         errorResponse(res);
     }
 }
-
+sportCtrl.getCombo = async (req = request, res = response)=> {
+    try {
+        let sports = await Sport.find({},'id name');
+        let combo = [];
+        sports.forEach(sport => {
+            let x = {id:sport.id, text:sport.name};
+            combo.push(x);
+        });
+        res.json({
+            ok: true,
+            msg:'Found Sport combo',
+            param: {
+                combo
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
 function errorResponse(res){
     res.status(500).json({
         ok:false,

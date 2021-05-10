@@ -23,7 +23,8 @@ export class FieldModalComponent implements OnInit {
   @Input() sportCenterID: string;
   @Output() closeModal = new EventEmitter<string>();
   @Output() getFields = new EventEmitter<string>();
-  @Output() createSchedules = new EventEmitter<string>();
+  @Output() newField = new EventEmitter<Field>();
+  @Output() createFieldSport = new EventEmitter<string>();
 
   fieldPrice: any;
   fieldForm: FormGroup;
@@ -129,10 +130,10 @@ export class FieldModalComponent implements OnInit {
                           text:'',
                           icon: 'success'
                         })
+                        this.newField.emit(resp.param.field)
                         this.getFields.emit();
                         this.closedModal();
-                        this.createSchedules.emit();
-                        //ABRIR MODAL DE DEPORTES Y DESPUES DE DIAS Y HORARIOS, AVISAR Q SI CANCELA NO SE VA A MOSTRAR LA CANCHA
+                        this.createFieldSport.emit();
                       }
                     },(err)=>{
                       console.log(err);

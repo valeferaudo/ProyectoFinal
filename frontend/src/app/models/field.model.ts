@@ -1,3 +1,4 @@
+import { FieldSport } from "../interfaces/fieldSport.interface";
 import { Feature } from "./feature.model";
 
 export class Field{
@@ -14,6 +15,7 @@ export class Field{
            public cantMaxPlayers?: number,
            public openingHour?: Date,
            public closingHour?: Date,
+           public sports?: FieldSport[]
         ){}
 
 }

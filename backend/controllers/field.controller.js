@@ -1,6 +1,7 @@
 const Field = require ('../models/field.model');
 const User = require ('../models/user.model');
 const FieldPrice = require('../models/fieldPrice.model');
+const FieldSport = require('../models/fieldSport.model');
 const SportCenter = require('../models/sportCenter.model');
 const Appointments = require ('../models/appointment.model');
 const { request, response} = require ('express');
@@ -145,6 +146,37 @@ fieldCtrl.updateField = async (req = request , res = response) => {
         console.log(error);
         errorResponse(res);
     }
+}
+fieldCtrl.updateFieldSport = async (req = request , res = response) => {
+    const fieldID = req.params.id;
+    const sportFields = req.body.sportFields;
+    try {
+        const fieldDB = await Field.findById(fieldID);
+        if(!fieldDB){
+            return unknownIDResponse(res);
+        }
+        let arrayChanges = [];
+        sportFields.forEach(sf => {
+            const obj = {
+                sport: sf.sport,
+                cantPlayers: sf.cantPlayers,
+            }
+            arrayChanges.push(obj)
+        });
+        let state;
+        arrayChanges === [] ? state = false : state = true;
+        const field = await Field.findByIdAndUpdate(fieldID, {$set:{sports:arrayChanges, state: state}},{new:true})
+        res.json({
+            ok:true,
+            msg:'Update Field Sport',
+            param: {
+                field: field
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }   
 }
 function errorResponse(res){
     res.status(500).json({

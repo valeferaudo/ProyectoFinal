@@ -23,6 +23,8 @@ import { HomeGuard } from '../guards/home.guard';
 import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-requests.component';
 import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
+import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports.component';
+import { UserSettingComponent } from '../components/user-setting/user-setting.component';
 
 
 
@@ -31,15 +33,14 @@ export const AdminRoutes: Routes = [
      // {path: 'home', component: AdminHomeComponent, canActivate: [HomeGuard]},
      {path: '', component: AdminHomeComponent, canActivate: [HomeGuard]},
      {path: 'settings', component: AdminSettingComponent, canActivate: [CenterGuard]},
-     //borrar estas dos
-     // {path: 'field', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
-     // {path: 'field/:id', component: AdminFieldComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'fields', component: AdminFieldsComponent, canActivate: [AdminGuard]},
      {path: 'appointments', component: AdminAppointmentsComponent, canActivate: [CenterGuard]},
      {path: 'appointment/:id', component: AdminDoAppointmentsComponent, canActivate: [CenterGuard]},
      {path: 'users', component: AdminUsersComponent, canActivate: [CenterSuperAdminGuard]},
+     {path: 'user/:id', component: UserSettingComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'sportcenter/:id', component: SportCenterComponent, canActivate: [CenterGuard]},
      {path: 'requests', component: AdminRequestsComponent, canActivate: [CenterSuperAdminGuard]},
+     {path: 'reports', component: AdminReportsComponent, canActivate: [CenterSuperAdminGuard]},
      
      //rutas del SUPER-ADMIN
      {path: 'super/users', component: UsersComponent, canActivate: [SuperAdminGuard]},

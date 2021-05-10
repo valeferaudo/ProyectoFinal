@@ -11,7 +11,10 @@ const FieldSchema = new Schema({
     state: {type: Boolean, default:false},
     duration:{type:Number, default: 1},
     sportCenter: {type:Schema.Types.ObjectId,ref:'SportCenter',required:true},
-    features: [{ type : Schema.Types.ObjectId, ref: 'Feature' }]
+    features: [{ type : Schema.Types.ObjectId, ref: 'Feature' }],
+    sports: [{sport:{type:Schema.Types.ObjectId,ref:'Sport',required:true, default:null},
+             cantPlayers:{type:Number, required:true, default:null}
+            }]
 },{collection:'fields'})
 
 FieldSchema.method('toJSON',function(){

@@ -38,6 +38,9 @@ export class FieldService {
   
     return this.http.put(`${baseUrl}/fields/${id}`, form );
   }
+  updateFieldSport(fieldID,fieldSport){
+    return this.http.put(`${baseUrl}/fields/sport/${fieldID}`, fieldSport );
+  }
   //no se si se usan
   getFieldsByCenterAdmin(search: any, id){
     const params = new HttpParams().set('search', search);

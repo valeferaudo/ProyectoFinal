@@ -62,7 +62,14 @@ export class SidebarComponent implements OnInit {
     }
     else if (this.userLogged.role === 'SUPER-ADMIN'){
       this.router.navigateByUrl('/admin/super/users');
-
+    }
+  }
+  goHome(){
+    if(this.userLogged.role === 'CENTER-SUPER-ADMIN' || this.userLogged.role === 'CENTER-ADMIN' ){
+      this.router.navigateByUrl('/admin');
+    }
+    else if (this.userLogged.role === 'SUPER-ADMIN'){
+      this.router.navigateByUrl('/admin/super/users');
     }
   }
 }

@@ -159,7 +159,6 @@ export class AdminFieldsComponent implements OnInit {
   closeFieldModal(){
     this.hiddenFieldModal = false;
   }
-
   createFieldSportModal(){
     this.modalMode = 'create';
     this.hiddenSportModal = true;
@@ -172,7 +171,9 @@ export class AdminFieldsComponent implements OnInit {
   closeFieldSportModal(){
     this.hiddenSportModal = false;
   }
-
+  setNewField(field){
+    this.fieldSelected = field;
+  }
 
 
 }

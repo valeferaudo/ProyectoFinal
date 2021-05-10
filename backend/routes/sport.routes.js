@@ -13,6 +13,8 @@ const { validateUserID } = require('../middlewares/validateUserID');
 router.get('/',[validateJWT,
             validateUserID],sportCtrl.getSports)
 router.get('/id',[validateJWT],sportCtrl.getSport)
+router.get('/combo',[validateJWT,
+            validateUserID],sportCtrl.getCombo)
 router.post('/',[validateJWT,
             validateUserID,
             validateSuperAdminRole,

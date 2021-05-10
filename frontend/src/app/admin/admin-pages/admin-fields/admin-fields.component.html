@@ -106,7 +106,7 @@
 
 <app-field-modal *ngIf="hiddenFieldModal" [hiddenModal]="!hiddenFieldModal" 
                                         [mode]="modalMode" [fieldSelected]="fieldSelected" [sportCenterID]="userLogged.sportCenter.id"
-                                    (closeModal)="closeFieldModal()" (getFields)="getFields()">
+                        (newField)="setNewField($event)" (closeModal)="closeFieldModal()" (getFields)="getFields()" (createFieldSport)="createFieldSportModal()">
 </app-field-modal>
 
 <app-field-sport-modal *ngIf="hiddenSportModal" [hiddenModal]="!hiddenSportModal" 

@@ -34,4 +34,7 @@ export class SportService {
     };
     return this.http.put(`${baseUrl}/sports/activatetBlock/${id}`,body);
   }
+  getSportCombo(){
+    return this.http.get(`${baseUrl}/sports/combo`);
+  }
 }

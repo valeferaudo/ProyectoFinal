@@ -23,7 +23,7 @@ export class AdminNavbarComponent implements OnInit {
   ngOnInit(): void {
   }
   goProfile(){
-    this.router.navigateByUrl(`/user/${this.user.uid}`)
+    this.router.navigateByUrl(`/admin/user/${this.user.uid}`)
   }
   goHome(){
     if(this.user.role === 'SUPER-ADMIN'){

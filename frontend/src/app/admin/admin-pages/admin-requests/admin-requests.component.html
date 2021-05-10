@@ -40,6 +40,110 @@
         </div>
     </div>
 </div>
+<div class="col-12 mb-2">
+    <div class="row">
+      <div class="col-sm-9 col-md-9 p-0">
+            <div id="example_filter" class="search-entry">
+                <h6 class="pull-left">
+                    <strong class="search-title-text">Buscar:</strong>
+                    <input type="search" class="" [value]="searchText" placeholder="" #text (keyup.enter)="searchRequests(text.value)" >
+                    <i class="fas fa-search pointer" (click)="searchRequests(text.value)"></i>
+                </h6>
+            </div>
+      </div>
+      <div class="col-sm-3 col-md-3 p-0">
+        <a class="text-info pointer d-flex pull-right entry-button" (click)="refreshTable()">Limpiar</a>
+      </div>
+    </div>
+    <div class="row">
+        <article class="filters mt-2">
+            <h6 class="pull-left">
+                <strong class="search-title-text">Filtrar:</strong>
+            </h6>
+            <div class="filters__items-container ml-3">
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuSection">
+                        <span class="filters__items-container__item__button__resume">Tipo</span>
+                        <span class="filters__items-container__item__button__name">Tipo</span>
+                </button>
+                <!-- FILTER MENU -->
+                <mat-menu #menuSection="matMenu" (closed)="setCheckValue()">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="requestSectionSelected">
+                                <mat-radio-button class="example-radio-button" *ngFor="let requestSection of requestSections" [value]="requestSection">
+                                        {{requestSection}}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                <!-- ACTIONS -->
+                <div class="filters__items-container__item__actions-container">
+                     <button mat-button (click)="clearFilter()" type="button"
+                        class="filters__items-container__item__actions-container__button">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterRequests()">Aplicar</button>
+                    </div>
+                </mat-menu>
+            </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuState">
+                        <span class="filters__items-container__item__button__resume">Estado</span>
+                        <span class="filters__items-container__item__button__name">Estado</span>
+                </button>
+                <!-- FILTER MENU -->
+                <mat-menu #menuState="matMenu" (closed)="setCheckValue()">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="requestStateSelected">
+                                <mat-radio-button class="example-radio-button" *ngFor="let requestState of requestStates" [value]="requestState">
+                                        {{requestState}}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                <!-- ACTIONS -->
+                <div class="filters__items-container__item__actions-container">
+                     <button mat-button (click)="clearFilter()" type="button"
+                        class="filters__items-container__item__actions-container__button">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterRequests()">Aplicar</button>
+                    </div>
+                </mat-menu>
+            </div>
+            <div class="filters__items-container__item">
+                <!-- FILTER BUTTON -->
+                <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuSeen">
+                    <span class="filters__items-container__item__button__resume">Visto</span>
+                    <span class="filters__items-container__item__button__name">Visto</span>
+            </button>
+            <!-- FILTER MENU -->
+            <mat-menu #menuSeen="matMenu" (closed)="setCheckValue()">
+                <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                            <!-- VALUES -->
+                    <div class="filters__items-container__item__menu__boolean-container">
+                        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="requestSeenSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let requestSeen of requestSeens" [value]="requestSeen">
+                                    {{requestSeen}}
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
+            <!-- ACTIONS -->
+            <div class="filters__items-container__item__actions-container">
+                 <button mat-button (click)="clearFilter()" type="button"
+                    class="filters__items-container__item__actions-container__button">Limpiar</button>
+                    <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterRequests()">Aplicar</button>
+                </div>
+            </mat-menu>
+        </div>
+    </div>
+        </article>
+    </div>
+</div>
+<!-- <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p> -->
 <div class="table-responsive animated fadeIn" *ngIf="requests.length!==0">
     <table id="myTable" class="table table-sm table-hover color-table inverse-table">
         <thead>

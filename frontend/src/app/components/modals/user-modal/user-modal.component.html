@@ -1,0 +1,73 @@
+<div class="background-modal" [class.hidden]="hiddenModal" >
+    <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="display: block" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title font-bold" id="exampleModalLabel">Crear usuario</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <p>Complete los datos del usuario.</p>
+              <form [formGroup]="userForm">
+                <div class="form-group mb-1">
+                  <label for="name" class="col-form-label">Nombre:</label>
+                  <input type="text" class="form-control" id="name" formControlName="name" [class.is-invalid]="getFieldValid('name')">
+                  <small class="text-danger" *ngIf="getFieldValid('name')">
+                    *Ingrese el <strong>nombre</strong>.
+                  </small>
+                </div>
+                <div class="form-group mb-1">
+                    <label for="lastName" class="col-form-label">Apellido:</label>
+                    <input type="text" class="form-control" id="lastName" formControlName="lastName" [class.is-invalid]="getFieldValid('lastName')">
+                    <small class="text-danger" *ngIf="getFieldValid('lastName')">
+                        *Ingrese el <strong>apellido</strong>.
+                    </small>
+                </div>
+                <div class="form-group mb-1">
+                <label for="phone" class="col-form-label">Teléfono:</label>
+                <input type="number" class="form-control"  formControlName="phone" [class.is-invalid]="getFieldValid('phone')">
+                <small *ngIf="getFieldValid('phone')" class="text-danger">
+                    *Ingrese el <strong>teléfono</strong>.
+                </small>
+                </div>
+                <div class="form-group mb-1">
+                <label for="address" class="col-form-label">Dirección:</label>
+                <input type="text" class="form-control"  formControlName="address" [class.is-invalid]="getFieldValid('address')">
+                </div>
+                <div class="form-group mb-1">
+                    <label for="email" class="col-form-label">Email:</label>
+                    <input type="email" class="form-control"  formControlName="email" [class.is-invalid]="getFieldValid('email')">
+                    <small *ngIf="getFieldValid('email')" class="text-danger">
+                        *Ingrese el <strong>email</strong>.
+                    </small>
+                </div>
+                <div class="form-group mb-1">
+                    <label for="password" class="col-form-label">Contraseña:</label>
+                    <input type="password" class="form-control"  formControlName="password" [class.is-invalid]="getFieldValid('password')">
+                    <small *ngIf="getFieldValid('password')" class="text-danger">
+                        *Ingrese la <strong>contraseña</strong>.
+                    </small>
+                </div>
+                <div class="form-group mb-1">
+                    <label for="password2" class="col-form-label">Repita contraseña:</label>
+                    <input type="password" class="form-control"  formControlName="password2" [class.is-invalid]="getFieldValid('password2')">
+                    <small *ngIf="getFieldValid('password2')" class="text-danger">
+                        *Las <strong>contraseñas</strong> no coinciden.
+                    </small>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" (click)="createUser()">Crear</button>
+              <button type="button" class="btn btn-danger"  (click)="closedModal()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<app-line-loader></app-line-loader>

@@ -39,77 +39,56 @@ userCtrl.getUsers = async (req = request,res = response)=>{
         let users;
         let booleanState;
         let selectedFilters;
+        const userDB = await User.findById(userLoggedID)
         if(state === 'Activo'){
             booleanState = true;
         }
         else if(state === 'Bloqueado'){
             booleanState = false;
         }
-
+        let query = {
+            '$and': []
+        };
+        searchText !== '' ? query['$and'].push({ $or: [
+                                                        {"name" : new RegExp(searchText, 'i')},
+                                                        {"lastName" : new RegExp(searchText, 'i')},
+                                                        {$expr: {
+                                                            "$regexMatch": {
+                                                                "input": { "$concat": ["$name", " ", "$lastName"] },
+                                                                "regex": searchText,
+                                                                "options": "i"
+                                                            }
+                                                        }},
+                                                        {$expr: {
+                                                            "$regexMatch": {
+                                                                "input": { "$concat": ["$lastName", " ", "$name"] },
+                                                                "regex": searchText,
+                                                                "options": "i"
+                                                            }
+                                                        }}
+                                                    ]}) : query ;
+        if (state !== ''){
+            query['$and'].push({state: booleanState})
+        }
+        query['$and'].push({_id: {$ne: userLoggedID}})
+        query['$and'].push({role: {$ne: 'SUPER-ADMIN'}})
+        if(userType === 'SUPER-ADMIN'){
+            query['$and'].push({role: {$ne: 'CENTER-ADMIN'}})
+        }
+        else if (userType === 'CENTER-SUPER-ADMIN'){
+            query['$and'].push({sportCenter: userDB.sportCenter})
+        }
+        users = await User.find(query);
         if(searchText === '' && state === '' ){
-            users = await User.find({
-                id:{$ne: userLoggedID},
-                $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
-            });
-            selectedFilters = [];
+            selectedFilters = []
         }
         else if(searchText !== '' && state === ''){
-            users = await User.find({
-                id:{$ne: userLoggedID},
-                $or: [
-                    {"name" : new RegExp(searchText, 'i')},
-                    {"lastName" : new RegExp(searchText, 'i')},
-                    {$expr: {
-                        "$regexMatch": {
-                            "input": { "$concat": ["$name", " ", "$lastName"] },
-                            "regex": searchText,
-                            "options": "i"
-                        }
-                    }},
-                    {$expr: {
-                        "$regexMatch": {
-                            "input": { "$concat": ["$lastName", " ", "$name"] },
-                            "regex": searchText,
-                            "options": "i"
-                        }
-                    }}
-                ],
-                $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
-            })
             selectedFilters = ['Texto: ', searchText];
         }
-        else if(searchText === '' && state !== ''){
-            users = await User.find({ 
-                                            id:{$ne: userLoggedID},
-                                            $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
-                                            state:booleanState
-                                        })
+        else if (searchText === '' && state !== ''){
             selectedFilters = ['Estado: ',state];
         }
-        else if(searchText !== '' && state !== ''){
-            users = await User.find({
-                                            id:{$ne: userLoggedID},
-                                            $and :[{role:{$ne:'CENTER-ADMIN'}},{role:{$ne:'SUPER-ADMIN'}}],
-                                            state:booleanState,
-                                            $or: [
-                                                {"name" : new RegExp(searchText, 'i')},
-                                                {"lastName" : new RegExp(searchText, 'i')},
-                                                {$expr: {
-                                                    "$regexMatch": {
-                                                        "input": { "$concat": ["$name", " ", "$lastName"] },
-                                                        "regex": searchText,
-                                                        "options": "i"
-                                                    }
-                                                }},
-                                                {$expr: {
-                                                    "$regexMatch": {
-                                                        "input": { "$concat": ["$lastName", " ", "$name"] },
-                                                        "regex": searchText,
-                                                        "options": "i"
-                                                    }
-                                                }}
-                                            ],
-            })
+        else if (searchText !== '' && state !== ''){
             selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
         }
         res.json({
@@ -150,6 +129,13 @@ userCtrl.createUser = async (req = request, res = response) =>{
                 default:
                     wrongRoleResponse(res);
         }
+        let sportCenter
+        if(req.body.role === 'CENTER-ADMIN'){
+            sportCenter = req.body.sportCenter
+        }
+        else{
+            sportCenter = null;
+        }
         user = new User({
             name: req.body.name,
             lastName: req.body.lastName,
@@ -158,12 +144,13 @@ userCtrl.createUser = async (req = request, res = response) =>{
             email: req.body.email,
             password: req.body.password,
             state: initialState,
+            sportCenter: sportCenter,
             role: req.body.role
         });
         
         const salt = bcrypt.genSaltSync();
         user.password = bcrypt.hashSync(password,salt);
-        await user.save();
+        const newUser = await user.save();
         if(req.body.role === 'CENTER-SUPER-ADMIN'){
             sendNewUserEmail(user);
         }
@@ -223,64 +210,13 @@ userCtrl.updateUser = async (req = request, res = response) =>{
         errorResponse(res);
     }
 }
-userCtrl.deleteUser = async (req = request, res = response) =>{
-    const uid = req.params.id;
-    try {
-        const userDB = await User.findById(uid);
-        if(!userDB){
-            return unknownIDResponse(res);
-        }
-        if(userDB.deletedDate !== null){
-            return userBlockedResponse(res);
-        }
-        userDB.deletedDate = Date.now();
-        await User.findByIdAndUpdate(uid,userDB,{new:true})
-        res.json({
-            ok:true,
-            msg:'Deleted User'
-        })
-        
-    } catch (error) {
-        console.log(error);
-        errorResponse(res);
-    }
-}
-userCtrl.activateUser = async (req = request, res = response) =>{
-    const uid = req.params.id;
-    try {
-        const userDB = await User.findById(uid);
-        if(!userDB){
-            return unknownIDResponse(res);
-        }
-        if(userDB.deletedDate === null){
-            return userActiveResponse(res);
-        }
-        userDB.deletedDate = null;
-        await User.findByIdAndUpdate(uid,userDB,{new:true})
-        res.json({
-            ok:true,
-            msg:'Activated User'
-        })
-    } catch (error) {
-        console.log(error);
-        errorResponse(res);
-    }
-}
-userCtrl.activateBlockSuperCenterAdmin = async (req = request, res = response) =>{
+userCtrl.activateBlockUser = async (req = request, res = response) =>{
     const uid = req.params.id;
     const action= req.body.action;
-    console.log(action)
     try {
         const userDB = await User.findById(uid)
         if(!userDB){
             return unknownIDResponse(res);
-        }
-        if(userDB.role !== 'CENTER-SUPER-ADMIN'){
-            return res.status(404).json({
-                ok:false,
-                code: 8,
-                msg:'This User doesn´t have to be accepted'
-            })
         }
         if (action === 'block'){
             if(userDB.deletedDate !== null){
@@ -298,28 +234,61 @@ userCtrl.activateBlockSuperCenterAdmin = async (req = request, res = response) =
                 userDB.deletedDate = null;
             }
         }
-
         userDB.state = !userDB.state;
         await User.findByIdAndUpdate(uid,userDB,{new:true});
-        // if (userDB.state === true){
-            //ACA VAN LOS ENVIOS DE MAIL---- PROBE PONIENDOLOS ABAJO PPERO NO TESTIE
-        // }
-        // else{
-        // }
-        if (action === 'block'){
-            sendBlockUser(userDB)
-            res.json({
-                ok:true,
-                msg:'Blocked CENTER-SUPER-ADMIN User'
-            })
+        if(userDB.role === 'CENTER-SUPER-ADMIN'){
+            if (action === 'block'){
+                sendBlockUser(userDB)
+                res.json({
+                    ok:true,
+                    msg:'Blocked CENTER-SUPER-ADMIN User'
+                })
+            }
+            else if(action === 'active'){
+                sendAcceptUser(userDB)
+                res.json({
+                    ok:true,
+                    msg:'Activated CENTER-SUPER-ADMIN User'
+                })
+            }
         }
-        else if(action === 'active'){
-            sendAcceptUser(userDB)
-            res.json({
-                ok:true,
-                msg:'Activated CENTER-SUPER-ADMIN User'
-            })
+        else{
+            if (action === 'block'){
+                res.json({
+                    ok:true,
+                    msg:'Blocked User'
+                })
+            }
+            else if(action === 'active'){
+                res.json({
+                    ok:true,
+                    msg:'Activated User'
+                })
+            }
         }
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
+userCtrl.changeRole = async (req = request, res = response) =>{
+    const uid = req.params.id;
+    try {
+        const userDB = await User.findById(uid)
+        if(!userDB){
+            return unknownIDResponse(res);
+        }
+        if (userDB.role === 'CENTER-SUPER-ADMIN'){
+            userDB.role = 'CENTER-ADMIN'
+        }
+        else if (userDB.role === 'CENTER-ADMIN'){
+            userDB.role = 'CENTER-SUPER-ADMIN'
+        }
+        await User.findByIdAndUpdate(uid,userDB,{new:true});
+        res.json({
+            ok:true,
+            msg:'Changed User role'
+        })
     } catch (error) {
         console.log(error);
         errorResponse(res);
@@ -436,5 +405,50 @@ function wrongPasswordResponse(res){
         code: 9,
         msg:'Password doesen´t match'
     })
+}
+
+// no se usan creo
+userCtrl.deleteUser = async (req = request, res = response) =>{
+    const uid = req.params.id;
+    try {
+        const userDB = await User.findById(uid);
+        if(!userDB){
+            return unknownIDResponse(res);
+        }
+        if(userDB.deletedDate !== null){
+            return userBlockedResponse(res);
+        }
+        userDB.deletedDate = Date.now();
+        await User.findByIdAndUpdate(uid,userDB,{new:true})
+        res.json({
+            ok:true,
+            msg:'Deleted User'
+        })
+        
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
+userCtrl.activateUser = async (req = request, res = response) =>{
+    const uid = req.params.id;
+    try {
+        const userDB = await User.findById(uid);
+        if(!userDB){
+            return unknownIDResponse(res);
+        }
+        if(userDB.deletedDate === null){
+            return userActiveResponse(res);
+        }
+        userDB.deletedDate = null;
+        await User.findByIdAndUpdate(uid,userDB,{new:true})
+        res.json({
+            ok:true,
+            msg:'Activated User'
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
 }
 module.exports = userCtrl;

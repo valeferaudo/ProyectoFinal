@@ -4,14 +4,45 @@ const Request = require ('../models/request.model');
 const { request, response} = require ('express');
 const requestCtrl = {};
 
-requestCtrl.getSportCentetrRequests = async (req = request , res = response) => {
-    const sportCenterID = req.params.id
+requestCtrl.getSportCenterRequests = async (req = request , res = response) => {
+    const sportCenterID = req.params.id;
+    const section = req.query.section;
+    const searchText = req.query.text;
+    const state = req.query.state;
+    const seen = req.query.seen;
     try {
         const sportCenterDB = await SportCenter.findById(sportCenterID);
         if(!sportCenterDB){
             return unknownIDResponse(res);
         }
-        const requests = await Request.find({sportCenter:sportCenterID})
+        if(state === 'Aceptada'){
+            booleanState = true;
+        }
+        else if(state === 'Rechazada'){
+            booleanState = false;
+        }
+        else if(state === 'En pausa'){
+            booleanState = null;
+        }
+        if(seen === 'Vista'){
+            seenState = true;
+        }
+        else if(seen === 'No vista'){
+            seenState = false;
+        }
+        let query = {
+            '$and': []
+        };
+        query['$and'].push({sportCenter:sportCenterID});
+        searchText !== '' ? query['$and'].push({ description: new RegExp(searchText, 'i')}) : query ;
+        section !== '' ? query['$and'].push({ section: section}) : query ;
+        if (state !== ''){
+            query['$and'].push({state: booleanState})
+        }
+        if (seen !== ''){
+            query['$and'].push({seen: seenState})
+        }
+        const requests = await Request.find(query)
         res.json({
             ok:true,
             msg:'Found Requests',
@@ -28,8 +59,39 @@ requestCtrl.getSportCentetrRequests = async (req = request , res = response) => 
     }
 }
 requestCtrl.getRequests = async (req = request , res = response) => {
+    const section = req.query.section;
+    const searchText = req.query.text;
+    const state = req.query.state;
+    const seen = req.query.seen;
     try {
-        const requests = await Request.find()
+        if(state === 'Aceptada'){
+            booleanState = true;
+        }
+        else if(state === 'Rechazada'){
+            booleanState = false;
+        }
+        else if(state === 'En pausa'){
+            booleanState = null;
+        }
+        if(seen === 'Vista'){
+            seenState = true;
+        }
+        else if(seen === 'No vista'){
+            seenState = false;
+        }
+        let query = {
+            '$and': []
+        };
+        query['$and'].push({creatorEmail:{$ne:null}});
+        searchText !== '' ? query['$and'].push({ description: new RegExp(searchText, 'i')}) : query ;
+        section !== '' ? query['$and'].push({ section: section}) : query ;
+        if (state !== ''){
+            query['$and'].push({state: booleanState})
+        }
+        if (seen !== ''){
+            query['$and'].push({seen: seenState})
+        }
+        const requests = await Request.find(query)
         res.json({
             ok:true,
             msg:'Found Requests',

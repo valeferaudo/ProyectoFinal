@@ -43,15 +43,18 @@ router.put('/favorite/:id',[validateJWT,
                 validateUserID,
                 validateSameUser,
                 validateUserRole],userCtrl.addFavorite);
-router.put('/delete/:id',[validateJWT,
-                validateUserID,
-                validateSuperRoleOrSameUser],userCtrl.deleteUser);
-router.put('/activate/:id',[validateJWT,
-                validateUserID,
-                validateSuperRole],userCtrl.activateUser);
 router.put('/acceptBlock/:id',[validateJWT,
                 validateUserID,
-                validateSuperAdminRole],userCtrl.activateBlockSuperCenterAdmin);
-
+                validateSuperRole],userCtrl.activateBlockUser);
+router.put('/changeRole/:id',[validateJWT,
+                validateUserID,
+                validateSuperRole],userCtrl.changeRole);
+//NO SE USAN CREO
+    //             router.put('/delete/:id',[validateJWT,
+    //                 validateUserID,
+    //                 validateSuperRoleOrSameUser],userCtrl.deleteUser);
+    // router.put('/activate/:id',[validateJWT,
+    //                 validateUserID,
+    //                 validateSuperRole],userCtrl.activateUser);
 
 module.exports = router;

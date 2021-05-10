@@ -45,25 +45,8 @@
                         </ul>
                     </li>
                     <!-- USUARIOS -->
-                    <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'"> 
-                        <a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="fas fa-users text-center"></i><span class="hide-menu"> Usuarios</span></a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li>
-                                <a [routerLink]="['/admin/users']" class="pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                                    <i class="fas fa-list-ul"></i> 
-                                    Lista de usuarios
-                                </a>
-                            </li>
-                            <li>
-                                <a [routerLink]="['/admin/settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                                    <i class="ti-settings"></i>
-                                    Configuración
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li *ngIf="userLogged.role === 'SUPER-ADMIN'"> 
-                        <a class="waves-effect waves-dark" [routerLink]="['/admin/super/users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                    <li *ngIf="userLogged.role === 'SUPER-ADMIN' || userLogged.role === 'CENTER-SUPER-ADMIN'"> 
+                        <a class="waves-effect waves-dark" (click)="goUsers()" [routerLink]="['/admin/super/users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="fas fa-certificate"></i>
                             <span class="hide-menu"> Usuarios</span>
                         </a>

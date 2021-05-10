@@ -24,6 +24,7 @@ import { SportCenterComponent } from './admin-pages/sport-center/sport-center.co
 import { MaterialModule } from '../material.module';
 import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-requests.component';
 import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
+import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { RequestDoComponent } from './super-admin-pages/request-do/request-do.co
      SportCenterComponent,
      AdminRequestsComponent,
      RequestDoComponent,
+     AdminUsersComponent,
   ],
   imports: [
     CommonModule,

@@ -85,4 +85,32 @@ export class TableUserComponent implements OnInit {
       }
     )
   }
+  changeRole(user: User){
+    this.sweetAlertService.showSwalConfirmation({
+      title: '¿Cambiar rol del usuario?',
+      text: ``,
+      icon: 'question',
+    })
+    .then((result) => {
+      if (result.value) {
+      this.loaderService.openLineLoader();
+      this.userService.changeRole(user.uid)
+                        .subscribe((resp: any) => {
+                          if(resp.ok){
+                            this.loaderService.closeLineLoader();
+                            this.sweetAlertService.showSwalResponse({
+                              title: 'Rol cambiado',
+                              text:'',
+                              icon: 'success',
+                            })
+                            this.getUsers.emit();
+                          }
+                        }, (err) => {
+                          console.log(err);
+                          this.loaderService.closeLineLoader();
+                          this.errorService.showErrors('nada',99)
+                        });
+      }
+    })
+  }
 }

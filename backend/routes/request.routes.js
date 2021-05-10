@@ -16,7 +16,7 @@ router.get('/',[validateJWT,
             validateUserID,
             validateSuperAdminRole],requestCtrl.getRequests)
 router.get('/:id',[validateJWT,
-            validateUserID],requestCtrl.getSportCentetrRequests)
+            validateUserID],requestCtrl.getSportCenterRequests)
 router.post('/',[validateJWT,
             validateUserID,
             validateCSAandOwnerField,

@@ -22,6 +22,7 @@ import { SportCenterComponent } from './admin-pages/sport-center/sport-center.co
 import { HomeGuard } from '../guards/home.guard';
 import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-requests.component';
 import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
+import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
 
 
 
@@ -36,7 +37,7 @@ export const AdminRoutes: Routes = [
      {path: 'fields', component: AdminFieldsComponent, canActivate: [AdminGuard]},
      {path: 'appointments', component: AdminAppointmentsComponent, canActivate: [CenterGuard]},
      {path: 'appointment/:id', component: AdminDoAppointmentsComponent, canActivate: [CenterGuard]},
-     {path: 'users', component: UsersComponent, canActivate: [AdminGuard]},
+     {path: 'users', component: AdminUsersComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'sportcenter/:id', component: SportCenterComponent, canActivate: [CenterGuard]},
      {path: 'requests', component: AdminRequestsComponent, canActivate: [CenterSuperAdminGuard]},
      

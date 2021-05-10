@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { RequestFilter } from '../interfaces/filters/requestFilter.interface';
 import { Request } from '../models/request.model';
 
 const baseUrl = environment.base_url
@@ -12,21 +13,21 @@ export class RequestService {
 
   constructor(private http: HttpClient) { }
 
-  getSportCenterRequests(sportCenterID){
-    // let params = new HttpParams();
-    // params = params.append('text',filters.text);
-    // params = params.append('state',filters.state);
-    // params = params.append('sportCenterID',filters.sportCenterID);
-    // return this.http.get(`${baseUrl}/requests/:id` ,{params});
-    return this.http.get(`${baseUrl}/requests/${sportCenterID}`);
+  getSportCenterRequests(sportCenterID,filters: RequestFilter){
+    let params = new HttpParams();
+    params = params.append('section',filters.section);
+    params = params.append('text',filters.text);
+    params = params.append('state',filters.state);
+    params = params.append('seen',filters.seen);
+    return this.http.get(`${baseUrl}/requests/${sportCenterID}` ,{params});
   }
-  getRequests(){
-    // let params = new HttpParams();
-    // params = params.append('text',filters.text);
-    // params = params.append('state',filters.state);
-    // params = params.append('sportCenterID',filters.sportCenterID);
-    // return this.http.get(`${baseUrl}/requests/:id` ,{params});
-    return this.http.get(`${baseUrl}/requests/`);
+  getRequests(filters: RequestFilter){
+    let params = new HttpParams();
+    params = params.append('section',filters.section);
+    params = params.append('text',filters.text);
+    params = params.append('state',filters.state);
+    params = params.append('seen',filters.seen);
+    return this.http.get(`${baseUrl}/requests/`, {params});
   }
   createRequest(request: Request ){
     return this.http.post(`${baseUrl}/requests/`, request );

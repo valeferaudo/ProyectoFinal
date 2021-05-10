@@ -29,6 +29,7 @@ import { SportCenterInfoModalComponent } from './modals/sport-center-info-modal/
 import { FieldModalComponent } from './modals/field-modal/field-modal.component';
 import { FieldSportModalComponent } from './modals/field-sport-modal/field-sport-modal.component';
 import { SportCenterScheduleModalComponent } from './modals/sport-center-schedule-modal/sport-center-schedule-modal.component';
+import { UserModalComponent } from './modals/user-modal/user-modal.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { SportCenterScheduleModalComponent } from './modals/sport-center-schedul
     SportCenterInfoModalComponent,
     FieldModalComponent,
     FieldSportModalComponent,
-    SportCenterScheduleModalComponent
+    SportCenterScheduleModalComponent,
+    UserModalComponent
 
   ],
   imports: [
@@ -85,7 +87,8 @@ import { SportCenterScheduleModalComponent } from './modals/sport-center-schedul
     SportCenterInfoModalComponent,
     FieldModalComponent,
     FieldSportModalComponent,
-    SportCenterScheduleModalComponent
+    SportCenterScheduleModalComponent,
+    UserModalComponent
   ]
 })
 export class ComponentsModule { }

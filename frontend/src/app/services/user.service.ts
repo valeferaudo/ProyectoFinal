@@ -50,8 +50,6 @@ export class UserService {
           })
       );
   }
-
-
   logOut(){
     if(this.user.role === 'USER'){
       this.router.navigateByUrl('/login')
@@ -60,9 +58,6 @@ export class UserService {
       this.router.navigateByUrl('/admin/login')
     }
     localStorage.removeItem('x-token');
-  }
-  createUser(user){
-    return this.http.get(`${baseUrl}/users/`);
   }
   deleteUser(userID){
     return this.http.get(`${baseUrl}/users/`);
@@ -83,7 +78,6 @@ export class UserService {
   updateUser(id: string, data){
     return this.http.put(`${baseUrl}/users/${id}`, data);
   }
-
   recoverPassword(email){
     return this.http.put(`${baseUrl}/users/RegeneratePassword`,email)
   }
@@ -100,5 +94,8 @@ export class UserService {
       action: action
     };
     return this.http.put(`${baseUrl}/users/acceptBlock/${id}`,body);
+  }
+  changeRole(id){
+    return this.http.put(`${baseUrl}/users/changeRole/${id}`,{});
   }
 }

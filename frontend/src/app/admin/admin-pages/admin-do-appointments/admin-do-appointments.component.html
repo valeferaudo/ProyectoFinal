@@ -1,41 +1,123 @@
-<div class="hero-wrap" style="background-image: url('../../../assets/img/fondo-canchas.jpg');background-repeat: no-repeat;background-size: cover;" >
-    <div class="overlay"></div>
-<div class="container">
-    <div class="row no-gutters slider-text justify-content-start align-items-center">
-        <div class="col-lg-6 col-md-6 ftco-animate d-flex align-items-end">
-            <div class="text">
-                <h1 class="mb-4 text-white text-uppercase">{{field?.name}}</h1>
-                <hr class="bg-white">
-                <p style="font-size: 20px;" class="text-white">Descripción: <span class="font-italic">{{field?.description}}</span></p>
-                <p style="font-size: 20px;" class="text-white">Apertura: <span class="font-italic">{{field?.openingHour | date:'shortTime':'+0'}}</span></p>
-                <p style="font-size: 20px;" class="text-white">Cierre: <span class="font-italic">{{field?.closingHour | date:'shortTime':'+0'}}</span></p>
-                <p style="font-size: 20px;" class="text-white">Precio: <span class="font-italic">{{field?.price}} $</span></p>      
-      </div>
-    </div>
-    <div class="col-lg-1 col"></div>
-    <div class="col-lg-3 col-md-9 mt-0 mt-md-2 d-flex">
-        <form action="#" class="request-form ftco-animate text-white" [formGroup]="appointmentForm" (submit)="search()">
-            <h1 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; background-color: white;">Busca un horario</h1>
-            <div class="d-flex">
-                <div class="form-group mr-2">
-                    <label for="" class="label">Fecha desde</label>
-                    <input type="date"  class="form-control" id="book_pick_date" placeholder="Fecha desde" formControlName="sinceDate">
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="card-title text-center"><strong>Nuevo Turno</strong></h2>
+            <p>
+                <span *ngIf="!fieldInParam"><strong>1-</strong> Seleccione la cancha. </span>
+                <span><strong>{{fieldInParam? '1-' : '2-'}}</strong> Elija rango de fechas.  </span>
+                <span><strong>{{fieldInParam? '2-' : '3-'}}</strong> Elija rango horario. </span>
+            </p>
+            <hr>
+            <h2 class="card-title" *ngIf="fieldInParam"><strong>{{field.name}}</strong></h2>
+            <h2 class="card-title" *ngIf="!fieldInParam && fieldSelected !== null"><strong>{{fieldSelected.text}}</strong></h2>
+            <article class="filters mt-2" *ngIf="fieldInParam || fieldsCombo.length > 0">
+                <div class="filters__items-container">
+                    <div class="filters__items-container__item" *ngIf="!fieldInParam">
+                        <!-- FILTER BUTTON -->
+                        <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="fieldMenu">
+                        <span class="filters__items-container__item__button__resume">Canchas</span>
+                        <span class="filters__items-container__item__button__name">Canchas</span>
+                        </button>
+                            <!-- FILTER MENU -->
+                        <mat-menu #fieldMenu="matMenu">
+                        <!-- <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)"> -->
+                        <div class="filters__items-container__item__menu">
+
+                                    <!-- VALUES -->
+                            <div class="filters__items-container__item__menu__boolean-container">
+                                <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="fieldSelected" (change)="setFieldID()">
+                                <mat-radio-button class="example-radio-button" *ngFor="let item of fieldsCombo" [value]="item">
+                                    {{item.text}}
+                                </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                        </div>
+                                <!-- ACTIONS -->
+                        <div class="filters__items-container__item__actions-container">
+                            <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetFields()">Limpiar</button>
+                            <!-- <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterEntryType()">Aplicar</button> -->
+                        </div> 
+                        </mat-menu>
+                    </div>
+                    <div class="filters__items-container__item" *ngIf="fieldSelected !== null || fieldInParam">
+                        <!-- FILTER BUTTON -->
+                        <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDates">
+                        <span class="filters__items-container__item__button__resume">Fecha</span>
+                        <span class="filters__items-container__item__button__name">Fecha</span>
+                        </button>
+                                    <!-- FILTER MENU -->
+                        <mat-menu #menuDates="matMenu">
+                        <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                            <!-- VALUES -->
+                            <div class="filters__items-container__item__menu__range-container">
+                                <div class="filters__items-container__item__menu__range-container__header">
+                                    <!-- <p class="filters__items-container__item__menu__range-container__header__title">Desde <br> ({{sinceDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                                    <!-- <p class="filters__items-container__item__menu__range-container__header__title">Hasta <br> ({{untilDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                                </div>
+                                <!-- <mat-label>Fechas</mat-label> -->
+                                <mat-form-field>
+                                <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRangeForm" [min]="minDate" [max]="maxDate" separator=" - " (click)="picker.open()">
+                                    <input matStartDate formControlName="sinceDateSelected" placeholder="Desde">
+                                    <input matEndDate formControlName="untilDateSelected" placeholder="Hasta">
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #picker></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <!-- ACTIONS -->
+                        <div class="filters__items-container__item__actions-container">
+                            <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetDates()">Limpiar</button>
+                            <!-- <button mat-button (click)="clearFilter(filter)" type="button"
+                                class="filters__items-container__item__actions-container__button">Limpiar</button> -->
+                            <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDates()">Aplicar</button>
+                        </div>
+                        </mat-menu>
+                    </div>
+                    <div class="filters__items-container__item" *ngIf="fieldSelected !== null || fieldInParam">
+                        <!-- FILTER BUTTON -->
+                        <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuHours">
+                        <span class="filters__items-container__item__button__resume">Horario</span>
+                        <span class="filters__items-container__item__button__name">Horario</span>
+                        </button>
+                                    <!-- FILTER MENU -->
+                        <mat-menu #menuHours="matMenu">
+                        <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                            <div class="filters__items-container__item__menu__range-container">
+                            <div class="filters__items-container__item__menu__range-container__header">
+                                <p class="filters__items-container__item__menu__range-container__header__title">Desde ({{sinceHourSelected}})</p>
+                            </div>
+                                <mat-slider class="filters__items-container__item__menu__range-container__range"
+                                    tickInterval="1"
+                                    [(ngModel)]="sinceHourSelected" color="accent" [max]="untilHourSelected - 1" min="0" step="1" thumbLabel="true">
+                                </mat-slider>
+                            </div>
+                            <div class="filters__items-container__item__menu__range-container">
+                                <div class="filters__items-container__item__menu__range-container__header">
+                                <p class="filters__items-container__item__menu__range-container__header__title">Hasta ({{untilHourSelected}})</p>
+                                </div>
+                                <mat-slider class="filters__items-container__item__menu__range-container__range" 
+                                tickInterval="1"
+                                [(ngModel)]="untilHourSelected" color="accent" max="23" [min]="sinceHourSelected + 1" step="1" thumbLabel="true"></mat-slider>
+                            </div>
+                        </div>
+                                        <!-- ACTIONS -->
+                        <div class="filters__items-container__item__actions-container">
+                            <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetHour()">Limpiar</button>
+                            <!-- <button mat-button (click)="clearFilter(filter)" type="button"
+                                class="filters__items-container__item__actions-container__button">Limpiar</button> -->
+                            <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterHour()">Aplicar</button>
+                        </div>
+                        </mat-menu>
+                    </div>
                 </div>
-                <div class="form-group ml-2">
-                    <label for="" class="label">Fecha hasta</label>
-                    <input type="date" class="form-control" id="book_off_date" placeholder="Fecha hasta" formControlName="untilDate">
-                </div>
-            
-            </div>
-                    <small *ngIf="getFieldValid('sinceDate') || getFieldValid('untilDate') " class="text-danger border-white text-uppercase mt-0 bg-danger text-black-50">
-                        Error en la fecha
-                    </small>
-            <div class="form-group">
-                <button class="btn btn-block btn-info" [disabled]="appointmentForm.invalid"><i class="fas fa-search"></i> Buscar</button>
-            </div>
-        </form>
+            </article>
+            <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="!fieldInParam && fieldsCombo.length === 0"> 
+                <i class="fas fa-times"></i> No hay <strong>Canchas disponibles</strong> en el centro deportivo. <br>
+              </div>
+        </div>
     </div>
 </div>
-</div>
-</div>
-<app-table-do-appointment [available]="available" [field]="field" *ngIf="table"></app-table-do-appointment>
+<hr>
+<app-table-do-appointment *ngIf="searchON" [availableAppointments]="availableAppointments" [fieldID]="fieldID" [searchON]="searchON"></app-table-do-appointment>

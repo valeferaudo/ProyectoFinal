@@ -12,6 +12,9 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import {MatSliderModule} from '@angular/material/slider'; 
 
 @NgModule({
   declarations: [],
@@ -26,9 +29,11 @@ import {MatSelectModule} from '@angular/material/select';
      MatCheckboxModule,
      MatProgressBarModule,
      MatSlideToggleModule,
-    // MatSliderModule,
+     MatSliderModule,
      MatMenuModule,
-     MatRadioModule
+     MatRadioModule,
+     MatDatepickerModule,
+     MatNativeDateModule
   ],
   exports:[
     // MatStepperModule,
@@ -40,9 +45,11 @@ import {MatSelectModule} from '@angular/material/select';
      MatCheckboxModule,
      MatProgressBarModule,
      MatSlideToggleModule,
-    // MatSliderModule,
+     MatSliderModule,
      MatMenuModule,
-     MatRadioModule
+     MatRadioModule,
+     MatDatepickerModule,
+     MatNativeDateModule
     
   ],
 })

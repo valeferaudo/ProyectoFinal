@@ -340,10 +340,10 @@ userCtrl.changePassword = async (req = request, res = response) =>{
         }
         //verificar contraseña vieja
          if (!(bcrypt.compareSync(passwords.OldPassword, userDB.password))) {
-            return wrongPasswordResponse(res);
+            return wrongOldPasswordResponse(res);
         }
         if(passwords.NewPassword !== passwords.RepeatNewPassword){
-            return wrongPasswordResponse(res);
+            return wrongNewPasswordResponse(res);
         }
         const salt = bcrypt.genSaltSync();
         const newPassword = bcrypt.hashSync(passwords.NewPassword,salt);
@@ -399,11 +399,18 @@ function userActiveResponse(res){
         msg:'This User is active'
     })
 }
-function wrongPasswordResponse(res){
+function wrongOldPasswordResponse(res){
     return res.status(404).json({
         ok:false,
         code: 9,
-        msg:'Password doesen´t match'
+        msg:'Old Password doesen´t match'
+    })
+}
+function wrongNewPasswordResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 11,
+        msg:'New Password doesen´t match'
     })
 }
 

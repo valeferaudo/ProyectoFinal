@@ -50,10 +50,10 @@ export class DoAppointmentComponent  {
   }
 
   search(){
-    this.appointmentsService.getAvailableAppointments(this.appointmentForm.value, this.field.id)
-                            .subscribe(resp => {
-                              this.available = resp;
-                            });
+  //   this.appointmentsService.getAvailableAppointments(this.appointmentForm.value, this.field.id)
+  //                           .subscribe(resp => {
+  //                             this.available = resp;
+  //                           });
   }
   getFieldValid(field: string){
     return this.appointmentForm.get(field).invalid &&

@@ -9,7 +9,7 @@
             <ul id="sidebarnav">
                 <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 
                     <a class="waves-effect waves-dark" (click)="goHome()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
-                        <i class="fas fa-clipboard-check text-center"></i>
+                        <i class="fas fa-thumbtack px-1"></i>
                         <span class="hide-menu align-middle">
                             <strong>Inicio</strong>
                         </span>
@@ -26,7 +26,7 @@
                     <!-- TURNOS -->
                     <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 
                         <a class="has-arrow waves-effect waves-dark" aria-expanded="false">
-                            <i class="fas fa-thumbtack px-1"></i>
+                            <i class="fas fa-clipboard-check text-center"></i>
                             <span class="hide-menu"> Turnos</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">

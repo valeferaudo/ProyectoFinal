@@ -26,11 +26,12 @@
                                 <th scope="col">Abierto</th>
                             </thead>
                             <tbody  *ngFor="let horario of schedules.controls; let i = index" [formGroupName]="i" >
-                                        <td>
-                                            <select formControlName="day"> 
+                                        <td >
+                                            <!-- <select formControlName="day"> 
                                                 <option selected [ngValue]="null" hidden>Eliga</option>
                                                 <option [value]="itemCombo.id" *ngFor="let itemCombo of scheduleCombo">{{itemCombo.text}}</option>
-                                            </select>
+                                            </select> -->
+                                            <input type="text" [value]="days[i]" disabled>
                                         </td>
                                     <td>
                                         <input type="time" name="" formControlName="openingHour">

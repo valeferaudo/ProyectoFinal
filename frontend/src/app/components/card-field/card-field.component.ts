@@ -35,30 +35,30 @@ export class CardFieldComponent {
   updateField(id: string){
     this.router.navigateByUrl(`/admin/field/${id}`);
   }
-  deleteField(id: string){
-    this.sweetAlertService.showSwalConfirmation({
-      title: '¿Estás seguro de eliminar la cancha?',
-      text: `Cancha: ${this.field.name}`,
-      icon: 'question',
-    }).then((result) => {
-      if (result.value) {
-        this.fieldService.deleteField(id)
-                            .subscribe(resp => {
-                              this.sweetAlertService.showSwalResponse({
-                                title: 'Cancha eliminada',
-                                text:'',
-                                icon: 'error',
-                              })
-                              setTimeout(() => {
-                                location.reload();
-                              }, 2000);
-                              }, (err) => {
-                                console.log(err);
-                                this.errorService.showErrors('mejorar',99)
-                              });
+  // deleteField(id: string){
+  //   this.sweetAlertService.showSwalConfirmation({
+  //     title: '¿Estás seguro de eliminar la cancha?',
+  //     text: `Cancha: ${this.field.name}`,
+  //     icon: 'question',
+  //   }).then((result) => {
+  //     if (result.value) {
+  //       this.fieldService.deleteField(id)
+  //                           .subscribe(resp => {
+  //                             this.sweetAlertService.showSwalResponse({
+  //                               title: 'Cancha eliminada',
+  //                               text:'',
+  //                               icon: 'error',
+  //                             })
+  //                             setTimeout(() => {
+  //                               location.reload();
+  //                             }, 2000);
+  //                             }, (err) => {
+  //                               console.log(err);
+  //                               this.errorService.showErrors('mejorar',99)
+  //                             });
 
-    }
-    });
-  }
+  //   }
+  //   });
+  // }
 
 }

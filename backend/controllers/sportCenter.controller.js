@@ -117,7 +117,7 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
         const days = await Day.find();
         let daysID = [];
         days.forEach(day => {
-            daysID.push(day.id)
+            daysID.push(day.idDia)
         });
         sportCenter = new SportCenter({
             name: sportCenterBody.name,
@@ -238,14 +238,38 @@ sportCenterCtrl.updateSchedule = async (req = request, res = response) =>{
         const changes = req.body;
         let arrayChanges = []
         changes.schedules.forEach(item => {
+            let dayID;
+            switch (item.day) {
+                case 'Lunes':
+                    dayID = 1;
+                    break;
+                case 'Martes':
+                    dayID = 2;  
+                    break;
+                case 'Miércoles':
+                    dayID = 3;
+                    break;
+                case 'Jueves':
+                    dayID = 4;
+                    break;
+                case 'Viernes':
+                    dayID = 5;
+                    break;
+                case 'Sábado':
+                    dayID = 6;
+                    break;
+                case 'Domingo':
+                    dayID = 7;
+                    break;
+            }
             const obj = {
-                day: item.day,
+                day: dayID,
                 openingHour: setDate(item.openingHour),
                 closingHour: setDate(item.closingHour)
             }
             arrayChanges.push(obj)
         });
-        sportCenter = await (await SportCenter.findByIdAndUpdate(sportCenterID,{$set:{schedules:arrayChanges}},{new:true})).populate('schedules.day')
+        sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,{$set:{schedules:arrayChanges}},{new:true})
         res.json({
             ok:true,
             msg:'Updated Sport Center Schedules',

@@ -10,9 +10,6 @@
                 <div class="col text-center">
                     <a href="javascript:void(0)" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><p class="mb-0">Editar</p></a>
                 </div>
-                <div class="col text-center" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'">
-                    <a href="javascript:void(0)" (click)="deleteUser()" class=" text-danger"><i class="far fa-trash-alt fa-1x"></i><br><p class="mb-0">Eliminar</p></a>
-                </div>
                 <div class="col text-center" >
                     <a href="javascript:void(0)" (click)="openChangePasswordModal()" class="text-dark text-fixed"><i class="fa fa-lock m-r-5"></i><br><p class="mb-0">Contraseña</p></a>
                 </div>
@@ -58,33 +55,8 @@
                         [class.form-control-danger]="getFieldValid('phone')">
                         <div class="form-control-feedback" *ngIf="getFieldValid('phone')">*Ingrese el nombre teléfono (Máx. 13 caracteres)</div> 
                 </div>
-                <!-- <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="!editMode" [class.has-danger]="getFieldValid('email')">
-                    <label for=""><strong>Correo electrónico</strong></label>
-                    <input type="text" 
-                        class="form-control" 
-                        placeholder="Ingrese un correo electrónico"
-                        formControlName="email"
-                        [class.form-control-danger]="getFieldValid('email')">
-                        <div class="form-control-feedback" *ngIf="getFieldValid('email')">*Ingrese el correo electrónico</div>
-                </div> -->
-                <!-- <div class="form-group col-md-6 m-t-5 m-b-5" [class.has-danger]="getFieldValid('tipoUsuario')" *ngIf="!userParam || ((userLogged.tipoUsuario ==='SuperAdmin' || userLogged.tipoUsuario==='Administracion')&& editMode)">
-                        <label for=""><strong>Rol</strong></label>
-                        <select class="form-control" ngDefaultControl="" [class.pointer]="!userInParam || editMode" 
-                            formControlName="tipoUsuario" [class.form-control-danger]="getFieldValid('tipoUsuario')">
-                            <option value="" hidden>Seleccione un tipo</option>
-                            <option *ngFor="let userType of userTypes" value="{{userType.id}}">{{userType.text}}</option>
-                        </select>
-                        <div class="form-control-feedback" *ngIf="getFieldValid('tipoUsuario')">*Ingrese el rol</div>
-                </div>
-                <div class="form-group col-md-6 m-t-5 m-b-5" [class.has-danger]="getFieldValid('tipoUsuario')" *ngIf="userParam && (userLogged.tipoUsuario ==='SuperAdmin' || userLogged.tipoUsuario==='Administracion') && !editMode">
-                    <label for=""><strong>Rol</strong></label>
-                    <input type="text" 
-                        class="form-control" 
-                        formControlName="tipoUsuario">
-                </div> -->
                 <div class="form-group col-md-12 m-t-5 text-center">
                     <button *ngIf="editMode" class="btn btn-info mr-1" (click)="updateUser()"><i class="fas fa-edit"></i> Guardar</button>
-                    <button *ngIf="false" class="btn btn-info mr-1" (click)="createUser()"><i class="fas fa-save"></i> Guardar</button>
                     <button *ngIf="editMode" (click)="cancel()" class="btn btn-danger"><i class="fas fa-times-circle"></i> Cancelar</button>
                 </div>            
             </form>

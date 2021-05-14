@@ -17,12 +17,12 @@ export class AppointmentsComponent {
       this.getAppointments()
   }
   getAppointments(){
-    this.appointmentService.getAppointments()
-                                      .subscribe(resp => {
-                                        this.reservedAppointments = resp.reservedAppointments;
-                                        this.completedAppointments = resp.completedAppointments;
-                                        this.inProgressAppointments = resp.inProgressAppointments;
-                                        this.aboutToStartAppointments = resp.aboutToStartAppointments;
-                                      });
+    // this.appointmentService.getAppointments()
+    //                                   .subscribe(resp => {
+    //                                     this.reservedAppointments = resp.reservedAppointments;
+    //                                     this.completedAppointments = resp.completedAppointments;
+    //                                     this.inProgressAppointments = resp.inProgressAppointments;
+    //                                     this.aboutToStartAppointments = resp.aboutToStartAppointments;
+    //                                   });
   }
 }

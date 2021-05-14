@@ -1,20 +1,21 @@
-<table class="table text-center" *ngIf="available.length>0">
+<table class="table text-center" *ngIf="availableAppointments.length>0 && searchON">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Fecha</th>
-        <th scope="col">Hora</th>
-        <th scope="col">Acción</th>
+        <th class="text-center" scope="col">#</th>
+        <th class="text-center" scope="col">Fecha</th>
+        <th class="text-center" scope="col">Hora</th>
+        <th class="text-center" scope="col">Acción</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of available; let i=index">
-        <th scope="row" >{{i +1}}</th>
-        <td>{{item|date:'longDate':'+0'}}</td>
-        <td>{{item|date:'shortTime':'+0'}}</td>
+      <tr *ngFor="let item of availableAppointments; let i=index">
+        <th class="text-center" scope="row" >{{i +1}}</th>
+        <td>{{item|date:"dd-MM-yyyy":'-3'}}</td>
+        <td>{{item|date:'HH:mm':'-3'}}hs.</td>
         <td><button type="text" class="btn btn-block btn-success" (click)="reserveAppointment(item)"><i class="far fa-check-circle"></i> Reservar</button> </td>
     </tbody>
   </table>
-  <div *ngIf="available.length===0" class="alert alert-dark mt-2" role="alert">
-    No hay turnos disponibles para las fechas especificadas
+  <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="availableAppointments.length === 0 && searchON"> 
+    <i class="fas fa-times"></i> No se encontraron <strong>Turnos disponibles</strong> para los parámetros indicados. <br>
+    Por favor, modifique los parámetros de búsqueda.
   </div>

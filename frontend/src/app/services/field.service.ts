@@ -41,16 +41,10 @@ export class FieldService {
   updateFieldSport(fieldID,fieldSport){
     return this.http.put(`${baseUrl}/fields/sport/${fieldID}`, fieldSport );
   }
-  //no se si se usan
-  getFieldsByCenterAdmin(search: any, id){
-    const params = new HttpParams().set('search', search);
-    return this.http.get(`http://localhost:3000/api/fields/admin/${id}`, { params })
-                    .pipe(map((data: any) => {
-                      return data.fields;
-                    }));
-  }
-  deleteField(id: string){
-    return this.http.delete(`http://localhost:3000/api/fields/${id}`);
+  getFieldCombo(sportCenterID: string){
+    let params = new HttpParams();
+    params = params.append('sportCenterID',sportCenterID);
+    return this.http.get(`${baseUrl}/fields/combo`,{params});
   }
 
 }

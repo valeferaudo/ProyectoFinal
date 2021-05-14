@@ -10,19 +10,25 @@ const appointmentCtrl = require('../controllers/appointment.controller');
 const {validateMaxTime} = require('../middlewares/validateMaxTime');
 const {validateCreatedDate} = require('../middlewares/validateCreatedDate');
 const {validateJWT} = require('../middlewares/validateJWT');
+const { validateUserID } = require('../middlewares/validateUserID');
 
 
 
-router.get('/user',[validateJWT],appointmentCtrl.getUserAppointments);
-router.get('/available/:field',[],appointmentCtrl.getAvailableAppointments)
+router.get('/user',[validateJWT,
+            validateUserID],appointmentCtrl.getUserAppointments);
+router.get('/available/:id',[validateJWT,
+            validateUserID,
+            ],appointmentCtrl.getFieldAvailableAppointments)
 router.post('/',[validateJWT,
-                validateCreatedDate,
-                check('date','Date field is required').not().isEmpty(),
-                check('user','User field is required and must be a correct ID').isMongoId(),
-                check('field','Field is required and must be a correct ID').isMongoId(),
-                validateFields],appointmentCtrl.createAppointment);
+            validateUserID,
+            validateCreatedDate,
+            check('date','Date field is required').not().isEmpty(),
+            check('user','User field is required and must be a correct ID').isMongoId(),
+            check('field','Field is required and must be a correct ID').isMongoId(),
+            validateFields],appointmentCtrl.createAppointment);
 router.delete('/:id',[validateJWT,
-                    validateMaxTime],appointmentCtrl.deleteAppointment);
+            validateUserID,
+            validateMaxTime],appointmentCtrl.deleteAppointment);
 
 
 module.exports = router;

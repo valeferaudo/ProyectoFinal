@@ -10,10 +10,13 @@ const {validateJWT} = require('../middlewares/validateJWT');
 const { validateCSAandOwnerField } = require('../middlewares/roleValidators/validateCSAandOwnerField');
 const { validateUserID } = require('../middlewares/validateUserID');
 
+router.get('/combo',[validateJWT,
+            validateUserID],fieldCtrl.getCombo);
+router.get('/:id',[validateJWT,
+            validateUserID],fieldCtrl.getField);
 router.get('/',[validateJWT,
             validateUserID],fieldCtrl.getFields)
-router.get('/:id',[validateJWT,
-            validateUserID],fieldCtrl.getField)
+
 //Este post crea solo la cancha y el precio.
 router.post('/',[validateJWT,
             validateUserID,
@@ -29,11 +32,6 @@ router.put('/:id',[validateJWT,
             validateFields],fieldCtrl.updateField)
 router.put('/sport/:id',[validateJWT,
             validateUserID],fieldCtrl.updateFieldSport);
-//No se si se usa
-router.delete('/:id',[validateJWT],fieldCtrl.deleteField)
-router.get('/admin/:id',[validateJWT],fieldCtrl.getFieldsByCenterAdmin)
-
-
 
 
 module.exports = router;

@@ -13,18 +13,18 @@ export class AdminAppointmentsComponent implements OnInit {
   inProgressAppointments = [];
   aboutToStartAppointments = [];
 
-  constructor(private appointmenService: AppointmentService) {
-                this.appointmenService.getAppointments()
-                                      .subscribe(resp => {
-                                        this.reservedAppointments = resp.reservedAppointments;
-                                        this.completedAppointments = resp.completedAppointments;
-                                        this.inProgressAppointments = resp.inProgressAppointments;
-                                        this.aboutToStartAppointments = resp.aboutToStartAppointments;
-                                      });
-
-               }
+  constructor(private appointmenService: AppointmentService) {}
 
   ngOnInit(): void {
+    // this.getAppointments();
   }
-
+  // getAppointments(){
+  //   this.appointmenService.getAppointments()
+  //                                     .subscribe(resp => {
+  //                                       this.reservedAppointments = resp.reservedAppointments;
+  //                                       this.completedAppointments = resp.completedAppointments;
+  //                                       this.inProgressAppointments = resp.inProgressAppointments;
+  //                                       this.aboutToStartAppointments = resp.aboutToStartAppointments;
+  //                                     });
+  // }
 }

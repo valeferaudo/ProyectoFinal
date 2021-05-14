@@ -12,7 +12,7 @@ import { ValidatorService } from 'src/app/services/validator.service';
   templateUrl: './user-setting.component.html',
   styleUrls: ['./user-setting.component.css']
 })
-export class UserSettingComponent {
+export class UserSettingComponent implements OnInit {
 
   //Banderas
   editMode: boolean = false;
@@ -32,31 +32,18 @@ export class UserSettingComponent {
               private router: Router,
               private activatedRoute: ActivatedRoute,
               private sweetAlertService: SweetAlertService,
-              private errorService: ErrorsService) {
-                this.getUserLogged();
-                this.getUser();
-                this.createForm();
-              }
-  getUser(){
-    if (this.router.url === '/admin/user'){
-      this.createMode = true;
-    }
-    else{
-      this.userID = this.activatedRoute.snapshot.params.id;
-      // if (this.userID !== this.userLogged.uid){
-      //   if(this.userLogged.role === 'USER'){
-      //     this.sweetAlertService.showSwalError({
-      //       title:'Acceso Prohibido',
-      //       icon:'error',
-      //       text:''
-      //     })
-      //   }
-      // }
-    }
+              private errorService: ErrorsService) {}
+  
+  ngOnInit(){
+    this.getUser();
+    this.createForm();
   }
-  getUserLogged(){
-    //CUANDO REUTILICE ESTO EN LOS DEMAS USUARIOS ACA HAY Q VER LA RUTA, DESPUES SI HAY PARAMTTRO O NO (ID) 
-    this.userLogged = this.userService.user;
+  getUser(){
+      this.userID = this.activatedRoute.snapshot.params.id;
+      this.userLogged = this.userService.user;
+      if(this.userID !== this.userLogged.uid){
+        this.router.navigateByUrl('/admin')
+      }
   }
   createForm(){
     this.userForm = this.fb.group({
@@ -65,8 +52,6 @@ export class UserSettingComponent {
       address: [{value: this.userLogged.address, disabled: true},[]],
       phone: [{value: this.userLogged.phone, disabled: true}, [Validators.required]],
       email: [{value: this.userLogged.email, disabled: true}, [Validators.required, Validators.email]],
-      password: [, ],
-      password2: [, []]
     }, {validators: this.validator.passEqual('password', 'password2')});
   }
 
@@ -101,14 +86,12 @@ export class UserSettingComponent {
     })
   }
   createUpdateObject(){
-    if (this.userLogged.role === 'USER'){
-      var userUpdated = {
-        name: this.userForm.controls['name'].value,
-        lastName: this.userForm.controls['lastName'].value,
-        email: this.userLogged.email,
-        phone: this.userForm.controls['phone'].value,
-        address: this.userForm.controls['address'].value,
-      }
+    var userUpdated = {
+      name: this.userForm.controls['name'].value,
+      lastName: this.userForm.controls['lastName'].value,
+      email: this.userLogged.email,
+      phone: this.userForm.controls['phone'].value,
+      address: this.userForm.controls['address'].value,
     }
     return userUpdated;
   }
@@ -116,98 +99,22 @@ export class UserSettingComponent {
     return this.userForm.get(field).invalid &&
             this.userForm.get(field).touched;
  }
-
   cancel(){
     this.pass = false;
     this.change = false;
     this.editMode = false;
+    this.createForm();
     this.disableForm();
   }
-
   disableForm(){
     Object.values(this.userForm.controls).forEach(control => {
       control.disable(); });
-    // this.userForm.controls['name'].disable();
-  }
-  cambiar(){
-    this.change = !this.change;
-    Object.values(this.userForm.controls).forEach(control => {
-      control.enable();
-    });
   }
   unlockForm(){
     this.editMode= true
     Object.values(this.userForm.controls).forEach(control=>{
       control.enable();
     })
-  }
-  deleteUser(){
-    // if(this.userID === this.userLogged.id){
-    //   this.sweetAlertService.showSwalConfirmation({
-    //     title: '¿Desea dar de baja su cuenta?',
-    //     text: ``,
-    //     icon: 'question',
-    //   })
-    //   .then((result) => {
-    //     if (result.value) {
-    //       this.fullScreenLoaderService.openDataLoader();
-    //       this.userService.deleteUser(this.userID)
-    //                       .subscribe( (resp: any)=>{
-    //                         if (resp.success === true){
-    //                           this.fullScreenLoaderService.closeDataLoader();
-    //                           this.sweetAlertService.showSwalResponse({
-    //                             title: 'Cuenta dada de baja',
-    //                             text:'Está siendo redirigido/a',
-    //                             icon: "success",
-    //                           })
-    //                           setTimeout(() => {
-    //                               this.userService.logout()
-    //                          }, 1000);
-    //                         }
-    //                         else if(resp.success === false){
-    //                           this.fullScreenLoaderService.closeDataLoader();
-    //                           this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
-    //                         }
-    //                       }, (err) => {
-    //                         this.errorService.showServerError()
-    //                         this.fullScreenLoaderService.closeDataLoader();
-    //                       })
-    //                 }
-    //     }
-    //   )
-    // }
-    // else if (this.userID !== this.userLogged.id){
-    //   this.sweetAlertService.showSwalConfirmation({
-    //     title: '¿Desea dar de baja la cuenta?',
-    //     text: ``,
-    //     icon: 'question',
-    //   })
-    //   .then((result) => {
-    //     if (result.value) {
-    //       this.userService.deleteUser(this.userID)
-    //                       .subscribe( (resp: any)=>{
-    //                         this.fullScreenLoaderService.close();
-    //                         if (resp.success === true){
-    //                           this.sweetAlertService.showSwalResponse({
-    //                             title: 'Cuenta dada de baja',
-    //                             text:'Está siendo redirigido/a',
-    //                             icon: "success",
-    //                           })
-    //                           setTimeout(() => {
-    //                             this.router.navigateByUrl("users")
-    //                         }, 1000);
-    //                         }
-    //                         else if(resp.success === false){
-    //                           this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
-    //                         }
-    //                       }, (err) => {
-    //                         this.errorService.showServerError()
-    //                         this.fullScreenLoaderService.closeDataLoader();
-    //                       })
-    //                 }
-    //   }
-    // )
-    // }
   }
   openChangePasswordModal(){
     this.hiddenPasswordModal=true;
@@ -225,8 +132,5 @@ export class UserSettingComponent {
     else if(this.userLogged.role === 'CENTER-SUPER-ADMIN'){
       this.router.navigateByUrl('admin/users');
     }
-  }
-  createUser(){
-
   }
 }

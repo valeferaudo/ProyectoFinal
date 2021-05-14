@@ -1,21 +1,153 @@
 const Appointment = require('../models/appointment.model');
 const User = require('../models/user.model');
 const Field = require('../models/field.model');
+const FieldPrice = require('../models/fieldPrice.model');
+const SportCenter = require('../models/sportCenter.model');
+var moment = require('moment');
+moment().format(); 
+
 const cron = require('node-cron');
 
 const { request , response } = require('express');
-
 const appointmentCtrl = {};
 
-appointmentCtrl.createAppointment = async (req = request, res = response) =>{
+appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = response) =>{
+    const fieldID = req.params.id
+    const dateSince = req.query.sinceDate;
+    const dateUntil = req.query.untilDate;
+    const sinceHour = req.query.sinceHour;
+    const untilHour = req.query.untilHour;
     try {
-        const appointment = new Appointment(req.body)
-        appointment.createdDate = (Date.now()- process.env.UTC_ARG);
+        const fieldDB = await Field.findById(fieldID,'sportCenter duration')
+        if(!fieldDB){
+            return unknownIDResponse(res);
+        }
+        const sportCenterDB = await SportCenter.findById(fieldDB.sportCenter)
+        //Armo las fechas desde y hasta
+        let sinceDate = moment(dateSince)
+        let untilDate = moment(dateUntil)
+        //calculo la duracion del turno en horas
+        const hourDuration = (fieldDB.duration / 60) 
+        //armo el arreglo de turnos entre las horas indicadas
+        let appointments = new Array;
+        do {
+            //Horas de busqueda
+            let openingTime = parseInt(sinceHour)  
+            let closingTime = parseInt(untilHour)  
+            do {
+                date = moment(sinceDate).add(openingTime,'h')
+                appointments.push(date)
+                openingTime = openingTime + hourDuration
+            } while (openingTime <= closingTime );
+            sinceDate = moment(sinceDate).add(1,'day')
+         } while (sinceDate <= untilDate);
+         //Ir por dia y si no esta abierto quitar todos, si esta abierto verificar las horas.
+         //Armo arreglo de dias abiertos
+        let openDays = [];
+        sportCenterDB.schedules.forEach( schedule => {
+            openDays.push(schedule)
+        });
+        //QUITO LAS HORAS DONDE LOS DIAS ESTAN CERRADOS y las horas que esta cerrado de los dias abiertos
+        let daysAppointments= []
+        //Horas de busqueda
+        for (let i = 0; i < openDays.length; i++) {
+            for (let j = 0; j < appointments.length; j++) {
+                if(moment(appointments[j]).isoWeekday() === openDays[i].day){
+                    if(moment(appointments[j]).hours() >= moment(openDays[i].openingHour).add(3,'h').hours() &&  moment(appointments[j]).hours() <= moment(openDays[i].closingHour).add(3,'h').hours())
+                    daysAppointments.push(appointments[j])
+                }                
+            }
+        }
+        appointments = daysAppointments;
+        //verificar si fecha = hoy --> no traiga los menores a ahora
+        sinceDate = moment(dateSince)
+        daysAppointments = [];
+        if(sinceDate.date() === moment().date()){
+            if(parseInt(sinceHour) < moment().hour()){
+                for (let j = 0; j < appointments.length; j++) {
+                    if(moment(appointments[j]).date() ===  moment().date()){
+                        if (moment(appointments[j]).hour() > moment().hour()){
+                            daysAppointments.push(appointments[j])
+                        }
+                    }
+                    else{
+                        daysAppointments.push(appointments[j])
+                    }             
+                }
+                appointments = daysAppointments;
+            }
+        }
+        // console.log(appointments)
+        //3- Limpiar los ya reservados
+        //Obtengo los reservados de BD entre los parametros.
+        let reserved = [];
+        reserved = await Appointment.find({$and: [ { date: { $gte: moment(sinceDate).add(parseInt(sinceHour),'h') } },
+                                                    { date: { $lte: moment(untilDate).add(parseInt(untilHour),'h') } },
+                                                {field:fieldID} ] } );
+        //Quito los ya reservados.
+        for (let i = 0; i < reserved.length; i++) {
+            for (let j = 0; j < appointments.length; j++) {
+                // console.log(moment(reserved[i].date).add(3,'h'), moment(appointments[j]), moment(reserved[i].date).add(3,'h').isSame(moment(appointments[j])))
+                if(moment(reserved[i].date).add(3,'h').isSame(moment(appointments[j]))){
+                    appointments.splice(j,1);
+                }             
+            }
+        }
+        //4- ORDENARLOS DE MAS RECIENTES A MAS LEJOS PARA MOSTRARLOS BIEN
+        appointments.sort((elem1,elem2)=>{
+            return (moment(elem1).diff(moment(elem2)))
+        })
+        res.json({
+            ok:true,
+            msg:'Available Appointments',
+            param:{
+                appointments
+            }
+        })
+        
+} catch (error) {
+    console.log(error)
+    res.status(500).json({
+        ok:false,
+        msg:'An unexpected error ocurred'
+    })
+}
+}
+appointmentCtrl.createAppointment = async (req = request, res = response) =>{
+    const body = req.body;
+    try {
+        //obtener la hora de cobro adicional luz, el monto y  el precio de la cancha
+        const fieldDB = await Field.findById(body.field).populate('sportCenter')
+        if(!fieldDB){
+            return unknownIDResponse(res);
+        }
+        let fieldPrice = await FieldPrice.findOne({field: body.field}).sort({'sinceDate' : -1}).limit(1);
+        let aditionalPrice = 0;
+        if (fieldDB.sportCenter.aditionalElectricity){
+            if(parseInt(fieldDB.sportCenter.aditionalElectricityHour.slice(0,2)) <= moment(body.date).hours()){
+                aditionalPrice = fieldDB.sportCenter.aditionalElectricity
+            }
+        }
+        let totalAmount = 0;
+        totalAmount = fieldPrice.price + aditionalPrice;
+        //Le resto 3 a la hora porque la trae con 3 hs mas
+        const appointment = new Appointment({
+            createdDate: moment().subtract(3,'h'),
+            date: moment(body.date).subtract(3,'h'),
+            totalAmount: totalAmount,
+            lightTime: fieldDB.sportCenter.aditionalElectricity ? true: false,
+            owner:{
+                oid: body.owner.oid,
+                name: body.owner.name,
+                phone: body.owner.phone
+            },
+            user: body.user,
+            field: body.field,
+        })
         await appointment.save()
         res.json({
             ok:true,
             msg:'Created Appointment',
-            appointment
         })
     } catch (error) {
         console.log(error);
@@ -31,6 +163,14 @@ appointmentCtrl.createAppointment = async (req = request, res = response) =>{
         })
     }
 }
+function unknownIDResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 3,
+        msg:'Unknown ID. Please insert a correct ID'
+    })
+}
+//NO SE SI SE USAN
 
 appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
     const id = req.params.id;
@@ -61,7 +201,6 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
         })
     }
 }
-
 appointmentCtrl.getUserAppointments = async (req = request , res = response) => {
     const userID = req.uid;
     try {   
@@ -140,77 +279,6 @@ sortDateFromLargest = (array)=>{
         }
     })
     return array
-}
-
-
-
-appointmentCtrl.getAvailableAppointments = async (req = request , res = response) =>{
-        const fieldID = req.params.field
-        const query1 = req.query.dateSince;
-        const query2 = req.query.dateUntil;
-        let dateSince =new Date(query1)
-        let dateUntil = new Date(query2)
-        hours = new Date().getHours()
-        try {
-            sinceTime = dateSince.getTime()
-            untilTime = dateUntil.getTime() 
-            
-            const fieldDB = await Field.findById(fieldID)
-            if(!fieldDB){
-                return res.status(404).json({
-                            ok:false,
-                            msg:'Unknown ID. Please insert a correct Field ID'
-                        })
-            }
-            let available = new Array
-            
-            do {
-                let openingTime = (fieldDB.openingHour.getHours() * 3600000) 
-                let closingTime = (fieldDB.closingHour.getHours() * 3600000) 
-                do {
-                    date = new Date(sinceTime + openingTime + 10800000)
-                    available.push(date)
-                    openingTime = openingTime + 3600000
-                } while (openingTime <= closingTime );
-                sinceTime = sinceTime + 86400000
-             } while (sinceTime <= untilTime);
-            
-             let reserved = new Array
-             let arrayReserved = new Array
-             reserved = await Appointment.find({field:fieldID},'date')
-             reserved.forEach(element =>{
-                 arrayReserved.push(element.date)
-             })
-             arrayReserved.sort((elem1,elem2)=>{
-                 return (elem1.getTime() - elem2.getTime())
-             })
-                 for (let i = 0; i < available.length; i++) {
-                     for (let j = 0; j < arrayReserved.length; j++) {
-                         if((available[i].getTime()) === (arrayReserved[j].getTime())) {
-                             available.splice(i,1)
-                         }
-                     }     
-                 }
-             for (let i = 0; i < available.length; i++) {
-                if((available[i].getTime()) < ((new Date().getTime())- process.env.UTC_ARG)) {
-                    available.splice(i,1)
-                    i= i-1
-                    }
-            }     
-            
-            res.json({
-                ok:true,
-                msg:'Available Appointments',
-                available
-            })
-            
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error ocurred'
-        })
-    }
 }
 
 cron.schedule('0,10,20,30,43,50 * * * *', async () => {

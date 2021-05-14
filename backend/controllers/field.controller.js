@@ -178,6 +178,27 @@ fieldCtrl.updateFieldSport = async (req = request , res = response) => {
         errorResponse(res);
     }   
 }
+fieldCtrl.getCombo = async (req = request, res = response)=> {
+    sportCenterID = req.query.sportCenterID
+    try {
+        let fields = await Field.find({sportCenter: sportCenterID,state:true});
+        let combo = [];
+        fields.forEach(field => {
+            let x = {id:field.id, text:field.name};
+            combo.push(x);
+        });
+        res.json({
+            ok: true,
+            msg:'Found field combo',
+            param: {
+                combo
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
 function errorResponse(res){
     res.status(500).json({
         ok:false,
@@ -200,58 +221,6 @@ function existsNameResponse(res){
     })
 }
 //No se si se usan
-fieldCtrl.getFieldsByCenterAdmin = async (req = request , res = response) => {
-    const id = req.params.id
-    const text = req.query.search
-    const regex = new RegExp(text,'i');
-    try {
-        const fields = await Field.find({$and:[{name: regex},{user:id}]});
-        res.json({
-            ok:true,
-            msg:'Found Fields',
-            fields
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
-    }
-}
-fieldCtrl.deleteField = async ( req = request, res = response) => {
-    const id = req.params.id
-    try {
-        const fieldDB = await Field.findById(id);
-        if (!fieldDB) {
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Field ID'
-            })
-        }
-        const appointments = await Appointments.find({field: id})
-        console.log("turnos" ,appointments)
-        if(appointments.length>0){
-            return res.status(404).json({
-                ok:false,
-                msg:'Cannot delete a Field with pending appointments'
-            })
-        }
-        else{
-            await Field.findByIdAndDelete(id)
-            res.json({
-                ok:true,
-                msg:'Deleted Field'
-            })
-        }
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error ocurred'
-        })
-    }
-}
 
 function setDate(hour){
     const date = new Date(`1970/01/01 ${hour}:00`) 

@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { DatesForm } from '../interfaces/datesForm.interface';
+import { AppointmentFilter } from '../interfaces/filters/appointmentFilter.interface';
+import { environment } from 'src/environments/environment';
+
+const baseUrl = environment.base_url;
 
 @Injectable({
   providedIn: 'root'
@@ -11,26 +15,22 @@ export class AppointmentService {
   constructor(private http: HttpClient) { }
 
   getAppointments(){
-        return this.http.get('http://localhost:3000/api/appointments/user')
-                        .pipe(map((data: any) => {
-                            return data.appointments;
-                          }));
+        return this.http.get(`${baseUrl}/appointments/user`)
   }
-  getAvailableAppointments(form: DatesForm, id: string){
+  getAvailableAppointments(filterObject: AppointmentFilter){
       let params = new HttpParams();
-      params = params.append('dateSince', form.sinceDate);
-      params = params.append('dateUntil', form.untilDate);
-      return this.http.get(`http://localhost:3000/api/appointments/available/${id}`, { params })
-                        .pipe(map((data: any) => {
-                            return data.available;
-                          }));
+      params = params.append('sinceDate', filterObject.sinceDate);
+      params = params.append('untilDate', filterObject.untilDate);
+      params = params.append('sinceHour', filterObject.sinceHour);
+      params = params.append('untilHour', filterObject.untilHour);
+      return this.http.get(`${baseUrl}/appointments/available/${filterObject.fieldID}`, { params })
   }
 
   createAppointments(appointment){
-      return this.http.post('http://localhost:3000/api/appointments', appointment);
+      return this.http.post(`${baseUrl}/appointments`, appointment);
   }
 
   deleteAppointment(id: string){
-      return this.http.delete(`http://localhost:3000/api/appointments/${id}`);
+      return this.http.delete(`${baseUrl}/appointments/${id}`);
   }
 }

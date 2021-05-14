@@ -1,4 +1,13 @@
-<h2>Historial de turnos</h2>
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="card-title"><strong>Historial de turnos </strong></h2>
+        </div>
+        <div class="col-md-6">
+            <button class="pull-right btn btn-info entry-button" [routerLink]="'/admin/appointment'"><i class="fas fa-plus"></i> Nueva turno</button>
+        </div>
+    </div>
+</div>
 <hr>
 <h3>Por comenzar</h3>
 <app-table-appointment [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>

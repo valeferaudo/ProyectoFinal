@@ -23,10 +23,10 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
   getAppointments(){
-    this.appointmentService.getAppointments()
-                                      .subscribe(resp => {
-                                        this.reservedAppointments = resp.reservedAppointments;
-                                        this.aboutToStartAppointments = resp.aboutToStartAppointments;
-                                      });
+    // this.appointmentService.getAppointments()
+    //                                   .subscribe(resp => {
+    //                                     this.reservedAppointments = resp.reservedAppointments;
+    //                                     this.aboutToStartAppointments = resp.aboutToStartAppointments;
+    //                                   });
   }
 }

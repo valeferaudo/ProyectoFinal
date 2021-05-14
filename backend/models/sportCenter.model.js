@@ -11,7 +11,7 @@ const SportCenterSchema = new Schema({
     aditionalElectricity:{type:Number, default:null},
     mercadoPago:{type:Boolean, default: false},
     images: {type:Array, default:[]},
-    schedules: [{day:{type:Schema.Types.ObjectId,ref:'Day',default:null},
+    schedules: [{day:{type:Number, enum:[1,2,3,4,5,6,7] ,default:null},
                 openingHour:{type: Date, default:null},
                 closingHour:{type: Date, default:null}
             }]

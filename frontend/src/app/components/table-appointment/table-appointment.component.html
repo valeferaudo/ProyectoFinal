@@ -1,36 +1,38 @@
-<div *ngIf="appointments.length===0" class="alert alert-dark" role="alert">
-    El usuario no tiene turnos {{text}}
-  </div>
+<hr>
+<h3 *ngIf="text === 'por comenzar.'">Por comenzar</h3>
+<h3 *ngIf="text === 'reservados.'">Reservado</h3>
+<h3 *ngIf="text === 'en curso.'">En curso</h3>
+<h3 *ngIf="text === 'finalizados.'">Finalizado</h3>
+
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="appointments.length===0" > 
+  <i class="fas fa-times"></i> No se encontraron turnos <strong>{{text}}</strong>
+</div>
   <table *ngIf="appointments.length!==0" class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col" *ngIf="this.user.role==='CENTER-ADMIN'">A nombre de</th>
-          <th scope="col" *ngIf="this.user.role==='CENTER-ADMIN'">Teléfono</th>
-          <th scope="col">Cancha</th>
-          <th scope="col">Día</th>
-          <th scope="col">Horario</th>
-          <th scope="col">Estado</th>
-          <th scope="col" *ngIf="this.user.role==='CENTER-ADMIN' && appointments[0].state==='Reserved'">Cancelar</th>
+      <thead [ngClass]="{'bg-reserved':appointments[0].state==='Reserved','bg-completed':appointments[0].state==='Completed','bg-inProgress':appointments[0].state==='InProgress','bg-aboutToStart':appointments[0].state==='AboutToStart'}">
+        <tr [ngClass]="{'text-dark':appointments[0].state==='Reserved','text-white':appointments[0].state==='Completed','text-dark':appointments[0].state==='InProgress','text-dark':appointments[0].state==='AboutToStart'}">
+          <th class="text-center" scope="col">#</th>
+          <th class="text-center" scope="col" *ngIf="this.user.role==='CENTER-ADMIN' || this.user.role==='CENTER-SUPER-ADMIN'">A nombre de</th>
+          <th class="text-center" scope="col" *ngIf="this.user.role==='CENTER-ADMIN' || this.user.role==='CENTER-SUPER-ADMIN'">Teléfono</th>
+          <th class="text-center" scope="col">Cancha</th>
+          <th class="text-center" scope="col">Día</th>
+          <th class="text-center" scope="col">Horario</th>
+          <th class="text-center" scope="col">Estado</th>
+          <th class="text-center" scope="col" *ngIf="(this.user.role==='CENTER-ADMIN' || this.user.role==='CENTER-SUPER-ADMIN') && appointments[0].state==='Reserved'">Cancelar</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of appointments; let i=index"  
-            [ngClass]="{'bg-success':item.state==='Reserved','bg-danger':item.state==='Completed','bg-info':item.state==='InProgress','bg-warning':item.state==='AboutToStart'}">
-          <th scope="row">{{i+1}}</th>
-          <td  *ngIf="this.user.role==='CENTER-ADMIN'">{{item.owner.name}}</td>
-          <td  *ngIf="this.user.role==='CENTER-ADMIN'">{{item.owner.phone}}</td>
-          <td>{{item.field.name}}</td>
-          <td>{{item.date | date:'mediumDate':'+0'}}</td>
-          <td>{{item.date | date:'shortTime':'+0'}}</td>
-  
-          <td>{{item.state| translate}}</td>
-          <td *ngIf="this.user.role==='CENTER-ADMIN'&& item.state==='Reserved'">
-              <button (click)="deleteAppointment(item.id)" class="btn btn-block">
-                <i class="fas fa-trash-alt"></i>
-              </button>
+        <tr *ngFor="let item of appointments; let i=index">
+          <th class="text-center" scope="row">{{i+1}}</th>
+          <td class="text-center" *ngIf="this.user.role==='CENTER-ADMIN' || this.user.role==='CENTER-SUPER-ADMIN'">{{item.owner.name}}</td>
+          <td class="text-center" *ngIf="this.user.role==='CENTER-ADMIN' || this.user.role==='CENTER-SUPER-ADMIN'">{{item.owner.phone}}</td>
+          <td class="text-center" >{{item.field.name}}</td>
+          <td class="text-center" >{{item.date | date:"dd-MM-yyyy":'+0'}}</td>
+          <td class="text-center" >{{item.date | date:'HH:mm':'+0'}}</td>
+          <td class="text-center" >{{item.state| translate}}</td>
+          <td class="text-center" *ngIf="(this.user.role==='CENTER-ADMIN' || this.user.role==='CENTER-SUPER-ADMIN') && item.state==='Reserved'">
+                <i class="fas fa-trash-alt pointer text-danger" (click)="deleteAppointment(item.id)"></i>
           </td>
-          <td *ngIf="this.user.role==='CENTER-ADMIN'&& item.state!=='Reserved'"></td>
+          <!-- <td *ngIf="(this.user.role==='CENTER-ADMIN' || this.user.role==='CENTER-SUPER-ADMIN')&& item.state!=='Reserved'"></td> -->
         </tr>
       </tbody>
     </table>

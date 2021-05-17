@@ -12,7 +12,7 @@
         <th class="text-center" scope="row" >{{i +1}}</th>
         <td>{{item|date:"dd-MM-yyyy":'-3'}}</td>
         <td>{{item|date:'HH:mm':'-3'}}hs.</td>
-        <td><button type="text" class="btn btn-block btn-success" (click)="reserveAppointment(item)"><i class="far fa-check-circle"></i> Reservar</button> </td>
+        <td><button type="text" class="btn btn-ok text-white" (click)="reserveAppointment(item)"><i class="far fa-check-circle"></i> Reservar</button> </td>
     </tbody>
   </table>
   <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="availableAppointments.length === 0 && searchON"> 

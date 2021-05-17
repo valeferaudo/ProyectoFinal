@@ -71,45 +71,30 @@ export class SportCenterScheduleModalComponent implements OnInit {
       this.schedules.push(this.addScheduleItem(i,item))
       i++
     });
-    this.fillForgetDays();
+    this.fillArraySchedules();
+    // this.fillForgetDays();
   }
   addScheduleItem(i,item){
-    let state;
-    if(this.sportCenter.schedules[i] !== undefined){
-      if(parseInt(this.sportCenter.schedules[i].day) - 1 === i){
-        if(this.sportCenter.schedules[i].openingHour === null){
-          this.openSlide[i] = false;
-          state= true;
-        }
-        else{
-          this.openSlide[i] = true;
-          state= false;
-        }
-        return this.fb.group({
-          day: [ this.days[i],[Validators.required],],
-          openingHour: [{value:this.setHourString(this.sportCenter.schedules[i].openingHour),disabled:state},[Validators.required],],
-          closingHour: [{value:this.setHourString(this.sportCenter.schedules[i].closingHour),disabled:state},[Validators.required],],
-        },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
+    return this.fb.group({
+      day: [{value: this.days[i],disabled:true},[Validators.required],],
+      openingHour: [{value:null,disabled:true},[Validators.required],],
+      closingHour: [{value: null,disabled:true},[Validators.required],],
+    },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
+  }
+  fillArraySchedules(){
+    let i = 0;
+    this.days.forEach(item => {
+      if(this.sportCenter.schedules[i] !== undefined){
+        this.schedules.controls[parseInt(this.sportCenter.schedules[i].day)-1].patchValue({
+          day: this.days[parseInt(this.sportCenter.schedules[i].day)-1],
+          openingHour: this.setHourString(this.sportCenter.schedules[i].openingHour),
+          closingHour: this.setHourString(this.sportCenter.schedules[i].closingHour)
+        })
+        this.schedules.controls[parseInt(this.sportCenter.schedules[i].day)-1].enable();
+        this.openSlide[parseInt(this.sportCenter.schedules[i].day)-1] = true;
       }
-      else{
-        this.forgetDays.push({
-          formPosition:parseInt(this.sportCenter.schedules[i].day) - 1,
-          dbPosition: i
-        });
-        return this.fb.group({
-          day: [{value: this.days[i],disabled:true},[Validators.required],],
-          openingHour: [{value:'',disabled:true},[Validators.required],],
-          closingHour: [{value:'',disabled:true},[Validators.required],],
-        },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
-      }
-    }
-    else{
-      return this.fb.group({
-        day: [{value:this.days[i],disabled:true},[Validators.required],],
-        openingHour: [{value:'',disabled:true},[Validators.required],],
-        closingHour: [{value:'',disabled:true},[Validators.required],],
-      },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
-    }
+      i++
+    });
   }
   setHourString(date){
     if(date === null){
@@ -123,7 +108,7 @@ export class SportCenterScheduleModalComponent implements OnInit {
     this.openSlide[index] = event.checked;
     if(this.openSlide[index] === false){
       this.schedules.controls[index].patchValue({
-        day: this.days[index],
+        day: this.days[index+1],
         openingHour:'',
         closingHour:''
       })
@@ -165,11 +150,52 @@ export class SportCenterScheduleModalComponent implements OnInit {
       }
     })
   }
+  //NO SE USAN
+  addScheduleItems(i,item){
+    let state;
+    if(this.sportCenter.schedules[i] !== undefined){
+      console.log("Dia que entra",this.sportCenter.schedules[i].day)
+      if(parseInt(this.sportCenter.schedules[i].day) - 1 === i){
+        if(this.sportCenter.schedules[i].openingHour === null){
+          this.openSlide[i] = false;
+          state= true;
+        }
+        else{
+          this.openSlide[i] = true;
+          state= false;
+        }
+        return this.fb.group({
+          day: [ this.days[i],[Validators.required],],
+          openingHour: [{value:this.setHourString(this.sportCenter.schedules[i].openingHour),disabled:state},[Validators.required],],
+          closingHour: [{value:this.setHourString(this.sportCenter.schedules[i].closingHour),disabled:state},[Validators.required],],
+        },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
+      }
+      else{
+        this.forgetDays.push({
+          formPosition: parseInt(this.sportCenter.schedules[i].day) - 1,
+          dbPosition: i
+        });
+        return this.fb.group({
+          day: [{value: this.days[i],disabled:true},[Validators.required],],
+          openingHour: [{value:null,disabled:true},[Validators.required],],
+          closingHour: [{value: null,disabled:true},[Validators.required],],
+        },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
+      }
+    }
+    else{
+      console.log('No pasan el primer entra:', i)
+      return this.fb.group({
+        day: [{value:this.days[i],disabled:true},[Validators.required],],
+        openingHour: [{value:null,disabled:true},[Validators.required],],
+        closingHour: [{value:null,disabled:true},[Validators.required],],
+      },{validators: this.validatorService.hoursOk("openingHour","closingHour")});
+    }
+  }
   fillForgetDays(){
-    //TENGO LA UBICACION EN EL AFORM ARRAY PERO ME FALTA LA UBICACION EN EL OBJETO SPORCENTER.SCHEDULES
     if(this.forgetDays.length === 0){
       return ;
     }
+    console.log('Dias olvidados',this.forgetDays)
     this.forgetDays.forEach(fd => {
       this.openSlide[fd.formPosition] = true;
       this.schedules.controls[fd.formPosition].patchValue({
@@ -179,5 +205,6 @@ export class SportCenterScheduleModalComponent implements OnInit {
       })
       this.schedules.controls[fd.formPosition].enable();
     });
+    console.log("Despues del dias olvidados:",this.schedules.value)
   }
 }

@@ -1,4 +1,72 @@
-<h1>ARMAR EL HOME</h1>
-<mat-slide-toggle>Slide me!</mat-slide-toggle>
+<div class="row">
+    <div class="col-md-6">
+        <h1 class="card-title"><strong>{{userLogged.sportCenter.name}}</strong></h1>
+    </div>
+</div>
+<hr>
+<div>
+  CAROUSERL
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card-body">
+            <select class="custom-select pull-right">
+                <option selected="">Hoy</option>
+                <option value="1">Semana</option>
+            </select>
+            <h4 class="card-title">Clima</h4>
+            <div class="d-flex align-items-center flex-row m-t-30">
+                <div class="p-2 display-5 text-info"><i class="wi wi-day-showers"></i> <span>73<sup>°</sup></span></div>
+                <div class="p-2">
+                    <h3 class="m-b-0">Sábado</h3><small>Rosario, Santa Fe, Argentina</small></div>
+            </div>
+            <table class="table no-border">
+                <tbody>
+                    <tr>
+                        <td>Viento</td>
+                        <td class="font-medium">ESE 6 km/h</td>
+                    </tr>
+                    <tr>
+                        <td>Humedad</td>
+                        <td class="font-medium">83%</td>
+                    </tr>
+                    <tr>
+                        <td>Presión</td>
+                        <td class="font-medium">28.56 in</td>
+                    </tr>
+                    <tr>
+                        <td>Porcentaje nublado</td>
+                        <td class="font-medium">78%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <ul class="list-unstyled row text-center city-weather-days">
+                <li class="col"><i class="wi wi-day-sunny"></i><span>09:30</span>
+                    <h3>25<sup>°</sup></h3></li>
+                <li class="col"><i class="wi wi-day-cloudy"></i><span>11:30</span>
+                    <h3>19<sup>°</sup></h3></li>
+                <li class="col"><i class="wi wi-day-hail"></i><span>13:30</span>
+                    <h3>21<sup>°</sup></h3></li>
+                <li class="col"><i class="wi wi-day-sprinkle"></i><span>15:30</span>
+                    <h3>24<sup>°</sup></h3></li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+            <div class="col-md-12">
+                <div style="text-align:center;padding:1em 0;"> 
+                    <h2>
+                        <a style="text-decoration:none;">
+                            <span style="color:gray;">Hora actual en</span><br />Rosario, Argentina</a></h2> 
+                            <iframe src="https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=es&size=large&timezone=America%2FArgentina%2FCordoba" width="100%" height="140" frameborder="0" seamless></iframe> 
+                        </div>
+            </div>
+            <div class="col-md-12">
+                
+                ESTADO ACTUAL DE LAS CANCHAS -->> SI OCUPADA O NO CAROUSEL
+            </div>
+    </div>
+</div>
 
 <app-sport-center-modal *ngIf="hiddenSportCenterModal" [hiddenSportCenterModal]="!hiddenSportCenterModal" (closeModalOutput)="closeSportCenterModal($event)"></app-sport-center-modal>

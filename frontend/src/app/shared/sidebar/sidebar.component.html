@@ -47,7 +47,7 @@
                     <!-- USUARIOS -->
                     <li *ngIf="userLogged.role === 'SUPER-ADMIN' || userLogged.role === 'CENTER-SUPER-ADMIN'"> 
                         <a class="waves-effect waves-dark" (click)="goUsers()" [routerLink]="['/admin/super/users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
-                            <i class="fas fa-certificate"></i>
+                            <i class="fas fa-users"></i>
                             <span class="hide-menu"> Usuarios</span>
                         </a>
                     </li>

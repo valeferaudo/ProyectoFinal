@@ -9,24 +9,23 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class AdminHomeComponent implements OnInit {
 
-  user: User;
+  userLogged: User;
   hiddenSportCenterModal: boolean = false;
 
   doNotCloseMenu = (event) => event.stopPropagation();
 
-  constructor(private userService: UserService) {
-    this.getUserLogged();
-   }
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
+    this.getUserLogged();
   }
   getUserLogged(){
-    this.user = this.userService.user;
+    this.userLogged = this.userService.user;
     this.createSportCenter();
   }
   createSportCenter(){
-    if(this.user.role === 'CENTER-SUPER-ADMIN'){
-      if(this.user.sportCenter === undefined || this.user.sportCenter === null){
+    if(this.userLogged.role === 'CENTER-SUPER-ADMIN'){
+      if(this.userLogged.sportCenter === undefined || this.userLogged.sportCenter === null){
         this.hiddenSportCenterModal=true;
       }
     }

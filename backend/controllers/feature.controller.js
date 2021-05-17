@@ -52,7 +52,7 @@ featureCtrl.getFeatures = async (req = request,res = response)=>{
 }
 featureCtrl.getCombo = async (req = request, res = response)=> {
     try {
-        let features = await Feature.find({},'id name');
+        let features = await Feature.find({state:true},'id name');
         let combo = [];
         features.forEach(feature => {
             let x = {id:feature.id, text:feature.name};

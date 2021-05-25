@@ -1,70 +1,78 @@
 <section id="wrapper">
-    <div class="login-register login-sidebar" style="background-image:url(./assets/images/background/login-register.jpg);">
-    <div class="login-box card">
-        <div class="card-body">
-            <form class="form" [formGroup]="registerForm" (submit)="signUp()">
-                <h2 class="card-title text-center font-weight-bold">REGISTRO <br> <small class="text-center">Centro Deportivos</small></h2>
-                <div class="form-group col mb-1" [class.has-danger]="getFieldValid('name')">
+    <div class="login">
+        <div class="login__left-panel">
+		</div>
+        <div class="login__right-panel">
+            <h1 class="login__right-panel__title-header font-bold">SPORTURNO</h1>
+			<div class="login__right-panel__header">
+                <h2 class="login__right-panel__sub-title-header mt-3">CENTRO DEPORTIVO</h2>
+                <!-- <div class="login__right-panel__header__logo"></div> -->
+			</div>
+            <form class="login__right-panel__form" id="loginform" [formGroup]="registerForm" (submit)="signUp()">
+                <h2 class="login__right-panel__sub-sub-title-header">Registro</h2>
+                <div class="form-group mb-2" [class.has-danger]="getFieldValid('name')">
                     <label class="font-bold">Nombre</label>
                     <input type="text" class="form-control"  formControlName="name" [class.form-control-danger]="getFieldValid('name')">
                     <small *ngIf="getFieldValid('name')" class="text-danger">
                         *Ingrese el <strong>nombre</strong>.
                     </small>
                 </div>
-                <div class="form-group col mb-1" [class.has-danger]="getFieldValid('secondName')">
+                <div class="form-group mb-2" [class.has-danger]="getFieldValid('lastName')">
                     <label class="font-bold">Apellido</label>
-                    <input type="text" class="form-control"  formControlName="secondName" [class.form-control-danger]="getFieldValid('secondName')">
-                    <small *ngIf="getFieldValid('secondName')" class="text-danger">
+                    <input type="text" class="form-control"  formControlName="lastName" [class.form-control-danger]="getFieldValid('lastName')">
+                    <small *ngIf="getFieldValid('lastName')" class="text-danger">
                         *Ingrese el <strong>apellido</strong>.
                     </small>
                 </div>
-                <div class="form-group col mb-1" [class.has-danger]="getFieldValid('address')">
+                <div class="form-group mb-2" [class.has-danger]="getFieldValid('address')">
                     <label class="font-bold">Dirección</label>
                     <input type="text" class="form-control" formControlName="address" [class.form-control-danger]="getFieldValid('address')">
                     <small *ngIf="getFieldValid('address')" class="text-danger">
                         *Ingrese la <strong>dirección</strong>.
                     </small>
                 </div>
-                <div class="form-group col mb-1" [class.has-danger]="getFieldValid('phone')">
+                <div class="form-group mb-2" [class.has-danger]="getFieldValid('phone')">
                     <label class="font-bold">Teléfono</label>
                     <input type="number" class="form-control" formControlName="phone" [class.form-control-danger]="getFieldValid('phone')">
                     <small *ngIf="getFieldValid('phone')" class="text-danger">
                         *Ingrese el <strong>teléfono</strong>.
                     </small>
                 </div>
-                <div class="form-group col mb-1" [class.has-danger]="getFieldValid('email')">
+                <div class="form-group mb-2" [class.has-danger]="getFieldValid('email')">
                     <label class="font-bold">Email</label>
                     <input type="text" class="form-control" formControlName="email" [class.form-control-danger]="getFieldValid('email')">
                     <small *ngIf="getFieldValid('email')" class="text-danger">
                         *Ingrese el <strong>email</strong> correctamente.
                     </small>
                 </div>
-                <div class="form-group col mb-1" [class.has-danger]="getFieldValid('password')">
+                <div class="form-group mb-2" [class.has-danger]="getFieldValid('password')">
                     <label class="font-bold">Contraseña</label>
                     <input type="password" class="form-control" formControlName="password" [class.form-control-danger]="getFieldValid('password')">
                     <small *ngIf="getFieldValid('password')" class="text-danger">
                         *Ingrese la <strong>contraseña</strong>.
                     </small>
                 </div>
-                <div class="form-group col mb-3" [class.has-danger]="getFieldValid('password2')">
+                <div class="form-group mb-2" [class.has-danger]="getFieldValid('password2')">
                     <label class="font-bold">Repita contraseña</label>
                     <input type="password" class="form-control" formControlName="password2" [class.form-control-danger]="getFieldValid('password2')">
-                    <small *ngIf="pass2Valid" class="text-danger">
+                    <small *ngIf="getFieldValid('password2')" class="text-danger">
                         *Las <strong>contraseñas</strong> no <strong>coinciden</strong>.
                     </small>                   
                 </div>
-                <div class="form-group col mb-1 text-center p-b-10">
+                <div class="form-group mb-2 text-center p-b-10">
                     <div class="col-xs-12">
                         <button class="btn btn-info  btn-md btn-rounded text-uppercase waves-effect waves-light" type="submit">Registrarse</button>
                     </div>
-                </div>
-                <div class="form-group col m-b-0">
+                    <hr>
                     <div class="col-sm-12 text-center">
                         ¿Ya tienes cuenta? <a [routerLink]="['/admin/login']" class="text-info m-l-5"><b>Ingresar</b></a>
+                    </div>
+                    <hr>
+                    <div class="col-sm-12 text-center">
+                        <i class="fas fa-home"></i> <a [routerLink]="['/']" class="text-info m-l-5">Volver al inicio</a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-</div>
 </section>

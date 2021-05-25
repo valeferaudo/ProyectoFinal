@@ -9,6 +9,7 @@ import { FeatureService } from 'src/app/services/feature.service';
 import { FieldService } from 'src/app/services/field.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
+import { UploadFileService } from 'src/app/services/upload-file.service';
 
 @Component({
   selector: 'app-field-modal',
@@ -28,9 +29,8 @@ export class FieldModalComponent implements OnInit {
 
   fieldPrice: any;
   fieldForm: FormGroup;
-  field: Field;
   formsEquals: boolean = true;
-
+  images: File [] = []
   doNotCloseMenu = (event) => event.stopPropagation();
   @ViewChildren('myCheckBoxFeature') private myCheckboxesFeature : QueryList<any>;
   featureCombo: Combo [] = [];
@@ -41,6 +41,7 @@ export class FieldModalComponent implements OnInit {
               private fb: FormBuilder,
               private errorService: ErrorsService,
               private loaderService: LoaderService,
+              private uploadFileService: UploadFileService,
               private sweetAlertService: SweetAlertService) {}
     
   ngOnInit(): void {
@@ -125,11 +126,16 @@ export class FieldModalComponent implements OnInit {
                     .subscribe((resp: any) =>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
-                        this.sweetAlertService.showSwalResponse({
-                          title: 'Cancha creada',
-                          text:'',
-                          icon: 'success'
-                        })
+                        if(this.images.length > 0){
+                          this.updateImages(resp.param.field.id);
+                        }
+                        else{
+                          this.sweetAlertService.showSwalResponse({
+                            title: 'Cancha creada',
+                            text:'(Sin imágenes)',
+                            icon: 'success'
+                          })
+                        }
                         this.newField.emit(resp.param.field)
                         this.getFields.emit();
                         this.closedModal();
@@ -159,13 +165,17 @@ export class FieldModalComponent implements OnInit {
         this.loaderService.openLineLoader();
         this.fieldService.updateField(this.fieldSelected.id,this.fieldForm.value)
                     .subscribe((resp: any) =>{
-                      this.loaderService.closeLineLoader();
                       if(resp.ok){
-                        this.sweetAlertService.showSwalResponse({
-                          title: 'Servicio editado',
-                          text:'',
-                          icon: 'success'
-                        })
+                        if(this.images.length > 0){
+                          this.updateImages(resp.param.field.id);
+                        }
+                        else{
+                          this.sweetAlertService.showSwalResponse({
+                            title: 'Cancha editada',
+                            text:'(Sin imágenes)',
+                            icon: 'success'
+                          })
+                        }
                         this.getFields.emit();
                         this.closedModal();
                       }
@@ -228,5 +238,26 @@ export class FieldModalComponent implements OnInit {
       }
     });
     return false;
+  }
+  updateImages(fieldID){
+    this.uploadFileService.uploadImage(this.images,'field',fieldID)
+                    .then((resp: any) =>{
+                      this.loaderService.closeLineLoader();
+                      if(resp.ok){
+                        this.sweetAlertService.showSwalResponse({
+                          title: 'Cancha editada',
+                          text:'(Con imágenes)',
+                          icon: 'success'
+                        })
+                      }
+                    },(err)=>{
+                      console.log(err);
+                      //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ
+                      this.loaderService.closeLineLoader();
+                      this.errorService.showErrors(99,'nada');
+                    })
+  }
+  setImages(images){
+    this.images = images;
   }
 }

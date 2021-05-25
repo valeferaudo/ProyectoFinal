@@ -12,8 +12,8 @@ import { FaqComponent } from '../shared/faq/faq.component';
 export const PagesRoutes: Routes = [
    // {path: '', pathMatch: 'full', redirectTo: 'home'},
    // {path: 'home', component: HomeComponent, canActivate: [UserGuard]},
-   {path: '', component: HomeComponent, canActivate: [UserGuard]},
-   {path: 'user/:id', component: UsersComponent,  canActivate: [UserGuard]},
+   {path: 'home', component: HomeComponent, canActivate: [UserGuard]},
+   {path: 'settings/:id', component: UsersComponent,  canActivate: [UserGuard]},
    {path: 'faq', component: FaqComponent,  canActivate: [UserGuard]},
    {path: 'fields', component: FieldsComponent,  canActivate: [UserGuard]},
    {path: 'appointments', component: AppointmentsComponent, canActivate: [UserGuard]},

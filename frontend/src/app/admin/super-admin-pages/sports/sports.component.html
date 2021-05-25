@@ -79,15 +79,15 @@
                 <td class="text-center">
                     <button (click)="activateBlockSport(sport, 'active')" *ngIf="sport.deletedDate !== null" class="btn btn-success badge m-1 content-tooltip" >
                         <i class="fas fa-check"></i>
-                        <span class="tooltip-box">Bloquear</span>
+                        <span class="tooltip-box">Activar</span>
                     </button>
                     <button (click)="activateBlockSport(sport, 'block')" *ngIf="sport.deletedDate === null" class="btn btn-danger badge m-1 content-tooltip" >
                         <i class="fas fa-times"></i>
-                        <span class="tooltip-box"></span>
+                        <span class="tooltip-box">Bloquear</span>
                     </button>
                     <button (click)="updateSportModal(sport)"  class="btn btn-info badge m-1 content-tooltip text-center">
                         <i class="fas fa-pencil-alt"></i>
-                        <span class="tooltip-box"></span>
+                        <span class="tooltip-box">Editar</span>
                     </button>
                 </td>
             </tr>

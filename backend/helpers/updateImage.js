@@ -1,4 +1,4 @@
-const User = require('../models/user.model');
+const SportCenter = require('../models/sportCenter.model');
 const Field = require('../models/field.model');
 
 const fs = require('fs');
@@ -9,18 +9,19 @@ const deleteImage = (path)=>{
         fs.unlinkSync(path);
     }
 }
+//FALLTA REVISAR SI YA EXISTE Y NO SUBIRLA, FALTA ELIMINARLA SI NO VIENE OTRA VEZ
 const updateImage = async (type, id, fileName) =>{
     let oldPath ="";
     switch (type) {
-        //Feature for user's images
-        case 'user':
-            const userDB = await User.findById(id);
-            if(!userDB){
+        //Feature for sportCenter images
+        case 'sportCenter':
+            const sportCenterDB = await SportCenter.findById(id);
+            if(!sportCenterDB){
                 return false;
             }
-            oldPath= `./uploads/users/${userDB.image}`;
+            oldPath= `./uploads/sportCenter/${sportCenterDB.image}`;
             deleteImage(oldPath);
-            userDB.image= fileName;
+            sportCenterDB.images.push(fileName);
             await User.save();
             return true
             
@@ -30,9 +31,11 @@ const updateImage = async (type, id, fileName) =>{
             if(!fieldDB){
                 return false
             }
-            oldPath= `./uploads/fields/${fieldDB.image}`;
-            deleteImage(oldPath);
-            fieldDB.image = fileName;
+            fieldDB.images.forEach(image => {
+                oldPath= `./uploads/field/${image}`;
+                deleteImage(oldPath);
+            });
+            fieldDB.images.push(fileName)
             await fieldDB.save();
             return true
         

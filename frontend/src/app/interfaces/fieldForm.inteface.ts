@@ -7,4 +7,6 @@ export interface FieldForm{
     openingHour: Date;
     closingHour: Date;
     user: string;
+    images: any[],
+    features: any[]
 }

@@ -4,7 +4,7 @@ const Field = require('../models/field.model');
 const FieldPrice = require('../models/fieldPrice.model');
 const SportCenter = require('../models/sportCenter.model');
 var moment = require('moment');
-moment().format(); 
+moment().format();
 
 const cron = require('node-cron');
 
@@ -27,13 +27,13 @@ appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = res
         let sinceDate = moment(dateSince)
         let untilDate = moment(dateUntil)
         //calculo la duracion del turno en horas
-        const hourDuration = (fieldDB.duration / 60) 
+        const hourDuration = (fieldDB.duration / 60)
         //armo el arreglo de turnos entre las horas indicadas
         let appointments = new Array;
         do {
             //Horas de busqueda
-            let openingTime = parseInt(sinceHour)  
-            let closingTime = parseInt(untilHour)  
+            let openingTime = parseInt(sinceHour)
+            let closingTime = parseInt(untilHour)
             do {
                 date = moment(sinceDate).add(openingTime,'h')
                 appointments.push(date)
@@ -55,7 +55,7 @@ appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = res
                 if(moment(appointments[j]).isoWeekday() === openDays[i].day){
                     if(moment(appointments[j]).hours() >= moment(openDays[i].openingHour).add(3,'h').hours() &&  moment(appointments[j]).hours() <= moment(openDays[i].closingHour).add(3,'h').hours())
                     daysAppointments.push(appointments[j])
-                }                
+                }
             }
         }
         appointments = daysAppointments;
@@ -72,7 +72,7 @@ appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = res
                     }
                     else{
                         daysAppointments.push(appointments[j])
-                    }             
+                    }
                 }
                 appointments = daysAppointments;
             }
@@ -88,7 +88,7 @@ appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = res
             for (let j = 0; j < appointments.length; j++) {
                 if(moment(reserved[i].date).add(3,'h').isSame(moment(appointments[j]))){
                     appointments.splice(j,1);
-                }             
+                }
             }
         }
         //4- ORDENARLOS DE MAS RECIENTES A MAS LEJOS PARA MOSTRARLOS BIEN
@@ -102,7 +102,7 @@ appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = res
                 appointments
             }
         })
-        
+
 } catch (error) {
     console.log(error)
     res.status(500).json({
@@ -163,11 +163,7 @@ appointmentCtrl.createAppointment = async (req = request, res = response) =>{
 }
 appointmentCtrl.getSportCenterAppointments = async (req = request , res = response) => {
     const sportCenterID = req.params.id;
-    //Recibo 0= true o 1=false
-    const reserved = parseInt(req.query.reserved) === 0 ? true : false;
-    const aboutToStart = parseInt(req.query.aboutToStart) === 0 ? true : false;
-    const inProgress = parseInt(req.query.inProgress) === 0 ? true : false;
-    const completed = parseInt(req.query.completed) === 0 ? true : false;
+    const state = req.query.state;
     const sinceDate = req.query.sinceDate === "null" || req.query.sinceDate === "undefined" ? null : req.query.sinceDate;
     const untilDate = req.query.untilDate === "null" || req.query.untilDate === "undefined" ? null : req.query.untilDate;
     const sinceHour = req.query.sinceHour !== undefined ? parseInt(req.query.sinceHour) : '1';
@@ -181,14 +177,7 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
         let query = {
             '$and': []
         };
-        let queryState = {
-            '$or': []
-        };
-        reserved === true ? queryState['$or'].push({ state: 'Reserved'}) : queryState ;
-        aboutToStart === true ? queryState['$or'].push({ state: 'AboutToStart'}) : queryState ;
-        inProgress === true ? queryState['$or'].push({ state: 'InProgress'}) : queryState ;
-        completed === true ? queryState['$or'].push({ state: 'Completed'}) : queryState ;
-        query['$and'].push(queryState);
+        state !== null ? query['$and'].push({ state: state}) : query ;
         fieldID !== null ? query['$and'].push({field: fieldID}) : query;
         if(sinceDate !== null && untilDate !== null){
             query['$and'].push({$and: [ { date: { $gte: moment(sinceDate).add(parseInt(sinceHour),'h').subtract(3,'h') } },
@@ -202,47 +191,130 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
                       { "$lte": [{ "$hour": "$date"}, untilHour]}
                     ]
                   }
-            }) 
+            })
         }
 
         const appointments = await Appointment.find(query)
                                          .populate('user','name')
-                                         .populate('field','name')
-                                         
-        let aboutToStartAppointments = [];
-        let reservedAppointments = [];
-        let inProgressAppointments = [];
-        let completedAppointments = [];
-        appointments.forEach(element=>{
-        if(element.state==='AboutToStart'){
-            aboutToStartAppointments.push(element)
+                                         .populate({
+                                            path: "field",
+                                            match: {
+                                                sportCenter: sportCenterID,
+                                            }})
+                                            // lo que andaba pero no filtraba por centro deportivo era .populate('field')
+        if(appointments.length > 0){
+            if(appointments[0].state === 'Completed'){
+                sortDateFromLargest(appointments);
+            }
+            else{
+                sortDateFromSmallest(appointments);
+            }
         }
-        if(element.state==='Reserved'){
-            reservedAppointments.push(element)
-        }
-        if(element.state==='InProgress'){
-            inProgressAppointments.push(element)
-        }
-        if(element.state==='Completed'){
-            completedAppointments.push(element)
-        }
-        })
-        sortDateFromSmallest(aboutToStartAppointments);
-        sortDateFromSmallest(reservedAppointments);
-        sortDateFromSmallest(inProgressAppointments);
-        sortDateFromLargest(completedAppointments);
-
         res.json({
             ok:true,
             msg:'Found Appointments',
             param:{
-                aboutToStartAppointments,
-                reservedAppointments,
-                inProgressAppointments,
-                completedAppointments
+                appointments,
             }
         })
-        
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error ocurred'
+        })
+    }
+}
+appointmentCtrl.getUserAppointments = async (req = request , res = response) => {
+    const userID = req.params.id;
+    const state = req.query.state;
+    const sinceDate = req.query.sinceDate === "null" || req.query.sinceDate === "undefined" ? null : req.query.sinceDate;
+    const untilDate = req.query.untilDate === "null" || req.query.untilDate === "undefined" ? null : req.query.untilDate;
+    const sinceHour = req.query.sinceHour !== undefined ? parseInt(req.query.sinceHour) : '1';
+    const untilHour = req.query.untilHour !== undefined ? parseInt(req.query.untilHour) : '23';
+    const fieldID = req.query.fieldID === "null" || req.query.fieldID === "undefined" ? null : req.query.fieldID;
+    try {
+        const userDB = await User.findById(userID)
+        if(!userDB){
+            return unknownIDResponse(res);
+        }
+        let query = {
+            '$and': []
+        };
+        state !== null ? query['$and'].push({ state: state}) : query ;
+        fieldID !== null ? query['$and'].push({field: fieldID}) : query;
+        if(sinceDate !== null && untilDate !== null){
+            query['$and'].push({$and: [ { date: { $gte: moment(sinceDate).add(parseInt(sinceHour),'h').subtract(3,'h') } },
+                                        { date: { $lte: moment(untilDate).add(parseInt(untilHour),'h').subtract(3,'h') }}]})
+        }
+        if(sinceDate === null && untilDate === null){
+            query['$and'].push({
+                "$expr": {
+                    "$and": [
+                      { "$gte": [{ "$hour": "$date" }, sinceHour] },
+                      { "$lte": [{ "$hour": "$date"}, untilHour]}
+                    ]
+                  }
+            })
+        }
+        query['$and'].push({ user: userID})
+        const appointments = await Appointment.find(query)
+                                         .populate('user','name')
+                                         .populate('field','name')
+        if(appointments.length > 0){
+            if(appointments[0].state === 'Completed'){
+                sortDateFromLargest(appointments);
+            }
+            else{
+                sortDateFromSmallest(appointments);
+            }
+        }
+        res.json({
+            ok:true,
+            msg:'Found Appointments',
+            param:{
+                appointments,
+            }
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error ocurred'
+        })
+    }
+}
+appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
+    const id = req.params.id;
+    try {
+        const appointmentDB = await Appointment.findById(id).populate('user');
+        if (!appointmentDB) {
+            return unknownIDResponse(res)
+        }
+        if(appointmentDB.state !== 'Reserved' || moment(appointmentDB.date).add(3,'h').subtract(12,'h') < moment()){
+            return res.status(404).json({
+                ok:false,
+                code:12,
+                msg:'The appointment cannot be deleted due to cancelation policies'
+            })
+        }
+        let userPhone;
+        if (appointmentDB.owner.phone !== null){
+            userPhone = appointmentDB.owner.phone
+        }
+        else if(appointmentDB.owner.phone === null){
+            userPhone = appointmentDB.user.phone
+        }
+        await Appointment.findByIdAndDelete(id);
+        res.json({
+            ok:true,
+            msg:'Deleted Appointment',
+            param: {
+                userPhone
+            }
+        })
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -279,150 +351,6 @@ sortDateFromLargest = (array)=>{
         }
     })
     return array
-}
-//NO SE SI SE USAN
-appointmentCtrl.getUserAppointments = async (req = request , res = response) => {
-    const userID = req.uid;
-    try {   
-        const userDB = await User.findById(userID)
-        if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
-        }
-        const appointmentsDB = await Appointment.find({user: userID})
-                                            .populate('user','name')
-                                            .populate('field','name')
-    
-        let reservedAppointments = new Array;
-        let completedAppointments = new Array;
-        let inProgressAppointments = new Array;
-        let aboutToStartAppointments = new Array;
-
-        appointmentsDB.forEach(element=>{
-            if(element.state==='AboutToStart'){
-                aboutToStartAppointments.push(element)
-            }
-            if(element.state==='Reserved'){
-                reservedAppointments.push(element)
-            }
-            if(element.state==='InProgress'){
-                inProgressAppointments.push(element)
-            }
-            if(element.state==='Completed'){
-                completedAppointments.push(element)
-            }
-        })
-        sortDateFromSmallest(aboutToStartAppointments);
-        sortDateFromSmallest(reservedAppointments);
-        sortDateFromSmallest(inProgressAppointments);
-        sortDateFromLargest(completedAppointments);
-
-        res.json({
-            ok:true,
-            msg:'Found Appointments',
-            appointments:{
-                reservedAppointments,
-                completedAppointments,
-                inProgressAppointments,
-                aboutToStartAppointments
-            }
-        })
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error ocurred'
-        })
-    }
-}
-appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
-    const id = req.params.id;
-    try {
-        const appointmentDB = await Appointment.findById(id);
-        if (!appointmentDB) {
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Appointment ID'
-            })
-        }
-        if(appointmentDB.state !== 'Reserved'){
-            return res.status(404).json({
-                ok:false,
-                msg:'The appointment cannot be deleted due to cancelation policies'
-            })
-        }
-        await Appointment.findByIdAndDelete(id);
-        res.json({
-            ok:false,
-            msg:'Deleted Appointment'
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error ocurred'
-        })
-    }
-}
-appointmentCtrl.getUserAppointments = async (req = request , res = response) => {
-    const userID = req.uid;
-    try {   
-        const userDB = await User.findById(userID)
-        if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
-        }
-        const appointmentsDB = await Appointment.find({user: userID})
-                                            .populate('user','name')
-                                            .populate('field','name')
-    
-        let reservedAppointments = new Array;
-        let completedAppointments = new Array;
-        let inProgressAppointments = new Array;
-        let aboutToStartAppointments = new Array;
-
-        appointmentsDB.forEach(element=>{
-            if(element.state==='AboutToStart'){
-                aboutToStartAppointments.push(element)
-            }
-            if(element.state==='Reserved'){
-                reservedAppointments.push(element)
-            }
-            if(element.state==='InProgress'){
-                inProgressAppointments.push(element)
-            }
-            if(element.state==='Completed'){
-                completedAppointments.push(element)
-            }
-        })
-        sortDateFromSmallest(aboutToStartAppointments);
-        sortDateFromSmallest(reservedAppointments);
-        sortDateFromSmallest(inProgressAppointments);
-        sortDateFromLargest(completedAppointments);
-
-        res.json({
-            ok:true,
-            msg:'Found Appointments',
-            appointments:{
-                reservedAppointments,
-                completedAppointments,
-                inProgressAppointments,
-                aboutToStartAppointments
-            }
-        })
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error ocurred'
-        })
-    }
 }
 
 cron.schedule('0,10,20,30,43,50 * * * *', async () => {

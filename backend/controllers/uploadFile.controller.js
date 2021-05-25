@@ -25,41 +25,44 @@ uploadCtrl.fileUpload = async (req = request,res=response)=>{
             ok:false,
             msg:'File does not exist'
         });
-      }
-    //Process file
-    const file = req.files.image;
-    const nameSplit = file.name.split('.');
-    const fileExtension = nameSplit[nameSplit.length-1].toLowerCase();
-    //Validate extension
-    const validExtension = ['png','jpg','jpeg'];
-    if(!validExtension.includes(fileExtension)){
-        return res.status(400).json({
-            ok:false,
-            msg:'The file extension is not allowed'
-        });
     }
-    //Create unique file name with uuidv4
-    const fileName = `${uuidv4()}.${fileExtension}`;
-    //Create the path to save the file in a specific folder
-    const path =`./uploads/${type}/${fileName}`;
-    //Move the image to the path
-    file.mv(path, (err)=> {
-        if (err){
-          return res.status(500).json({
-              ok:false,
-              msg: 'An error ocurred while uploading a file'
-          })
+    //Process file
+    //FALTA VALIDAR SI LA IMAGEN YA existe!
+    let imagesKeys = Object.keys(req.files)
+    for(let i=0; i< imagesKeys.length; i++){
+        let key = imagesKeys[i];
+        const file = req.files[key];
+        const nameSplit = file.name.split('.');
+        const fileExtension = nameSplit[nameSplit.length-1].toLowerCase();
+        //Validate extension
+        const validExtension = ['png','jpg','jpeg'];
+        if(!validExtension.includes(fileExtension)){
+            return res.status(400).json({
+                ok:false,
+                msg:'The file extension is not allowed'
+            });
         }
-
-    updateImage(type,id, fileName);
-    res.json({
-        ok: true,
-        msg:'File upload',
-        type,
-        id
+        //Create unique file name with uuidv4
+        const fileName = `${uuidv4()}.${fileExtension}`;
+        //Create the path to save the file in a specific folder
+        const path =`./uploads/${type}/${fileName}`;
+        //Move the image to the path
+        file.mv(path, (err)=> {
+            if (err){
+              return res.status(500).json({
+                  ok:false,
+                  msg: 'An error ocurred while uploading a file'
+              })
+            }
+            updateImage(type,id, fileName);
         })
-    });
-    
+      }
+      res.json({
+        ok: true,
+        msg:'File uploads',
+        // type,
+        // id
+        })
 }
 uploadCtrl.getImage = (req,res = response)=>{
     const type = req.params.type;

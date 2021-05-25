@@ -35,8 +35,8 @@ export class FieldService {
     return this.http.post(`${baseUrl}/fields/`, field );
   }
   updateField(id, form: FieldForm){
-  
-    return this.http.put(`${baseUrl}/fields/${id}`, form );
+    let fieldObject = form;
+    return this.http.put(`${baseUrl}/fields/${id}`, fieldObject );
   }
   updateFieldSport(fieldID,fieldSport){
     return this.http.put(`${baseUrl}/fields/sport/${fieldID}`, fieldSport );

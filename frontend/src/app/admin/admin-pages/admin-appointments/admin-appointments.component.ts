@@ -40,10 +40,7 @@ export class AdminAppointmentsComponent implements OnInit {
   untilHourSelected = 23;
   maxDate = new Date(new Date().getTime() + (25 * 86400000));
   filterObject: AppointmentTableFilter = {
-    stateReserved: 0,
-    stateAboutToStart:  1,
-    stateInProgress:  1,
-    stateCompleted:  1,
+    state: null,
     sinceDate: null,
     untilDate: null,
     sinceHour: 0,
@@ -55,7 +52,7 @@ export class AdminAppointmentsComponent implements OnInit {
   filterAboutToStartON: boolean = false;
   filterInProgressON: boolean = false;
   states = ['Reservado','Por comenzar','En progreso','Completado']
-  statesSelected = ['Reservado'];
+  statesSelected = ['Reservado','Por comenzar','En progreso'];
   constructor(private appointmenService: AppointmentService,
               private errorService: ErrorsService,
               private userService: UserService,
@@ -83,17 +80,14 @@ export class AdminAppointmentsComponent implements OnInit {
                     this.errorService.showErrors(99,'nada')
                   });
   }
-  getAppointments(){
+  getReservedAppointments(){
     this.loaderService.openLineLoader();
     this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
-                                          this.reservedAppointments= resp.param.reservedAppointments;
-                                          this.aboutToStartAppointments = resp.param.aboutToStartAppointments;
-                                          this.inProgressAppointments = resp.param.inProgressAppointments;
-                                          this.completedAppointments = resp.param.completedAppointments;
-                                          this.setStateFilter();
+                                          this.reservedAppointments= resp.param.appointments;
+                                          this.filterReservedON = true 
                                         }
                                       }, (err) =>{
                                         console.log(err)
@@ -101,18 +95,54 @@ export class AdminAppointmentsComponent implements OnInit {
                                         this.loaderService.closeLineLoader();
                                       });
   }
-  setStateFilter(){
-    this.statesSelected.includes('Reservado') ? this.filterReservedON = true : this.filterReservedON = false;
-    this.statesSelected.includes('Por comenzar') ? this.filterAboutToStartON = true : this.filterAboutToStartON = false;
-    this.statesSelected.includes('En progreso') ? this.filterInProgressON = true : this.filterInProgressON = false;
-    this.statesSelected.includes('Completado') ? this.filterCompletedON = true : this.filterCompletedON = false;
+  getAboutToStartAppointments(){
+    this.loaderService.openLineLoader();
+    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+                                      .subscribe((resp:any) => {
+                                        this.loaderService.closeLineLoader();
+                                        if(resp.ok){
+                                          this.aboutToStartAppointments= resp.param.appointments
+                                          this.filterAboutToStartON = true;
+                                        }
+                                      }, (err) =>{
+                                        console.log(err)
+                                        this.errorService.showServerError()
+                                        this.loaderService.closeLineLoader();
+                                      });
+  }
+  getInProgressAppointments(){
+    this.loaderService.openLineLoader();
+    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+                                      .subscribe((resp:any) => {
+                                        this.loaderService.closeLineLoader();
+                                        if(resp.ok){
+                                          this.inProgressAppointments= resp.param.appointments;
+                                          this.filterInProgressON = true;
+                                        }
+                                      }, (err) =>{
+                                        console.log(err)
+                                        this.errorService.showServerError()
+                                        this.loaderService.closeLineLoader();
+                                      });
+  }
+  getCompletedAppointments(){
+    this.loaderService.openLineLoader();
+    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+                                      .subscribe((resp:any) => {
+                                        this.loaderService.closeLineLoader();
+                                        if(resp.ok){
+                                          this.completedAppointments= resp.param.appointments;
+                                          this.filterCompletedON = true;
+                                        }
+                                      }, (err) =>{
+                                        console.log(err)
+                                        this.errorService.showServerError()
+                                        this.loaderService.closeLineLoader();
+                                      });
   }
   fillFilterObject(){
     this.filterObject = {
-      stateReserved: this.statesSelected.includes('Reservado') ? 0 : 1,
-      stateAboutToStart:  this.statesSelected.includes('Por comenzar') ? 0 : 1,
-      stateInProgress:  this.statesSelected.includes('En progreso') ? 0 : 1,
-      stateCompleted:  this.statesSelected.includes('Completado') ? 0 : 1,
+      state: null,
       sinceDate: this.sinceDate,
       untilDate: this.untilDate,
       sinceHour: this.sinceHourSelected,
@@ -139,14 +169,10 @@ export class AdminAppointmentsComponent implements OnInit {
       this.statesSelected.push(state)
     }
     else{
-      let index = 0;
-      this.statesSelected.forEach(element => {
-        if(element === state){
-          this.statesSelected.splice(index,1);
-          return;
-        }
-        index = index + 1;
-      });
+      var i = this.statesSelected.indexOf( state );
+      if ( i !== -1 ) {
+          this.statesSelected.splice( i, 1 );
+      }
     }
   }
   formatDates(){
@@ -212,50 +238,34 @@ export class AdminAppointmentsComponent implements OnInit {
     this.fillFilterObject();
     this.getAppointments();
   }
-  //NO SE SI SE USAN
-  getAboutToStartAppointments(){
-    this.loaderService.openLineLoader();
-    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
-                                      .subscribe((resp:any) => {
-                                        this.loaderService.closeLineLoader();
-                                        if(resp.ok){
-                                          this.aboutToStartAppointments= resp.param.appointments
-                                          this.filterAboutToStartON = true;
-                                        }
-                                      }, (err) =>{
-                                        console.log(err)
-                                        this.errorService.showServerError()
-                                        this.loaderService.closeLineLoader();
-                                      });
-  }
-  getInProgressAppointments(){
-    this.loaderService.openLineLoader();
-    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
-                                      .subscribe((resp:any) => {
-                                        this.loaderService.closeLineLoader();
-                                        if(resp.ok){
-                                          this.inProgressAppointments= resp.param.appointments;
-                                          this.filterInProgressON = true;
-                                        }
-                                      }, (err) =>{
-                                        console.log(err)
-                                        this.errorService.showServerError()
-                                        this.loaderService.closeLineLoader();
-                                      });
-  }
-  getCompletedAppointments(){
-    this.loaderService.openLineLoader();
-    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
-                                      .subscribe((resp:any) => {
-                                        this.loaderService.closeLineLoader();
-                                        if(resp.ok){
-                                          this.completedAppointments= resp.param.appointments;
-                                          this.filterCompletedON = true;
-                                        }
-                                      }, (err) =>{
-                                        console.log(err)
-                                        this.errorService.showServerError()
-                                        this.loaderService.closeLineLoader();
-                                      });
+  getAppointments(){
+    if(this.statesSelected.includes('Reservado')){
+      this.filterObject.state= 'Reserved';
+      this.getReservedAppointments();
+    }else{
+      this.filterReservedON = false;
+      this.reservedAppointments = []
+    }
+    if(this.statesSelected.includes('Por comenzar')){
+      this.filterObject.state= 'AboutToStart';
+      this.getAboutToStartAppointments()
+    }else{
+      this.filterAboutToStartON = false;
+      this.aboutToStartAppointments = []
+    }
+    if(this.statesSelected.includes('En progreso')){
+      this.filterObject.state= 'InProgress';
+      this.getInProgressAppointments();
+    }else{
+      this.filterInProgressON = false;
+      this.inProgressAppointments = []
+    }
+    if(this.statesSelected.includes('Completado')){
+      this.filterObject.state= 'Completed';
+      this.getCompletedAppointments();
+    }else{
+      this.filterCompletedON = false;
+      this.completedAppointments = []
+    }
   }
 }

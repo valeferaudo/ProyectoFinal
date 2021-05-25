@@ -1,9 +1,16 @@
 <section id="wrapper">
-    <div class="login-register" style="background-image:url(../../../assets/images/background/login-register.jpg);">
-        <div class="login-box card">
-            <div class="card-body">
-                <form class="form" [formGroup]="loginForm" (submit)="login()">
-                    <h2 class="card-title m-b-20 text-center font-weight-bold">INGRESO</h2>
+    <div class="login">
+        <div class="login__left-panel">
+		</div>
+        <div class="login__right-panel">
+            <h1 class="login__right-panel__title-header font-bold mt-5">SPORTURNO</h1>
+			<div class="login__right-panel__header">
+                <h2 class="login__right-panel__sub-title-header mt-3">Reservar Turno</h2>
+				<!-- <div class="login__right-panel__header__logo"></div> -->
+			</div>
+                <form class="login__right-panel__form" id="loginform" [formGroup]="loginForm" (submit)="login()">
+                    <!-- <h2 class="card-title m-b-20 text-center font-weight-bold">INGRESO</h2> -->
+                    <h2 class="login__right-panel__sub-sub-title-header font-bold">INGRESO</h2>
                     <div class="form-group mb-1" [class.has-danger]="getFieldValid('email')">
                         <div class="col">
                             <label class="font-bold">Email</label>
@@ -51,7 +58,7 @@
                                 <label for="checkbox-signup">Recordar email</label>
                             </div>
                             <div class="col pull-right">
-                                <button class="btn btn-lg btn-info ml-4" type="submit">Ingresar</button>
+                                <button class="btn btn-md btn-rounded btn-info ml-4" type="submit">Ingresar</button>
                             </div>
                         </div>
                     </div>
@@ -61,17 +68,20 @@
                             ¿Todavía no tiene cuenta? <a [routerLink]="['/register']"  class="text-info m-l-5"><b> Registrarse</b></a>
                         </div>
                     </div>
-                </form>
-                <hr>
-                <div class="form-group m-b-0 mt-4">
-                    <div class="row">
-                        <div class="col text-center">
-                            ¿Unirse a <span class="font-bold"> SporTurno</span>? <a [routerLink]="['/admin/register']"  class="text-info m-l-5"><b> Centro deportivo</b></a>
+                    <hr>
+                    <div class="form-group m-b-0 mt-4">
+                        <div class="row">
+                            <div class="col text-center">
+                                ¿Unirse a <span class="font-bold"> SporTurno</span>? <a [routerLink]="['/admin/register']"  class="text-info m-l-5"><b> Centro deportivo</b></a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <hr>
+                    <div class="col-sm-12 text-center">
+                        <i class="fas fa-home"></i> <a [routerLink]="['/']" class="text-info m-l-5">Volver al inicio</a>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
 </section>
 <app-forget-password-modal *ngIf="hiddenEmailModal" [hiddenEmailModal]="!hiddenEmailModal" (closeModalOutput)="closeRecoverPasswordModal($event)"></app-forget-password-modal>

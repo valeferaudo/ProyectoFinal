@@ -1,9 +1,7 @@
 const User = require ('../models/user.model');
 const {request, response} = require('express');
-const UserType = require ('../models/userType.model')
 const authCtrl ={};
 
-const UserRoleHistorial = require ('../models/userRoleHistorial.model')
 
 const {generateJWT} = require ('../helpers/jwt');
 //Encripta psw

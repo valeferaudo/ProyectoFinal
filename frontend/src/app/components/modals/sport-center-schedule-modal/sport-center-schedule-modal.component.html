@@ -44,7 +44,14 @@
                                         {{openSlide[i]? 'SI': 'NO'}}
                                       </mat-slide-toggle>
                                     </td>                       
-                                </tbody>
+                            </tbody>
+                            <tfoot *ngIf="getSchedulesValid()">
+                              <td colspan="4">
+                                <small class="text-danger">
+                                  *La hora de <strong>inicio</strong> debe ser menor a la hora de <strong>fin</strong>.
+                                </small>
+                              </td>  
+                          </tfoot>
                         </table>
                     </div>
                 </div>

@@ -14,7 +14,7 @@ const { validateUserID } = require('../middlewares/validateUserID');
 
 
 
-router.get('/user',[validateJWT,
+router.get('/user/:id',[validateJWT,
             validateUserID],appointmentCtrl.getUserAppointments);
 router.get('/sportCenter/:id',[validateJWT,
             validateUserID],appointmentCtrl.getSportCenterAppointments);

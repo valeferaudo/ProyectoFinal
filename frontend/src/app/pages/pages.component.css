@@ -1,3 +1,19 @@
 .footer{
     bottom: 0;
 }
+/* PISO PAGE WRAPER PARA Q FUNCIONE EL FOOTER */
+.page-wrapper {
+    margin-left: 0px; }
+.page-wrapper {
+    background: #e9edf1;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    position: relative; }
+
+.fix-header .page-wrapper {
+    padding-top: 70px; }
+.single-column .page-wrapper {
+    margin-left: 0px !important; }
+
+.page-wrapper {
+margin-left: 0; }

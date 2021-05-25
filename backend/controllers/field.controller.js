@@ -1,11 +1,12 @@
 const Field = require ('../models/field.model');
 const User = require ('../models/user.model');
 const FieldPrice = require('../models/fieldPrice.model');
-const FieldSport = require('../models/fieldSport.model');
 const SportCenter = require('../models/sportCenter.model');
 const Appointments = require ('../models/appointment.model');
 const { request, response} = require ('express');
 const fieldCtrl = {};
+
+const uploadCtrl = require('../controllers/uploadFile.controller')
 
 fieldCtrl.getField = async (req = request , res = response) => {
     const id = req.params.id
@@ -140,7 +141,10 @@ fieldCtrl.updateField = async (req = request , res = response) => {
         }
         res.json({
             ok:true,
-            msg:'Updated Field'
+            msg:'Updated Field',
+            param:{
+                field: fieldDB
+            }
         })
     } catch (error) {
         console.log(error);

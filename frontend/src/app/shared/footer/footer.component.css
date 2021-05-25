@@ -10,11 +10,12 @@
     font-size: 0.8125rem;
 }
 .footer {
-    bottom: 0;
     color: #fff;
     left: 0px;
     padding: 0px 0px;
-    position: absolute;
+    position:-ms-page;
+    bottom: 0px;
+    z-index: 10;
     right: 0;
     border-top: 1px solid rgba(120, 130, 140, 0.13);
     background: #343a40; }

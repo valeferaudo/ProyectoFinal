@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Router } from '@angular/router';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { SportCenterService } from 'src/app/services/sport-center.service';
@@ -25,6 +26,7 @@ export class SportCenterModalComponent implements OnInit {
               private sportCenterService: SportCenterService,
               private errorService: ErrorsService,
               private loaderService: LoaderService,
+              private router: Router,
               private sweetAlertService: SweetAlertService) {
                 this.closeModalOutput = new EventEmitter(); 
                 this.createSportCenterForm()
@@ -57,11 +59,9 @@ export class SportCenterModalComponent implements OnInit {
           icon:'info',
           text:''
         });
-        setTimeout(() => {
-          this.hiddenSportCenterModal= false;
-          this.closeModalOutput.emit(this.hiddenSportCenterModal)
-          this.userService.logOut();
-        }, 1500);
+        this.hiddenSportCenterModal= false;
+        this.closeModalOutput.emit(this.hiddenSportCenterModal)
+        this.userService.logOut();
       }
     })
   }
@@ -88,10 +88,9 @@ export class SportCenterModalComponent implements OnInit {
                                text:'¡Bienvenido!',
                                icon: "success"
                              })
-                             setTimeout(() => {
-                              this.hiddenSportCenterModal= false;
-                              this.closeModalOutput.emit(this.hiddenSportCenterModal)
-                            }, 1500);
+                            this.router.navigateByUrl('/admin');
+                            // this.hiddenSportCenterModal= false;
+                            // this.closeModalOutput.emit(this.hiddenSportCenterModal)
                         }, (err) => {
                           console.log(err)
                           this.errorService.showServerError()

@@ -1,5 +1,4 @@
 const User = require ('../models/user.model');
-const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 const bcrypt = require('bcryptjs');
 
 

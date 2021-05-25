@@ -219,7 +219,7 @@ userCtrl.activateBlockUser = async (req = request, res = response) =>{
             return unknownIDResponse(res);
         }
         if (action === 'block'){
-            if(userDB.deletedDate !== null){
+            if(userDB.state === false){
                 return userBlockedResponse(res);
             }
             else{
@@ -227,7 +227,7 @@ userCtrl.activateBlockUser = async (req = request, res = response) =>{
             }
         }
         else if (action === 'active'){
-            if(userDB.deletedDate === null){
+            if(userDB.state === true){
                 return userActiveResponse(res);
             }
             else{

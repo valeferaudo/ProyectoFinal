@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
 import { PipesModule } from '../pipes/pipes.module';
 import { ChartsModule } from 'ng2-charts';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 // COMPONENTES
 import { UserSettingComponent } from './user-setting/user-setting.component';
@@ -30,6 +31,7 @@ import { FieldModalComponent } from './modals/field-modal/field-modal.component'
 import { FieldSportModalComponent } from './modals/field-sport-modal/field-sport-modal.component';
 import { SportCenterScheduleModalComponent } from './modals/sport-center-schedule-modal/sport-center-schedule-modal.component';
 import { UserModalComponent } from './modals/user-modal/user-modal.component';
+import { ImageDropZoneModalComponent } from './modals/image-drop-zone-modal/image-drop-zone-modal.component';
 
 
 @NgModule({
@@ -55,7 +57,9 @@ import { UserModalComponent } from './modals/user-modal/user-modal.component';
     FieldModalComponent,
     FieldSportModalComponent,
     SportCenterScheduleModalComponent,
-    UserModalComponent
+    UserModalComponent,
+    ImageDropZoneModalComponent,
+
 
   ],
   imports: [
@@ -64,7 +68,8 @@ import { UserModalComponent } from './modals/user-modal/user-modal.component';
     PipesModule,
     ReactiveFormsModule,
     ChartsModule,
-    MaterialModule
+    MaterialModule,
+    NgxDropzoneModule
   ],
   exports: [
     UserSettingComponent,
@@ -88,7 +93,8 @@ import { UserModalComponent } from './modals/user-modal/user-modal.component';
     FieldModalComponent,
     FieldSportModalComponent,
     SportCenterScheduleModalComponent,
-    UserModalComponent
+    UserModalComponent,
+    ImageDropZoneModalComponent
   ]
 })
 export class ComponentsModule { }

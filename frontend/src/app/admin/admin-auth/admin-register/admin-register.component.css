@@ -1,32 +1,118 @@
-.login-register {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  height: 100%;
-  width: 100%;
-  padding: 2% 0;
-  position: fixed;
-  overflow: auto; }
+.login {
+	min-height: 100%;
+	width: 100%;
+	display: flex;
+	height: 100vh;
+}
 
-.login-box {
-  width: 400px;
-  margin: 0 auto;
- }
-  .login-box .footer {
-    width: 100%;
-    left: 0px;
-    right: 0px; }
-  .login-box .social {
-    display: block;
-    margin-bottom: 30px; }
+.login__left-panel {
+	background-image: url('../../../../assets/images/background/login-register.jpg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+	width: calc(100% - 25rem);
+}
 
-#recoverform {
-  display: none; }
+.login__left-panel::after {
+	content: '\A';
+	position: absolute;
+	width: 100%; 
+	height: 100%;
+	top: 0; 
+	left: 0;
+	background:rgba(0,0,0,0.6);
+	opacity: 1;
+}
 
-.login-sidebar {
-  padding: 0px;
-  margin-top: 0px; }
-  .login-sidebar .login-box {
-    right: 0px;
-    position: absolute;
-    height: 100%; }
+.login__right-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  width: 25rem;
+  z-index: 1;
+}
+
+.login__right-panel__title-header {
+	text-align: center;
+    color: #5B9AE1;
+    font-weight: 800;
+    margin-bottom: 0px;
+}
+.login__right-panel__sub-title-header{
+	text-align: center;
+    color: #72837b;
+    font-weight: 600;
+    margin-bottom: 0px;
+}
+.login__right-panel__sub-sub-title-header {
+	text-align: center;
+    color: #777777;
+    font-weight: 600;
+    margin-bottom: 0px;
+	text-decoration: underline;
+}
+.login__right-panel__header {
+  	align-items: flex-end;
+	display: flex;
+	min-height: 50px;
+	justify-content: center;
+	width: 100%;
+}
+
+.login__right-panel__header__logo {
+	/* background-image: url('./../../../assets/img/login/escudo.png'); */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	height: 8rem;
+	width: 100%;
+}
+
+.login__right-panel__form {
+	align-items: center;
+	box-sizing: border-box;
+	display: block;
+	flex-direction: column;
+	height: 100%;
+	justify-content: center;
+	padding: 32px;
+  padding-top: 10px;
+	width: 100%;
+}
+
+.login__right-panel__form div.form-group {
+	width: 100%;
+}
+
+.login__right-panel__form__title {
+	margin-bottom: 2rem;
+	text-align: center;
+}
+
+.login__right-panel__form__row {
+	text-align: center;
+	width: 100%;
+}
+
+.login__right-panel__form__row:last-child {
+	margin-top: 3rem;
+} 
+	
+.login__right-panel__form__submit {
+	height: 3rem;
+	width: 200px;
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) { 
+
+	.login__left-panel {
+		display: none;
+	}
+
+	.login__right-panel {
+		width: 100%;
+	}
+
+}

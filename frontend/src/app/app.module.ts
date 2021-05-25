@@ -38,7 +38,7 @@ import { InterceptorService } from './services/interceptors/interceptor.service'
     ReactiveFormsModule,
     HttpClientModule,
     ComponentsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
   ],
   providers: [
     {

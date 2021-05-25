@@ -1,9 +1,16 @@
 <section id="wrapper">
-    <div class="login-register" style="background-image:url(./assets/images/background/login-register.jpg);">
-        <div class="login-box card">
-            <div class="card-body">
-                <form class="form" [formGroup]="registerForm" (submit)="signUp()" >
-                    <h2 class="card-title m-b-20 text-center font-weight-bold">REGISTRO</h2>
+    <div class="login">
+        <div class="login__left-panel">
+		</div>
+        <div class="login__right-panel">
+            <h1 class="login__right-panel__title-header font-bold">SPORTURNO</h1>
+			<div class="login__right-panel__header">
+                <h2 class="login__right-panel__sub-title-header mt-3">Reservar Turno</h2>
+				<!-- <div class="login__right-panel__header__logo"></div> -->
+			</div>
+                <form class="login__right-panel__form" id="loginform" [formGroup]="registerForm" (submit)="signUp()" >
+                    <!-- <h2 class="card-title m-b-20 text-center font-weight-bold">REGISTRO</h2> -->
+                    <h2 class="login__right-panel__sub-sub-title-header font-bold">REGISTRO</h2>
                     <div class="form-group col mb-1" [class.has-danger]="getFieldValid('name')">
                         <label class="font-bold">Nombre</label>
                         <input type="text" class="form-control"  formControlName="name" [class.form-control-danger]="getFieldValid('name')">
@@ -11,10 +18,10 @@
                             *Ingrese el <strong>nombre</strong>.
                         </small>
                     </div>
-                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('secondName')">
+                    <div class="form-group col mb-1" [class.has-danger]="getFieldValid('lastName')">
                         <label class="font-bold">Apellido</label>
-                        <input type="text" class="form-control"  formControlName="secondName" [class.form-control-danger]="getFieldValid('secondName')">
-                        <small *ngIf="getFieldValid('secondName')" class="text-danger">
+                        <input type="text" class="form-control"  formControlName="lastName" [class.form-control-danger]="getFieldValid('lastName')">
+                        <small *ngIf="getFieldValid('lastName')" class="text-danger">
                             *Ingrese el <strong>apellido</strong>.
                         </small>
                     </div>
@@ -49,7 +56,7 @@
                     <div class="form-group col mb-3" [class.has-danger]="getFieldValid('password2')">
                         <label class="font-bold">Repita contraseña</label>
                         <input type="password" class="form-control" formControlName="password2" [class.form-control-danger]="getFieldValid('password2')">
-                        <small *ngIf="pass2Valid" class="text-danger">
+                        <small *ngIf="getFieldValid('password2')" class="text-danger">
                             *Las <strong>contraseñas</strong> no <strong>coinciden</strong>.
                         </small>                   
                     </div>
@@ -62,9 +69,12 @@
                         <div class="col-sm-12 text-center">
                             ¿Ya tienes cuenta? <a [routerLink]="['/login']" class="text-info m-l-5"><b>Ingresar</b></a>
                         </div>
+                        <hr>
+                        <div class="col-sm-12 text-center">
+                            <i class="fas fa-home"></i> <a [routerLink]="['/']" class="text-info m-l-5">Volver al inicio</a>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
 </section>

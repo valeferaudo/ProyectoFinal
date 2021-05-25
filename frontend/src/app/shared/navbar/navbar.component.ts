@@ -9,18 +9,19 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit{
   userLogged : User;
   constructor(private router: Router,
     private userService: UserService,
     private activatedRoute: ActivatedRoute,
     private sweetAlertService: SweetAlertService) {
-      this.userLogged = this.userService.user;
-     }
-
-
-searchField(text: string){
-  this.router.navigate(['/fields'], {queryParams: {search: text},
+    }
+    
+  ngOnInit(){
+  this.userLogged = this.userService.user;
+  } 
+  searchField(text: string){
+    this.router.navigate(['/fields'], {queryParams: {search: text},
                             replaceUrl: true,
                             queryParamsHandling: 'merge'});
 }
@@ -37,10 +38,8 @@ logOut(){
       text:'',
     icon: 'warning',
     })
-    setTimeout(() => {
     this.userService.logOut();
     this.router.navigateByUrl('/login');
-    }, 2000);
   }
 });
 }

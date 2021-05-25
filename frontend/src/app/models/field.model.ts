@@ -9,7 +9,7 @@ export class Field{
            public duration?: number,
            public price?: number,
            public features?: Feature [],
-           public image?: string,
+           public images?: [],
            public id?: string,
            public sportCenter?: string,
            public cantMaxPlayers?: number,

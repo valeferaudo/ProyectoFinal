@@ -98,6 +98,7 @@ export class AdminLoginComponent implements OnInit {
     this.hiddenEmailModal = closeModal
   }
   closeSportCenterModal(closeModal){
-    this.hiddenSportCenterModal = closeModal
+    this.hiddenSportCenterModal = closeModal;
+    this.loginForm.controls['password'].reset();
   }
 }

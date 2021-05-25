@@ -1,10 +1,8 @@
 const SportCenter = require ('../models/sportCenter.model');
-const SportCenterService = require ('../models/sportCenterService.model');
 const Service = require ('../models/service.model');
 const User = require ('../models/user.model');
 const Day = require ('../models/day.model')
 const Field = require ('../models/field.model')
-const UserRoleHistorial = require ('../models/userRoleHistorial.model');
 const {request, response} = require('express');
 const sportCenterCtrl ={};
 
@@ -126,15 +124,7 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
             aditionalElectricityHour: sportCenterBody.aditionalElectricityHour,
             aditionalElectricity: sportCenterBody.aditionalElectricity,
             mercadoPago: sportCenterBody.mercadoPago,
-            schedules:[
-                {day:daysID[0],openingHour:null,closingHour:null},
-                {day:daysID[1],openingHour:null,closingHour:null},
-                {day:daysID[2],openingHour:null,closingHour:null},
-                {day:daysID[3],openingHour:null,closingHour:null},
-                {day:daysID[4],openingHour:null,closingHour:null},
-                {day:daysID[5],openingHour:null,closingHour:null},
-                {day:daysID[6],openingHour:null,closingHour:null},
-            ]
+            schedules:[]
         });
         await sportCenter.save();
         const sportCenterCreated = await SportCenter.findOne({name: sportCenter.name});

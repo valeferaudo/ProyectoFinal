@@ -39,7 +39,6 @@ specialScheduleCtrl.getSpecialSchedules = async (req = request,res = response)=>
         })
     }
 }
-
 specialScheduleCtrl.createSpecialSchedule = async (req = request, res = response) =>{
     userID = req.uid;
     sportCenterID = req.params.id;

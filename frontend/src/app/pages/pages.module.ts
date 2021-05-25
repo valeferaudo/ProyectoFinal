@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from '../app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { ComponentsModule } from '../components/components.module';
+import { MaterialModule } from '../material.module';
 
 //COMPONENTES
 import { PagesComponent } from './pages.component';
@@ -14,7 +16,6 @@ import { AboutComponent } from '../shared/about/about.component';
 import { FieldsComponent } from './fields/fields.component';
 import { DoAppointmentComponent } from './do-appointment/do-appointment.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
-import { ComponentsModule } from '../components/components.module';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { ComponentsModule } from '../components/components.module';
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
-    ComponentsModule
+    ComponentsModule,
+    MaterialModule
   ],
   exports:[
     PagesComponent,

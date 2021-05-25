@@ -27,7 +27,7 @@ export class AdminRegisterComponent {
    createForm(){
      this.registerForm = this.fb.group({
        name: ['', [Validators.required]],
-       secondName: ['', [Validators.required]],
+       lastName: ['', [Validators.required]],
        address: ['',[Validators.required] ],
        phone: ['', [Validators.required]],
        email: ['', [Validators.required, Validators.email]],
@@ -35,13 +35,6 @@ export class AdminRegisterComponent {
        password2: ['', [Validators.required]]
      }, {validators: this.validator.passEqual('password', 'password2')});
    }
-
-   get pass2Valid(){
-      const pass1 = this.registerForm.get('password').value;
-      const pass2 = this.registerForm.get('password2').value;
-      return ( pass1 === pass2 ) ? false : true;
-   }
-
    getFieldValid(field: string){
       return this.registerForm.get(field).invalid &&
               this.registerForm.get(field).touched;

@@ -35,7 +35,7 @@
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
                         <div class="filters__items-container__item__menu__options-container__option" *ngFor="let state of states; let i = index">
-                            <mat-checkbox  (change)="changeStateSelected($event,state)" #myCheckBoxCategory [checked]="statesSelected[i]===state">
+                            <mat-checkbox  (change)="changeStateSelected($event,state)" #myCheckBoxCategory [checked]="statesSelected.includes(state)">
                             <span>{{state}}</span>
                             </mat-checkbox>
                         </div>
@@ -147,6 +147,6 @@
 </div>
 
 <app-table-appointment *ngIf="filterAboutToStartON" [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
-<app-table-appointment *ngIf="filterReservedON" [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterReservedON" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
 <app-table-appointment *ngIf="filterInProgressON" [appointments]="inProgressAppointments" [text]="'en curso.'"></app-table-appointment>
 <app-table-appointment *ngIf="filterCompletedON" [appointments]="completedAppointments" [text]="'finalizados.'"></app-table-appointment>

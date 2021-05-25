@@ -50,4 +50,13 @@ export class SweetAlertService {
       allowOutsideClick: false
     })
   }
+  showSwalResponseConfirm(confirmationSwalObject: ConfirmationSwal){
+    return  Swal.fire({
+      title: confirmationSwalObject.title,
+      text: confirmationSwalObject.text,
+      icon: confirmationSwalObject.icon,
+      showConfirmButton:true,
+      allowOutsideClick: false
+    })
+  }
 }

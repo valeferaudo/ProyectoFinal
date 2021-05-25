@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ErrorsService } from 'src/app/services/errors.service';
+import { LoaderService } from 'src/app/services/loader.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
 import { ValidatorService } from 'src/app/services/validator.service'
@@ -20,6 +21,7 @@ export class RegisterComponent {
               private router: Router,
               private validator: ValidatorService,
               private errorService: ErrorsService,
+              private loaderService: LoaderService,
               private sweetAlertService: SweetAlertService) {
     this.createForm();
    }
@@ -27,7 +29,7 @@ export class RegisterComponent {
    createForm(){
      this.registerForm = this.fb.group({
        name: ['', [Validators.required]],
-       secondName: ['', [Validators.required]],
+       lastName: ['', [Validators.required]],
        address: ['', ],
        phone: ['', [Validators.required]],
        email: ['', [Validators.required, Validators.email]],
@@ -35,13 +37,6 @@ export class RegisterComponent {
        password2: ['', [Validators.required]]
      }, {validators: this.validator.passEqual('password', 'password2')});
    }
-
-   get pass2Valid(){
-      const pass1 = this.registerForm.get('password').value;
-      const pass2 = this.registerForm.get('password2').value;
-      return ( pass1 === pass2 ) ? false : true;
-   }
-
    getFieldValid(field: string){
       return this.registerForm.get(field).invalid &&
               this.registerForm.get(field).touched;
@@ -54,17 +49,19 @@ export class RegisterComponent {
        });
        return;
      }
+     this.loaderService.openLineLoader();
      this.userService.signUp(this.registerForm.value, 'USER')
                       .subscribe(resp => {
+                        this.loaderService.closeLineLoader();
                         this.sweetAlertService.showSwalResponse({
                           title: 'Usuario Registrado',
                           text:'',
                           icon: 'success',
                         })
-                        setTimeout(() => {
-                          this.router.navigateByUrl('/login');
-                        }, 2000);
+                        this.router.navigateByUrl('/login');
                       }, (err) => {
+                        this.loaderService.closeLineLoader();
+                        console.log(err)
                         this.errorService.showErrors('error',99)
                       });
    }

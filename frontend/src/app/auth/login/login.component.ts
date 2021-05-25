@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { ErrorsService } from 'src/app/services/errors.service'
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-login',
@@ -19,12 +20,12 @@ export class LoginComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private userService: UserService,
               private router: Router,
+              private loaderService: LoaderService,
               private sweetAlertService: SweetAlertService,
               private errorService: ErrorsService) {
     this.createForm();
 
   }
-
   createForm(){
     this.loginForm = this.fb.group({
       // email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
@@ -33,9 +34,6 @@ export class LoginComponent implements OnInit {
       remember: [true, , ]
     });
   }
-
-
-
   login(){
     if (this.loginForm.invalid){
       Object.values(this.loginForm.controls).forEach(control=>{
@@ -43,8 +41,10 @@ export class LoginComponent implements OnInit {
       })
       return;
     }
+    this.loaderService.openLineLoader();
     this.userService.signIn(this.loginForm.value, 'USER')
                       .subscribe(resp => {
+                        this.loaderService.closeLineLoader();
                         if (this.loginForm.get('remember').value){
                           localStorage.setItem('email', this.loginForm.get('email').value);
                         }else{
@@ -55,12 +55,10 @@ export class LoginComponent implements OnInit {
                           text:'',
                           icon:'success'
                         });
-                        setTimeout(() => {
-                          this.router.navigateByUrl('');
-                        }, 2000);
+                        this.router.navigateByUrl('user/home');
                       }, (err) => {
                         console.log(err);
-                        console.log('hola')
+                        this.loaderService.closeLineLoader();
                         this.errorService.showErrors('MEJORAR ERRORES',99)
                       });
   }

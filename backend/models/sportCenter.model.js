@@ -14,7 +14,10 @@ const SportCenterSchema = new Schema({
     schedules: [{day:{type:Number, enum:[1,2,3,4,5,6,7] ,default:null},
                 openingHour:{type: Date, default:null},
                 closingHour:{type: Date, default:null}
-            }]
+            }],
+    services: [{service:{type:Schema.Types.ObjectId,ref:'Service',required:true, default:null},
+            description:{type:Number, required:true, default:null}
+           }]
 },{collection:'sportCenters'})
 
 SportCenterSchema.method('toJSON',function(){

@@ -5918,14 +5918,14 @@ input[type="number"] {
     cursor: pointer;
   }
   /* MODALES */
-  .backgroundo-modal{
+  .background-modal{
     background-color: rgba(0, 0, 0, 0.4);
     position: fixed;
     top: 0px;
     left: 0px;
     width: 100%;
     height: 100%;
-    z-index: 9999999;
+    z-index: 1000;
 }
 
 .hidden{
@@ -5939,6 +5939,7 @@ input[type="number"] {
     right: 0;
     left: 0;
     padding: 10;
+    overflow-y: scroll;
 }
 
 /* COLOR MAS UTILIZADO EN USUARIO COMUN */
@@ -6155,3 +6156,33 @@ html{
       .btn-ok{
         background: #007F44;
     }
+    /* Tooltip */
+.content-tooltip{
+  position: relative;
+}
+.content-tooltip:hover .tooltip-box{
+  display: inline-block;
+}
+.tooltip-box{
+  display: none;
+  position: absolute;
+  background-color: black;
+  line-height: 20px;
+  z-index: 500;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  left: 35%;
+  bottom: 80%;
+}
+.tooltip-box::after{
+  content: "";
+  display: block;
+  border-top: 7px solid transparent;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  position: absolute;
+  bottom: -8px;
+}

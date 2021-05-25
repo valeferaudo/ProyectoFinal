@@ -45,7 +45,7 @@
                     <div class="col-6">
                       <div class="form-group mb-1" *ngIf="this.slideElectricity">
                         <label for="aditionalElectricity" class="col-form-label">Monto adicional:</label>
-                        <input type="number" class="form-control"  formControlName="aditionalElectricity" [class.is-invalid]="getFieldValid('aditionalElectricity')">
+                        <input type="number" class="form-control" formControlName="aditionalElectricity" [class.is-invalid]="getFieldValid('aditionalElectricity')">
                         <small *ngIf="getFieldValid('aditionalElectricity')" class="text-danger">
                           *Ingrese un <strong>monto</strong>.
                         </small>
@@ -54,7 +54,7 @@
                     <div class="col-6">
                       <div class="form-group mb-1" *ngIf="this.slideElectricity">
                         <label for="aditionalElectricityHour" class="col-form-label">Hora desde:</label>
-                        <input type="time" class="form-control"  formControlName="aditionalElectricityHour" [class.is-invalid]="getFieldValid('aditionalElectricityHour')">
+                        <input type="time" class="form-control" formControlName="aditionalElectricityHour" [class.is-invalid]="getFieldValid('aditionalElectricityHour')">
                         <small *ngIf="getFieldValid('aditionalElectricityHour')" class="text-danger">
                           *Ingrese un <strong>horario</strong>.
                         </small>

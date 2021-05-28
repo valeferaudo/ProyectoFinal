@@ -1,6 +1,6 @@
 <div class="text-center">
     <div class="col">
-        <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 999;" [routerLink]="['/admin/']" >
+        <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 10;" [routerLink]="['/admin/']" >
             <i class="fas fa-arrow-alt-circle-left"></i> Atrás
         </button>
     </div>
@@ -67,8 +67,10 @@
             <label for="aditionalElectricityHour" class="col-form-label"><strong>Hora desde</strong></label>
             <input type="time" class="form-control"  formControlName="aditionalElectricityHour">
         </div>
-        <div class="form-group col-md-4 m-t-5 m-b-5" >
-            <label for="aditionalElectricityHour" class="col-form-label"><strong>Imágenes</strong></label>
+        <div class="form-group col-md-12 m-t-5 m-b-5" >
+            <label for="description" class="col-form-label"><strong>Imágenes:</strong> ({{sportCenter.images.length}})</label>
+            <app-carousel-images [images]="sportCenter.images" [type]="'sportCenter'" (deleteImage)="deleteImage($event)"></app-carousel-images>
+            <app-image-drop-zone-modal *ngIf="editMode" (setImages)="setImages($event)"></app-image-drop-zone-modal>
         </div>
     </form>
     <div class="form-group col-md-12 text-center" style="margin-top: 5vh;" *ngIf="editMode">

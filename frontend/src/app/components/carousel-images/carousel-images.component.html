@@ -1,0 +1,15 @@
+<ngb-carousel *ngIf="images.length>0" class="mb-1 animated fadeIn text-center" isShown="false">
+    <ng-template *ngFor="let image of images" ngbSlide>
+      <div class="picsum-img-wrapper">
+        <i class="fas fa-times-circle pull-right pointer text-danger" style="z-index: 15;" (click)="deletedImage(image)"></i> 
+        <img [src]= "image | image:type" class="img-field img-fluid" [alt]="image">
+      </div>
+      <div class="carousel-caption">
+        <!-- <h3>First slide label</h3> -->
+        <!-- <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> -->
+      </div>
+    </ng-template>
+  </ngb-carousel>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="images.length === 0"> 
+    <i class="fas fa-times"></i> No hay <strong>Imágenes</strong> subidas.
+</div>

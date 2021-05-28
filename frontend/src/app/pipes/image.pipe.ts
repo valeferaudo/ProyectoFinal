@@ -12,7 +12,7 @@ export class ImagePipe implements PipeTransform {
 
   }
 
-  transform(image: string, type: 'user'|'field' ): string {
+  transform(image: string, type: 'sportCenter'|'field' ): string {
      if (!image){
         return `${base_url}/uploads/${type}/no-image.png`;
      }

@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 import { SportCenter } from 'src/app/models/sportCenter.model';
 import { User } from 'src/app/models/user.model';
 import { ErrorsService } from 'src/app/services/errors.service';
+import { LoaderService } from 'src/app/services/loader.service';
 import { SportCenterService } from 'src/app/services/sport-center.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
+import { UploadFileService } from 'src/app/services/upload-file.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -23,13 +25,16 @@ export class SportCenterComponent implements OnInit {
   slideElectricity: boolean = false;
   slideMercadoPago:boolean = false;
   hiddenScheduleModal: boolean = false;
+  images: File [] = []
 
   constructor(private userService: UserService,
               private fb: FormBuilder,
               private router: Router,
               private sweetAlertService: SweetAlertService,
               private sportCenterService: SportCenterService,
-              private errorService: ErrorsService) { }
+              private errorService: ErrorsService,
+              private loaderService: LoaderService,
+              private uploadFileService: UploadFileService) { }
 
   ngOnInit(): void {
     this.userLogged = this.userService.user;
@@ -124,15 +129,22 @@ export class SportCenterComponent implements OnInit {
       if (result.value) {
       this.sportCenterService.updateSportCenter(this.sportCenter.id, this.sportCenterForm.value)
                         .subscribe((resp: any) => {
-                          this.sweetAlertService.showSwalResponse({
-                            title: 'Centro deportivo editado',
-                            text:'',
-                            icon: 'success',
-                          })
-                          this.sportCenter = resp.param.sportCenter;
-                          this.fillForm();
-                          this.editMode = false;
-                          this.sportCenterForm.disable();
+                          if(resp.ok){
+                            if(this.images.length > 0){
+                              this.updateImages(this.sportCenter.id);
+                            }
+                            else{
+                              this.sweetAlertService.showSwalResponse({
+                                title: 'Centro deportivo editado',
+                                text:'(Sin imágenes)',
+                                icon: 'success',
+                              })
+                            }
+                            this.sportCenter = resp.param.sportCenter;
+                            this.fillForm();
+                            this.editMode = false;
+                            this.sportCenterForm.disable();
+                          }
                         }, (err) => {
                           console.log(err)
                           this.errorService.showErrors('nada',99)
@@ -157,5 +169,59 @@ export class SportCenterComponent implements OnInit {
 }
 closeScheduleModal(){
   this.hiddenScheduleModal = false;
+}
+updateImages(sportCenterID){
+  this.uploadFileService.uploadImage(this.images,'sportCenter',sportCenterID)
+                  .then((resp: any) =>{
+                    this.loaderService.closeLineLoader();
+                    if(resp.ok){
+                      this.sweetAlertService.showSwalResponse({
+                        title: 'Centro deportivo editado',
+                        text:'(Con imágenes)',
+                        icon: 'success'
+                      })
+                      resp.param.uploadImages.forEach(element => {
+                        this.sportCenter.images.push(element)
+                      });
+                    }
+                  },(err)=>{
+                    console.log(err);
+                    //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ //ponerlo en el servicio de upñload
+                    this.loaderService.closeLineLoader();
+                    this.errorService.showErrors(99,'nada');
+                  })
+}
+setImages(images){
+  this.images = images;
+}
+deleteImage(image){
+  this.sweetAlertService.showSwalConfirmation({
+    title: '¿Eliminar imagen?',
+    text: ``,
+    icon: 'question'})
+  .then((result) => {
+    if (result.value) {
+      this.loaderService.openLineLoader();
+      this.uploadFileService.deleteImage(image, this.sportCenter.id, 'sportCenter')
+                  .subscribe((resp: any) =>{
+                    this.loaderService.closeLineLoader();
+                    if(resp.ok){
+                      this.sweetAlertService.showSwalResponse({
+                        title: 'Imagen eliminada',
+                        text:'',
+                        icon: 'success'
+                      })
+                      this.deleteArrayImage(image);
+                    }
+                  },(err)=>{
+                    console.log(err);
+                    this.loaderService.closeLineLoader();
+                    this.errorService.showErrors(99,'nada');
+                  })
+    }
+  })
+}
+deleteArrayImage(imageDeleted){
+  this.sportCenter.images = this.sportCenter.images.filter(image => image !== imageDeleted)
 }
 }

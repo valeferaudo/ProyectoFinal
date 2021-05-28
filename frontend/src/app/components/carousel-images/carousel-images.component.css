@@ -1,0 +1,25 @@
+::ng-deep .carousel-control-next{
+    width: 2.513rem;
+    height: 5.68rem;
+    background-color: black;
+    margin: 0 0 0 0;
+    top: calc(50% - 2.84rem)
+  }
+  ::ng-deep .carousel-control-prev {
+    width: 2.513rem;
+    height: 5.68rem;
+    background-color: black;
+    margin: 0 0 0 0;
+    top: calc(50% - 2.84rem)
+  }
+  .img-field{
+    width: 250px;
+    height: auto;
+  }
+  .first .carousel-control-prev
+{
+    display:none;
+}
+.last .carousel-control-next {
+    display: none;
+}

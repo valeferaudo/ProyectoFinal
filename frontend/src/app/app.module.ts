@@ -18,6 +18,7 @@ import { AdminRegisterComponent } from './admin/admin-auth/admin-register/admin-
 import { ComponentsModule } from './components/components.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InterceptorService } from './services/interceptors/interceptor.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -39,6 +40,7 @@ import { InterceptorService } from './services/interceptors/interceptor.service'
     HttpClientModule,
     ComponentsModule,
     BrowserAnimationsModule,
+    NgbModule,
   ],
   providers: [
     {

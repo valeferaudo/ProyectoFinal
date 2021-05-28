@@ -149,15 +149,16 @@ export class AdminFieldsComponent implements OnInit {
   createFieldModal(){
     this.modalMode = 'create';
     this.hiddenFieldModal = true;
+    console.log(this.fieldSelected)
   }
   updateFieldModal(field){
-    //if() preguntar si tiene ya horarios, sino mandar al crate.
     this.fieldSelected = field
     this.modalMode = 'update';
     this.hiddenFieldModal = true;
   }
   closeFieldModal(){
     this.hiddenFieldModal = false;
+    this.fieldSelected = null;
   }
   createFieldSportModal(){
     this.modalMode = 'create';

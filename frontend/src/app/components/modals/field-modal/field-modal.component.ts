@@ -252,12 +252,42 @@ export class FieldModalComponent implements OnInit {
                       }
                     },(err)=>{
                       console.log(err);
-                      //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ
+                      //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ //ponerlo en el servicio de upñload
                       this.loaderService.closeLineLoader();
                       this.errorService.showErrors(99,'nada');
                     })
   }
   setImages(images){
     this.images = images;
+  }
+  deleteImage(image){
+    this.sweetAlertService.showSwalConfirmation({
+      title: '¿Eliminar imagen?',
+      text: ``,
+      icon: 'question'})
+    .then((result) => {
+      if (result.value) {
+        this.loaderService.openLineLoader();
+        this.uploadFileService.deleteImage(image, this.fieldSelected.id, 'field')
+                    .subscribe((resp: any) =>{
+                      this.loaderService.closeLineLoader();
+                      if(resp.ok){
+                        this.sweetAlertService.showSwalResponse({
+                          title: 'Imagen eliminada',
+                          text:'',
+                          icon: 'success'
+                        })
+                        this.deleteArrayImage(image);
+                      }
+                    },(err)=>{
+                      console.log(err);
+                      this.loaderService.closeLineLoader();
+                      this.errorService.showErrors(99,'nada');
+                    })
+      }
+    })
+  }
+  deleteArrayImage(imageDeleted){
+    this.fieldSelected.images = this.fieldSelected.images.filter(image => image !== imageDeleted)
   }
 }

@@ -32,6 +32,8 @@ import { FieldSportModalComponent } from './modals/field-sport-modal/field-sport
 import { SportCenterScheduleModalComponent } from './modals/sport-center-schedule-modal/sport-center-schedule-modal.component';
 import { UserModalComponent } from './modals/user-modal/user-modal.component';
 import { ImageDropZoneModalComponent } from './modals/image-drop-zone-modal/image-drop-zone-modal.component';
+import { CarouselImagesComponent } from './carousel-images/carousel-images.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -59,8 +61,7 @@ import { ImageDropZoneModalComponent } from './modals/image-drop-zone-modal/imag
     SportCenterScheduleModalComponent,
     UserModalComponent,
     ImageDropZoneModalComponent,
-
-
+    CarouselImagesComponent,
   ],
   imports: [
     FormsModule,
@@ -69,7 +70,8 @@ import { ImageDropZoneModalComponent } from './modals/image-drop-zone-modal/imag
     ReactiveFormsModule,
     ChartsModule,
     MaterialModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    NgbModule
   ],
   exports: [
     UserSettingComponent,
@@ -94,7 +96,9 @@ import { ImageDropZoneModalComponent } from './modals/image-drop-zone-modal/imag
     FieldSportModalComponent,
     SportCenterScheduleModalComponent,
     UserModalComponent,
-    ImageDropZoneModalComponent
+    ImageDropZoneModalComponent,
+    CarouselImagesComponent,
+
   ]
 })
 export class ComponentsModule { }

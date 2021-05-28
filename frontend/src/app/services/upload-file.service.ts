@@ -1,15 +1,19 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {environment} from '../../environments/environment';
+import { ErrorsService } from './errors.service';
+import { SweetAlertService } from './sweet-alert.service';
 
 
-const base_url = environment.base_url;
+const baseUrl = environment.base_url;
 
 @Injectable({
   providedIn: 'root'
 })
 export class UploadFileService {
-  constructor() { }
+  constructor(private http: HttpClient,
+              private errorService: ErrorsService,
+              private sweetAlertService: SweetAlertService) { }
 
   // this can be resolve with http request
   async uploadImage(
@@ -21,7 +25,7 @@ export class UploadFileService {
       const headers = new HttpHeaders({
         'x-token': token
       });
-      const url = `${base_url}/uploads/${type}/${id}`;
+      const url = `${baseUrl}/uploads/${type}/${id}`;
       const formData = new FormData();
       if(files.length > 0){
           for (let i = 0; i < files.length; i++) {
@@ -42,12 +46,18 @@ export class UploadFileService {
         return data;
       }
       else{
-        console.log(data.msg);
+        //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ
+        console.log(data.msg)
+        this.errorService.showErrors(99,'nada');
         return false;
       }
     } catch (error) {
       console.log(error);
       return false;
     }
+  }
+  deleteImage(idImage, id, type : 'sportCenter'|'field'){
+    let params = new HttpParams();
+    return this.http.put(`${baseUrl}/uploads/delete/${type}/${id}/${idImage}`,{params});
   }
 }

@@ -11,5 +11,6 @@ router.use(fileUpload());
 
 router.put('/:type/:id', [validateJWT],uploadCtrl.fileUpload);
 router.get('/:type/:image',uploadCtrl.getImage)
+router.put('/delete/:type/:id/:image',uploadCtrl.deleteImage)
 
 module.exports=router;

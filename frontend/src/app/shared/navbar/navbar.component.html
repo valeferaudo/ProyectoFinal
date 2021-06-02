@@ -12,7 +12,7 @@
             <a class="nav-link font-weight-bold" [routerLink]="['/user/home']">Home</a>
           </li>
           <li class="nav-item" routerLinkActive="active" >
-            <a class="nav-link font-weight-bold" [routerLink]="['/user/sports']" >Deportes</a>
+            <a class="nav-link font-weight-bold" [routerLink]="['/user/sportCenters']" >Centros Deportivos</a>
         </li>
           <li class="nav-item" routerLinkActive="active" >
               <a class="nav-link font-weight-bold" [routerLink]="['/','user','fields']">Canchas</a>
@@ -22,7 +22,10 @@
           </li>
           <li class="nav-item" routerLinkActive="active" >
             <a class="nav-link font-weight-bold" [routerLink]="['/user/favorites']"><i class="fas fa-star bg-star"></i> Favoritos</a>
-        </li>
+          </li>
+          <li class="nav-item" routerLinkActive="active" >
+            <a class="nav-link font-weight-bold" [routerLink]="['/user/payments']">Pagos</a>
+          </li>
         </ul>
         <div class="form-inline my-2 my-lg-0 mr-2">
           <div class="input-group">
@@ -37,7 +40,7 @@
         </div>
         <ul class="navbar-nav mr-auto mr-sm-2">
           <li class="nav-item" routerLinkActive="active" >
-            <a class="nav-link font-weight-bold" [routerLink]="['/user/about']">¿Quienes Somos?</a>
+            <a class="nav-link font-weight-bold" [routerLink]="['/user/faq']">FAQ</a>
         </li>
         <li class="nav-item dropdown pointer">
           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

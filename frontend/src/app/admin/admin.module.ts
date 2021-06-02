@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from '../app-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // Components
  import { AdminComponent } from './admin.component';
@@ -55,7 +56,8 @@ import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports
     FormsModule,
     ReactiveFormsModule,
     PipesModule,
-    MaterialModule
+    MaterialModule,
+    NgbModule
   ],
   exports: [
      AdminComponent,

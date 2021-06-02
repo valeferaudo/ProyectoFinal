@@ -8,11 +8,12 @@
         <nav class="sidebar-nav">
             <ul id="sidebarnav">
                 <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 
-                    <a class="waves-effect waves-dark" (click)="goHome()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                    <a class="waves-effect waves-dark" [routerLink]="['/admin']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                         <i class="fas fa-thumbtack px-1"></i>
                         <span class="hide-menu align-middle">
                             <strong>Inicio</strong>
                         </span>
+                        
                     </a>
                 </li>
                 <li class="nav-devider" *ngIf="userLogged.role !== 'SUPER-ADMIN'"></li>
@@ -25,28 +26,18 @@
                     </li>
                     <!-- TURNOS -->
                     <li *ngIf="userLogged.role !== 'SUPER-ADMIN'"> 
-                        <a class="has-arrow waves-effect waves-dark" aria-expanded="false">
+                        <a class="waves-effect waves-dark" aria-expanded="false" [routerLink]="['/admin/appointments']" routerLinkActive="active">
                             <i class="fas fa-clipboard-check text-center"></i>
                             <span class="hide-menu"> Turnos</span>
                         </a>
-                        <ul aria-expanded="false" class="collapse">
-                            <li>
-                                <a [routerLink]="['/admin/appointments']" routerLinkActive="active">
-                                    <i class="fas fa-list-ul"></i> 
-                                    Lista de turnos
-                                </a>
-                            </li>
-                            <li>
-                                <a [routerLink]="['/admin/appointment/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                                    <i class="fas fa-plus"></i> 
-                                    Nuevo turno
-                                </a>
-                            </li>
-                        </ul>
                     </li>
                     <!-- USUARIOS -->
                     <li *ngIf="userLogged.role === 'SUPER-ADMIN' || userLogged.role === 'CENTER-SUPER-ADMIN'"> 
-                        <a class="waves-effect waves-dark" (click)="goUsers()" [routerLink]="['/admin/super/users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                        <a class="waves-effect waves-dark" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'" [routerLink]="['/admin/users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                            <i class="fas fa-users"></i>
+                            <span class="hide-menu"> Usuarios</span>
+                        </a>
+                        <a class="waves-effect waves-dark" *ngIf="userLogged.role === 'SUPER-ADMIN'" [routerLink]="['/admin/super/users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="fas fa-users"></i>
                             <span class="hide-menu"> Usuarios</span>
                         </a>
@@ -60,7 +51,11 @@
                     </li>
                     <!-- SOLICITUDES -->
                     <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' || userLogged.role === 'SUPER-ADMIN'"> 
-                        <a class="waves-effect waves-dark" (click)="goRequest()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                        <a class="waves-effect waves-dark" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'" [routerLink]="['/admin/requests']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                            <i class="fas fa-question-circle"></i>
+                            <span class="hide-menu"> Solicitudes</span>
+                        </a>
+                        <a class="waves-effect waves-dark" *ngIf="userLogged.role === 'SUPER-ADMIN'" [routerLink]="['/admin/super/requests']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
                             <i class="fas fa-question-circle"></i>
                             <span class="hide-menu"> Solicitudes</span>
                         </a>

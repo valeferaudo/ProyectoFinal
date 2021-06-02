@@ -39,8 +39,8 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     //FALTAn FILTRos
     uid = req.uid
     searchText = req.query.text;
-    state = req.query.state;
-    sportCenterID = req.query.sportCenterID;
+    state = req.query.state === undefined ? '' : req.query.state;
+    sportCenterID = req.query.sportCenterID === undefined ? '' : req.query.sportCenterID;
     try {
         let fields;
         let booleanState;
@@ -60,7 +60,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
             booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
         }
         sportCenterID !== '' ? query['$and'].push({sportCenter: sportCenterID}) : query;
-        fields = await Field.find(query);
+        query['$and'].length > 0 ? fields = await Field.find(query).populate('sportCenter') : fields = await Field.find().populate('sportCenter'); 
         //Armo el selected filters
         if(searchText !== ''){
             selectedFilters.push(' Texto: ', searchText)
@@ -202,6 +202,38 @@ fieldCtrl.getCombo = async (req = request, res = response)=> {
         console.log(error);
         errorResponse(res);
     }
+}
+fieldCtrl.getMinMaxPrices = async (req = request, res = response)=> {
+    try {
+        // let fieldsID = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id')
+        // let fieldsPrices = await findPrices();
+        // let fieldsPrices = []
+        // fieldsID.forEach(field => {
+            // const x = await findPrices(field)
+            // fieldsPrices.push(x);
+        // });
+        // console.log(fieldsPrices.price)
+        // let combo = [];
+        // fields.forEach(field => {
+        //     let x = {id:field.id, text:field.name};
+        //     combo.push(x);
+        // });
+        res.json({
+            ok: true,
+            msg:'Found field combo',
+            param: {
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
+function findPrices(field){
+    return FieldPrice.findOne({field:field.id}).sort({'sinceDate' : -1}).limit(1).populate({path: 'field',
+                                                                    model: 'Field',
+                                                                    match: { $and: [ {deletedDate: null }, { state:true } ] },
+                                                                })
 }
 function errorResponse(res){
     res.status(500).json({

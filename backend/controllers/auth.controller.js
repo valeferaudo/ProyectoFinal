@@ -81,7 +81,7 @@ authCtrl.renewToken = async (req,res)=>{
     const token =  await generateJWT(uid)    
 
 //OBTENER USUARIO
-    var userDB = await User.findById(uid,{uid:1,name:1,lastName:1,address:1,phone:1,email:1,role:1,sportCenter:1})
+    var userDB = await User.findById(uid,{uid:1,name:1,lastName:1,address:1,phone:1,email:1,role:1,sportCenter:1,favorites:1})
                                     .populate('sportCenter');
     if(!userDB){
         return console.log('NO ENCUENTRA USUARIO')

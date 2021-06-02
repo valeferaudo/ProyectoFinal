@@ -159,7 +159,7 @@ sportCtrl.activateBlockSport = async (req = request, res = response) =>{
 }
 sportCtrl.getCombo = async (req = request, res = response)=> {
     try {
-        let sports = await Sport.find({deletedDate: {$ne: null}},'id name');
+        let sports = await Sport.find({deletedDate:  null},'id name');
         let combo = [];
         sports.forEach(sport => {
             let x = {id:sport.id, text:sport.name};

@@ -8,7 +8,7 @@
                 <h2 class="login__right-panel__sub-title-header mt-3">Reservar Turno</h2>
 				<!-- <div class="login__right-panel__header__logo"></div> -->
 			</div>
-                <form class="login__right-panel__form" id="loginform" [formGroup]="registerForm" (submit)="signUp()" >
+                <form class="login__right-panel__form pb-0" id="loginform" [formGroup]="registerForm" (submit)="signUp()" >
                     <!-- <h2 class="card-title m-b-20 text-center font-weight-bold">REGISTRO</h2> -->
                     <h2 class="login__right-panel__sub-sub-title-header font-bold">REGISTRO</h2>
                     <div class="form-group col mb-1" [class.has-danger]="getFieldValid('name')">
@@ -69,7 +69,7 @@
                         <div class="col-sm-12 text-center">
                             ¿Ya tienes cuenta? <a [routerLink]="['/login']" class="text-info m-l-5"><b>Ingresar</b></a>
                         </div>
-                        <hr>
+                        <hr class="m-1">
                         <div class="col-sm-12 text-center">
                             <i class="fas fa-home"></i> <a [routerLink]="['/']" class="text-info m-l-5">Volver al inicio</a>
                         </div>

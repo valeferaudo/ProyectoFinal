@@ -46,5 +46,7 @@ export class FieldService {
     params = params.append('sportCenterID',sportCenterID);
     return this.http.get(`${baseUrl}/fields/combo`,{params});
   }
-
+  getMinMaxPrices(){
+    return this.http.get(`${baseUrl}/fields/minMaxPrices`);
+  }
 }

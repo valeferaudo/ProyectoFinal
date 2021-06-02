@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col-md-6">
-            <h2 class="card-title"><strong>Listado de canchas </strong></h2>
+            <h2 class="card-title"><strong>Listado de Centros Deportivos </strong></h2>
         </div>
     </div>
 </div>
@@ -12,8 +12,8 @@
             <div id="example_filter" class="search-entry">
                 <h6 class="pull-left">
                     <strong class="search-title-text">Buscar:</strong>
-                    <input type="search" class="" [value]="searchText" placeholder="" #text (keyup.enter)="searchFields(text.value)" >
-                    <i class="fas fa-search pointer" (click)="searchFields(text.value)"></i>
+                    <input type="search" class="" [value]="searchText" placeholder="" #text (keyup.enter)="searchSportCenters(text.value)" >
+                    <i class="fas fa-search pointer" (click)="searchSportCenters(text.value)"></i>
                 </h6>
             </div>
       </div>
@@ -54,26 +54,26 @@
                 </div>
                 <div class="filters__items-container__item">
                     <!-- FILTER BUTTON -->
-                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuFeature">
-                    <span class="filters__items-container__item__button__resume">Características</span>
-                    <span class="filters__items-container__item__button__name">Características</span>
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuServices">
+                    <span class="filters__items-container__item__button__resume">Servicios</span>
+                    <span class="filters__items-container__item__button__name">Servicios</span>
                     </button>
                                 <!-- FILTER MENU -->
-                    <mat-menu #menuFeature="matMenu">
+                    <mat-menu #menuServices="matMenu">
                     <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
-                        <div class="filters__items-container__item__menu__options-container__option" *ngFor="let feature of featureCombo; let i = index">
-                            <mat-checkbox  (change)="changeFeatureSelected($event,feature)" #myCheckBoxCategory [checked]="featuresSelected.includes(feature)">
-                            <span>{{feature.text}}</span>
+                        <div class="filters__items-container__item__menu__options-container__option" *ngFor="let service of servicesCombo; let i = index">
+                            <mat-checkbox  (change)="changeFeatureSelected($event,service)" #myCheckBoxCategory [checked]="servicesSelected.includes(service)">
+                            <span>{{service.text}}</span>
                             </mat-checkbox>
                         </div>
                         </div>
                     </div>
                                     <!-- ACTIONS -->
                     <div class="filters__items-container__item__actions-container">
-                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetFeatures()">Limpiar</button>
-                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterFeatures()">Aplicar</button>
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetServices()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterServices()">Aplicar</button>
                     </div>
                     </mat-menu>
                 </div>  
@@ -116,43 +116,6 @@
                 </div>
                 <div class="filters__items-container__item">
                     <!-- FILTER BUTTON -->
-                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuPrice">
-                        <span class="filters__items-container__item__button__resume">Precio</span>
-                        <span class="filters__items-container__item__button__name">Precio</span>
-                </button>
-                <!-- FILTER MENU -->
-                <mat-menu #menuPrice="matMenu">
-                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
-                          <!-- VALUES -->
-                      <div class="filters__items-container__item__menu__range-container">
-                        <div class="filters__items-container__item__menu__range-container__header">
-                          <p class="filters__items-container__item__menu__range-container__header__title">Desde ({{sincePriceSelected}})</p>
-                        </div>
-                          <mat-slider class="filters__items-container__item__menu__range-container__range"
-                              tickInterval="1"
-                              [(ngModel)]="sincePriceSelected" color="accent" [max]="untilPriceSelected" [min]="sinceBDPrice" step="1" thumbLabel="true">
-                          </mat-slider>
-                      </div>
-                      <div class="filters__items-container__item__menu__range-container">
-                          <div class="filters__items-container__item__menu__range-container__header">
-                            <p class="filters__items-container__item__menu__range-container__header__title">Hasta ({{untilPriceSelected}})</p>
-                          </div>
-                          <mat-slider class="filters__items-container__item__menu__range-container__range" 
-                          tickInterval="1"
-                          [(ngModel)]="untilPriceSelected" color="accent" [max]="untilBDPrice" [min]="sincePriceSelected" step="1" thumbLabel="true"></mat-slider>
-                        </div>
-                    </div>
-                                  <!-- ACTIONS -->
-                    <div class="filters__items-container__item__actions-container">
-                      <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetPrice()">Limpiar</button>
-                        <!-- <button mat-button (click)="clearFilter(filter)" type="button"
-                            class="filters__items-container__item__actions-container__button">Limpiar</button> -->
-                      <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterPrice()">Aplicar</button>
-                    </div>
-                  </mat-menu>
-                </div>
-                <div class="filters__items-container__item">
-                    <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuMap">
                     <span class="filters__items-container__item__button__resume">Mapa</span>
                     <span class="filters__items-container__item__button__name">Mapa</span>
@@ -175,7 +138,7 @@
 </div>
 <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="card-group">
-    <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let field of fields">
+    <!-- <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let field of sportCenters">
         <app-card-field [field]="field"></app-card-field>
-    </div>
+    </div> -->
 </div>

@@ -74,7 +74,7 @@
                 <div class="form-group mb-1">
                   <label *ngIf="fieldSelected !== null" for="description" class="col-form-label"><strong>Imágenes:</strong> ({{fieldSelected.images.length}})</label>
                   <label *ngIf="fieldSelected === null" for="description" class="col-form-label"><strong>Imágenes:</strong></label>  
-                  <app-carousel-images *ngIf="fieldSelected !== null" [images]="fieldSelected.images" [type]="'field'" (deleteImage)="deleteImage($event)"></app-carousel-images>
+                  <app-carousel-images *ngIf="fieldSelected !== null" [images]="fieldSelected.images" [type]="'field'" [mode]="'update'" (deleteImage)="deleteImage($event)"></app-carousel-images>
                   <app-image-drop-zone-modal (setImages)="setImages($event)"></app-image-drop-zone-modal>
                 </div>
               </form>

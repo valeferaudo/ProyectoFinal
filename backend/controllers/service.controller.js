@@ -71,7 +71,6 @@ serviceCtrl.createService = async (req = request, res = response) =>{
         errorResponse(res);
     }
 }
-
 serviceCtrl.updateService = async (req = request, res = response) =>{
     const serviceID = req.params.id
     const name = req.body.name
@@ -137,6 +136,26 @@ serviceCtrl.activateBlockService = async (req= request, res= response) => {
                 msg:'Activated Service'
             })
         }
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
+serviceCtrl.getCombo = async (req = request, res = response)=> {
+    try {
+        let services = await Service.find({state:  true},'id name');
+        let combo = [];
+        services.forEach(service => {
+            let x = {id:service.id, text:service.name};
+            combo.push(x);
+        });
+        res.json({
+            ok: true,
+            msg:'Found Service combo',
+            param: {
+                combo
+            }
+        })
     } catch (error) {
         console.log(error);
         errorResponse(res);

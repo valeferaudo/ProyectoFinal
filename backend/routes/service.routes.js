@@ -14,6 +14,8 @@ const { validateUserID } = require('../middlewares/validateUserID');
 router.get('/',[validateJWT,
             validateUserID],serviceCtrl.getServices)
 // router.get('/id',[validateJWT],serviceCtrl.getService)
+router.get('/combo',[validateJWT,
+            validateUserID],serviceCtrl.getCombo)
 router.post('/',[validateJWT,
             validateUserID,
             validateSuperAdminRole,

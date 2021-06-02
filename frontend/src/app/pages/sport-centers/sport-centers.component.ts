@@ -1,40 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { ActivatedRoute } from '@angular/router';
 import { Combo } from 'src/app/interfaces/combo.interface';
-import { FieldFilter } from 'src/app/interfaces/filters/fieldFilter.interface';
-import { Field } from 'src/app/models/field.model';
-import { User } from 'src/app/models/user.model';
-import { FeatureService } from 'src/app/services/feature.service';
+import { SportCenterFilter } from 'src/app/interfaces/filters/sportCenter.interface';
+import { SportCenter } from 'src/app/models/sportCenter.model';
+import { ErrorsService } from 'src/app/services/errors.service';
+import { FieldService } from 'src/app/services/field.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { ServiceService } from 'src/app/services/service.service';
+import { SportCenterService } from 'src/app/services/sport-center.service';
 import { SportService } from 'src/app/services/sport.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
-import { ErrorsService } from '../../services/errors.service';
-import { FieldService } from '../../services/field.service'
 
 @Component({
-  selector: 'app-fields',
-  templateUrl: './fields.component.html',
-  styleUrls: ['./fields.component.css']
+  selector: 'app-sport-centers',
+  templateUrl: './sport-centers.component.html',
+  styleUrls: ['./sport-centers.component.css']
 })
-export class FieldsComponent implements OnInit {
+export class SportCentersComponent implements OnInit {
 
   searchText: string = '';
-  fields: Field[] = [];
+  sportCenters: SportCenter[] = [];
   filterON: boolean = false;
-  filters: FieldFilter = {
-    sportCenterID: '',
+  filters: SportCenterFilter = {
     text: '',
     state: '',
-    features: [],
+    services: [],
     sports: [],
     sinceHour: 1,
     untilHour: 23,
   }
   sportsCombo: Combo[];
   sportsSelected = [];
-  featureCombo: Combo[];
-  featuresSelected = [];
+  servicesCombo: Combo[];
+  servicesSelected = [];
   sinceHourSelected = 0;
   untilHourSelected = 23;
   sinceBDPrice;
@@ -44,10 +42,10 @@ export class FieldsComponent implements OnInit {
   selectedFilters: string [] = [];
   doNotCloseMenu = (event) => event.stopPropagation();
 
-  constructor(private fieldService: FieldService,
-              private activatedRoute: ActivatedRoute,
-              private featureService: FeatureService,
-              private sportService: SportService,
+  constructor(private sportService: SportService,
+              private sportCenterService: SportCenterService,
+              private fieldService: FieldService,
+              private serviceService: ServiceService,
               private loaderService: LoaderService,
               private sweetAlertService: SweetAlertService,
               private errorService: ErrorsService) {
@@ -57,16 +55,15 @@ export class FieldsComponent implements OnInit {
      this.getCombos();
     }
     getCombos(){
-      this.getFeatureCombo();
+      this.getServicesCombo();
       this.getSportCombo();
-      this.getPrices();
-      this.getFields();
+      // this.getSportCenters();
     }
-    getFeatureCombo(){
-      this.featureService.getCombo()
+    getServicesCombo(){
+      this.serviceService.getServiceCombo()
                     .subscribe((resp: any)=>{
                       if(resp.ok){
-                        this.featureCombo = resp.param.combo
+                        this.servicesCombo = resp.param.combo
                       }
                     },(err)=>{
                       console.log(err);
@@ -96,11 +93,11 @@ export class FieldsComponent implements OnInit {
                     this.errorService.showErrors(99,'nada');
                   })
     }
-    getFields(){
-      this.fieldService.getFields(this.filters)
+    getSportCenters(){
+      this.sportCenterService.getSportCenters(this.filters)
                 .subscribe((resp: any) => {
                   if(resp.ok){
-                    this.fields = resp.param.fields;
+                    this.sportCenters = resp.param.fields;
                     this.selectedFilters = resp.param.selectedFilters;
                   }
                 },(err)=>{
@@ -108,10 +105,10 @@ export class FieldsComponent implements OnInit {
                   this.errorService.showErrors(99,'nada');
                 })
     }
-    searchFields(text: string){
+    searchSportCenters(text: string){
       this.searchText = text;
       this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
     refreshTable(){
       this.searchText = '';
@@ -120,14 +117,14 @@ export class FieldsComponent implements OnInit {
     clearFilter(){
       this.filterON = false;
       this.sportsSelected = [];
-      this.featuresSelected = [];
+      this.servicesSelected = [];
       this.sinceHourSelected = 0;
       this.untilHourSelected = 23;
       this.sincePriceSelected = null;
       this.untilPriceSelected = null;
       this.selectedFilters = [];
       this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
     changeSportSelected(event:MatCheckboxChange,sport){
       if(event.checked){
@@ -143,63 +140,50 @@ export class FieldsComponent implements OnInit {
     resetSports(){
       this.sportsSelected = [];
       this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
     filterSports(){
       this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
     changeFeatureSelected(event:MatCheckboxChange,feature){
       if(event.checked){
-        this.featuresSelected.push(feature)
+        this.servicesSelected.push(feature)
       }
       else{
-        var i = this.featuresSelected.indexOf( feature );
+        var i = this.servicesSelected.indexOf( feature );
         if ( i !== -1 ) {
-            this.featuresSelected.splice( i, 1 );
+            this.servicesSelected.splice( i, 1 );
         }
       }
     }
-    resetFeatures(){
-      this.featuresSelected = [];
+    resetServices(){
+      this.servicesSelected = [];
       this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
-    filterFeatures(){
+    filterServices(){
       this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
     resetHour(){
       // this.searchON = false;
       this.sinceHourSelected = 0;
       this.untilHourSelected = 23;
       this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
     filterHour(){
       // this.searchON = true;
       this.fillFilterObject();
-      this.getFields();
-    }
-    resetPrice(){
-      this.sincePriceSelected = null;
-      this.untilPriceSelected = null;
-      this.fillFilterObject();
-      this.getFields();
-    }
-    filterPrice(){
-      this.fillFilterObject();
-      this.getFields();
+      this.getSportCenters();
     }
     fillFilterObject(){
       this.filters = {
         text: this.searchText,
         // sports: this.sportsSelected,
         state: '',
-        sportCenterID: '',
-        features: this.featuresSelected,
-        sincePrice: this.sincePriceSelected,
-        untilPrice: this.untilPriceSelected,
+        services: this.servicesSelected,
         sinceHour: this.sinceHourSelected,
         untilHour: this.untilHourSelected,
       }

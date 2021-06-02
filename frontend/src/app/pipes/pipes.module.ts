@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ImagePipe } from './image.pipe';
 import { NoimagePipe } from './noimage.pipe';
 import { TranslatePipe } from './translate.pipe';
+import { IfNullPipe } from './if-null.pipe';
 
 
 
@@ -10,7 +11,8 @@ import { TranslatePipe } from './translate.pipe';
   declarations: [
     ImagePipe,
     NoimagePipe,
-    TranslatePipe
+    TranslatePipe,
+    IfNullPipe
 ],
   imports: [
     CommonModule
@@ -18,7 +20,8 @@ import { TranslatePipe } from './translate.pipe';
   exports: [
     ImagePipe,
     NoimagePipe,
-    TranslatePipe
+    TranslatePipe,
+    IfNullPipe
   ]
 })
 export class PipesModule { }

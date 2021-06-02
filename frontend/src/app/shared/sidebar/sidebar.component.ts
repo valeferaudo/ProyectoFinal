@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
@@ -15,6 +15,7 @@ export class SidebarComponent implements OnInit {
   sportCenterID: string;
   constructor(private sweetAlertService: SweetAlertService,
     private userService: UserService,
+    private activatedRoute: ActivatedRoute,
     private router: Router) { 
     }
     

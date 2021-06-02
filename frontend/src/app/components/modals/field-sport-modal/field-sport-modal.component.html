@@ -40,8 +40,8 @@
                                 </tbody>
                             <!-- poner un ng if en el footer -->
                             <tfoot>
-                                <td colspan="4" class="text-center" *ngIf="sportFields.length < sportsCombo.length">
-                                    <button class="btn btn-ok mt-0 text-white" (click)="addSportField()">
+                                <td class="text-center" *ngIf="sportFields.length < sportsCombo.length">
+                                    <button class="btn btn-ok mt-0" (click)="addSportField()">
                                         <i class="fas fa-plus-circle"></i> Agregar
                                     </button>
                                 </td>  

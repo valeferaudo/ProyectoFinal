@@ -5,60 +5,36 @@ import { ErrorsService } from '../../services/errors.service';
 import { FieldService } from '../..//services/field.service';
 import { UserService } from '../../services/user.service';
 import { SweetAlertService } from '../../services/sweet-alert.service';
+import { Field } from 'src/app/models/field.model';
 @Component({
   selector: 'app-card-field',
   templateUrl: './card-field.component.html',
   styleUrls: ['./card-field.component.css']
 })
 export class CardFieldComponent {
-  @Input() field: any ={}
-  @Input() id: any;
-  user: User;
+  @Input() field: Field;
+  userLogged: User;
 
   constructor(private router: Router,
               private userService: UserService,
               private fieldService: FieldService,
               private sweetAlertService: SweetAlertService,
               private errorService: ErrorsService) {
-                this.user = this.userService.user;
+                this.userLogged = this.userService.user;
                }
 
-  navigateField(id){
-    if (this.user.role === 'USER'){
-      this.router.navigateByUrl(`/appointment/${id}`);
-    }
-    else if (this.user.role === 'CENTER-ADMIN'){
-      this.router.navigateByUrl(`/admin/appointment/${id}`);
-    }
+  goAppointment(fieldID){
+    //ir a la pagina de turnos ya con la cancha
 
   }
-  updateField(id: string){
-    this.router.navigateByUrl(`/admin/field/${id}`);
+  goSportCenter(sportCenterID){
+    //ABRIR EL MODAL DE INFO DEL CENTRO DEPORTIVO
+    // que te muestre un mapa con la ubicacion tambien
   }
-  // deleteField(id: string){
-  //   this.sweetAlertService.showSwalConfirmation({
-  //     title: '¿Estás seguro de eliminar la cancha?',
-  //     text: `Cancha: ${this.field.name}`,
-  //     icon: 'question',
-  //   }).then((result) => {
-  //     if (result.value) {
-  //       this.fieldService.deleteField(id)
-  //                           .subscribe(resp => {
-  //                             this.sweetAlertService.showSwalResponse({
-  //                               title: 'Cancha eliminada',
-  //                               text:'',
-  //                               icon: 'error',
-  //                             })
-  //                             setTimeout(() => {
-  //                               location.reload();
-  //                             }, 2000);
-  //                             }, (err) => {
-  //                               console.log(err);
-  //                               this.errorService.showErrors('mejorar',99)
-  //                             });
-
-  //   }
-  //   });
-  // }
-
+  addFavorite(fieldID){
+//PONER COMO FAVORITO
+  }
+  deleteFavorite(fieldID){
+    //quitar de favorito
+  }
 }

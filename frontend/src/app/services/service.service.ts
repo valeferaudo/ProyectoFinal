@@ -35,4 +35,7 @@ export class ServiceService {
     };
     return this.http.put(`${baseUrl}/services/activateBlock/${id}`,body);
   }
+  getServiceCombo(){
+    return this.http.get(`${baseUrl}/services/combo`);
+  }
 }

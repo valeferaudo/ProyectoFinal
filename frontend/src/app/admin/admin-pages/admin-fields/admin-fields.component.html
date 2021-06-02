@@ -68,7 +68,7 @@
                 <th>#</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
-                <th>Etapa de creación</th>                
+                <th>Estado</th>                
                 <th class="text-center">Acción</th>
             </tr>
         </thead>
@@ -76,8 +76,8 @@
             <tr *ngFor="let field of fields; let i = index">
                 <td>{{i+1}}</td>
                 <td>{{field.name}}</td>
-                <td>{{field.description}}</td>
-                <td>{{field.state? 'Activo' : 'Por completar'}}</td>
+                <td>{{field.description | ifNull}}</td>
+                <td>{{field.state? 'Activo' : 'Agregar Deporte'}}</td>
                 <td class="text-center">
                     <button (click)="activateBlockField(field, 'active')" *ngIf="field.deletedDate !== null" class="btn btn-success badge m-1 content-tooltip" >
                         <i class="fas fa-check"></i>

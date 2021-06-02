@@ -1,4 +1,19 @@
   .img-carousel{
-      height: 600px;
-      width: 1200px;
+      height: 100vh;
+      width: 100vw;
+  }
+  .text-hover{
+    color: white;
+  }
+  .text-hover :hover{
+    color: #212529 !important;
+  }
+  .dropdown-item {
+    color: white
+  }
+  .dropdown-item:hover{
+    color: #212529;
+  }
+  .bg-blur{
+    background-color: rgba(202, 189, 189, 0.3);
   }

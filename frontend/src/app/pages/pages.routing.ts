@@ -7,6 +7,9 @@ import { Routes } from '@angular/router';
  import { UserGuard } from '../guards/user.guard';
  import { DoAppointmentComponent } from './do-appointment/do-appointment.component';
 import { FaqComponent } from '../shared/faq/faq.component';
+import { SportCentersComponent } from './sport-centers/sport-centers.component';
+import { FavoritesComponent } from './favorites/favorites.component';
+import { PaymentsComponent } from './payments/payments.component';
 
 
 export const PagesRoutes: Routes = [
@@ -16,6 +19,9 @@ export const PagesRoutes: Routes = [
    {path: 'settings/:id', component: UsersComponent,  canActivate: [UserGuard]},
    {path: 'faq', component: FaqComponent,  canActivate: [UserGuard]},
    {path: 'fields', component: FieldsComponent,  canActivate: [UserGuard]},
+   {path: 'sportCenters', component: SportCentersComponent,  canActivate: [UserGuard]},
+   {path: 'favorites', component: FavoritesComponent,  canActivate: [UserGuard]},
+   {path: 'payments', component: PaymentsComponent,  canActivate: [UserGuard]},
    {path: 'appointments', component: AppointmentsComponent, canActivate: [UserGuard]},
    {path: 'appointment/:id', component: DoAppointmentComponent, canActivate: [UserGuard]},
 ];

@@ -69,7 +69,7 @@
         </div>
         <div class="form-group col-md-12 m-t-5 m-b-5" >
             <label for="description" class="col-form-label"><strong>Imágenes:</strong> ({{sportCenter.images.length}})</label>
-            <app-carousel-images [images]="sportCenter.images" [type]="'sportCenter'" (deleteImage)="deleteImage($event)"></app-carousel-images>
+            <app-carousel-images [images]="sportCenter.images" [type]="'sportCenter'" [mode]="'update'" (deleteImage)="deleteImage($event)"></app-carousel-images>
             <app-image-drop-zone-modal *ngIf="editMode" (setImages)="setImages($event)"></app-image-drop-zone-modal>
         </div>
     </form>

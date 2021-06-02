@@ -31,7 +31,6 @@ export class AdminFieldsComponent implements OnInit {
     text: '',
     state: '',
     features:[],
-    price:[]
   }
   selectedFilters: string [] = [];
   fieldStates = ['Activo', 'Bloqueado']
@@ -98,7 +97,6 @@ export class AdminFieldsComponent implements OnInit {
       state: this.fieldStateSelected,
       sportCenterID: this.userLogged.sportCenter.id,
       features:[],
-      price:[]
     }
   }
   activateBlockField(field, action: 'active' | 'block'){

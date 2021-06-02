@@ -6186,3 +6186,6 @@ html{
   position: absolute;
   bottom: -8px;
 }
+.bg-ok{
+ background-color: blue;   
+}

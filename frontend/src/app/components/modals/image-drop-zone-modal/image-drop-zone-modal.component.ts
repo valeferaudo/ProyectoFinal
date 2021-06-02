@@ -14,7 +14,7 @@ export class ImageDropZoneModalComponent implements OnInit {
   ngOnInit(): void {
   }
   onSelect(event) {
-    // console.log(event);
+    console.log(event);
     this.files.push(...event.addedFiles);
     this.setImages.emit(this.files)
   }

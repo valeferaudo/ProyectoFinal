@@ -12,6 +12,7 @@ import { AdminNavbarComponent } from './admin-navbar/admin-navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { InitialHomeComponent } from './initial-home/initial-home.component';
 import { FaqComponent } from './faq/faq.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -29,7 +30,8 @@ import { FaqComponent } from './faq/faq.component';
   ],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    NgbModule
   ],
   exports:[
     PageNotFoundComponent,

@@ -16,6 +16,9 @@ import { AboutComponent } from '../shared/about/about.component';
 import { FieldsComponent } from './fields/fields.component';
 import { DoAppointmentComponent } from './do-appointment/do-appointment.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { SportCentersComponent } from './sport-centers/sport-centers.component';
+import { FavoritesComponent } from './favorites/favorites.component';
+import { PaymentsComponent } from './payments/payments.component';
 
 
 @NgModule({
@@ -26,7 +29,10 @@ import { AppointmentsComponent } from './appointments/appointments.component';
     AboutComponent,
     FieldsComponent,
     DoAppointmentComponent,
-    AppointmentsComponent
+    AppointmentsComponent,
+    SportCentersComponent,
+    FavoritesComponent,
+    PaymentsComponent
   ],
   imports: [
     CommonModule,

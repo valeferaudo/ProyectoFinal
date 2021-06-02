@@ -13,6 +13,7 @@ export class User{
         public password?: string,
         public role?: 'USER' | 'SUPER-ADMIN' | 'CENTER-SUPER-ADMIN' | 'CENTER-ADMIN',
         public uid?: string,
+        public favorites?: any [],
         public sportCenter?: SportCenter
         ){}
 

@@ -53,7 +53,7 @@ export class AdminAppointmentsComponent implements OnInit {
   filterInProgressON: boolean = false;
   states = ['Reservado','Por comenzar','En progreso','Completado']
   statesSelected = ['Reservado','Por comenzar','En progreso'];
-  constructor(private appointmenService: AppointmentService,
+  constructor(private appointmentService: AppointmentService,
               private errorService: ErrorsService,
               private userService: UserService,
               private fieldService: FieldService,
@@ -82,7 +82,7 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getReservedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
@@ -97,7 +97,7 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getAboutToStartAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
@@ -112,7 +112,7 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getInProgressAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
@@ -127,7 +127,7 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getCompletedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){

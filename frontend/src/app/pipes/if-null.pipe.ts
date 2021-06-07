@@ -5,9 +5,12 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class IfNullPipe implements PipeTransform {
 
-  transform(text: string | object): string {
+  transform(text: string ): string {
     if ( text === null || text === undefined || text === ''){
       return '-Sin Datos-';
+    }
+    else{
+      return text
     }
   }
 

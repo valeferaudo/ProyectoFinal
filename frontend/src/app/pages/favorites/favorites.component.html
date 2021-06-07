@@ -1,1 +1,29 @@
-<p>favorites works!</p>
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="card-title"><strong>Favoritos </strong></h2>
+        </div>
+    </div>
+</div>
+<hr>
+
+<h6 class="card-title"><strong>Canchas </strong></h6>
+<div class="card-group" *ngIf="fields.length > 0">
+    <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let field of fields">
+        <app-card-field [field]="field" (removeFavorite)="removeFavoriteFromArray($event)"></app-card-field>
+    </div>
+</div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0"> 
+    <i class="fas fa-times"></i> No se encontraron <strong>Canchas</strong> marcadas como <strong>favoritas</strong>.
+</div>
+<hr>
+<h6 class="card-title"><strong>Centros Deportivos </strong></h6>
+<div class="card-group" *ngIf="sportCenters.length > 0">
+    <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
+        <app-card-sport-center [sportCenter]="sportCenter" (removeFavorite)="removeFavoriteFromArray($event)"></app-card-sport-center>
+
+    </div>
+</div> 
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0"> 
+    <i class="fas fa-times"></i> No se encontraron <strong>Centros Deportivos</strong> marcados como <strong>favoritos</strong>.
+</div>

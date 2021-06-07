@@ -1,33 +1,39 @@
-<div class="card card-rounded bg-dark mb-5">
+<div class="card card-rounded bg-dark mb-1">
         <div class="card-block">
                 <h2 class="card-title text-light text-center text-uppercase mb-0">
                         {{field.name}} 
                         <i class="far fa-star fa-size text-warning pointer pull-right content-tooltip mt-1" (click)="addFavorite(field.id)" *ngIf="userLogged.favorites === null || !userLogged.favorites.includes(field.id)">
                                 <span class="tooltip-box" style="font-size:14px;font-style: normal;font-variant: normal;">Agregar Favorito</span>
                         </i>
-                        <i class="fas fa-star fa-size text-warning pointer pull-right content-tooltip" (click)="deleteFavorite(field.id)" *ngIf="userLogged.favorites !== null && userLogged.favorites.includes(field.id)">
+                        <i class="fas fa-star fa-size text-warning pointer pull-right content-tooltip mt-1" (click)="deleteFavorite(field.id)" *ngIf="userLogged.favorites !== null && userLogged.favorites.includes(field.id)">
                                 <span class="tooltip-box" style="font-size:14px;font-style: normal;">Quitar Favorito</span>
                         </i>
                 </h2>
                 <app-carousel-images [images]="field.images" [type]="'field'" [mode]="'get'"></app-carousel-images>
                 <div class="row text-center">
                         <div class="col-6">
-                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Precio</span> <br> {{field.description}}</p>
+                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Precio</span> <br> {{field.price}} $</p>
         
                         </div>
                         <div class="col-6">
-                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Duración</span> <br> {{field.duration}}</p>
+                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Duración</span> <br> {{field.duration}} Min.</p>
+                        </div>
+                        <div class="col-12">
+                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Deportes - Cant. Jugadores</span> <br>
+                                        <span *ngFor="let sport of field.sports">{{sport.sport.name}} - {{sport.cantPlayers}}</span>
+                                </p>
                         </div>
                         <div class="col-6">
-                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Hora apertura</span> <br> 18:00hs{{field.openingHour | date:'shortTime':'+0' }}</p>
-                        </div>
-                        <div class="col-6">
-                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Hora cierre</span> <br> 22:00hs {{field.closingHour | date:'shortTime':'+0'}}</p>
+                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Características</span> <br>
+                                        <span *ngFor="let feature of field.features">{{feature.name}} 
+                                                                                        <!-- <span *ngIf="field.features.length = 0">Sin Datos</span> -->
+                                        </span>
+                                </p>
                         </div>
                         <div class="col-6">
                                 <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Centro Deportivo</span> <br> {{field.sportCenter.name}}</p>
                         </div>
-                        <div class="col-6">
+                        <div class="col-12 text-center">
                                 <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Dirección</span> <br> {{field.sportCenter.address}}</p>
                         </div>
                 </div>
@@ -41,6 +47,18 @@
                                 (click)="goSportCenter(field.sportCenter)"><i class="fas fa-info-circle"></i>
                                 <span class="tooltip-box">Información Centro Deportivo</span>
                         </button>
+                        <button class="btn btn-info m-1 content-tooltip"
+                            (click)="openScheduleModal(field.sportCenter)"><i class="fas fa-clock"></i>
+                            <span class="tooltip-box">Horarios</span>
+                        </button>
+                        <button class="btn btn-info m-1 content-tooltip"
+                            (click)="openMap(field.id)"><i class="fas fa-map-marker-alt"></i>
+                            <span class="tooltip-box">Mapa</span>
+                        </button>
                 </div>
     </div>
   </div>
+  <app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
+                [sportCenter]="field.sportCenter" [sportCenterID]="field.sportCenter.id"
+                (closeModal)="closeScheduleModal()">
+</app-sport-center-schedule-modal>

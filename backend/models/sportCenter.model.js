@@ -16,7 +16,7 @@ const SportCenterSchema = new Schema({
                 closingHour:{type: Date, default:null}
             }],
     services: [{service:{type:Schema.Types.ObjectId,ref:'Service',required:true, default:null},
-            description:{type:Number, required:true, default:null}
+            description:{type:String, required:true, default:null}
            }]
 },{collection:'sportCenters'})
 

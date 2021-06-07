@@ -43,6 +43,9 @@ router.put('/schedule/:id',[validateJWT,
             validateCSAandOwner,
             check('schedules','Schedules fields are required').not().isEmpty(),
             validateFields],sportCenterCtrl.updateSchedule);
+router.put('/services/:id',[validateJWT,
+            validateUserID,
+            validateCSAandOwner],sportCenterCtrl.updateService);
 
 // router.post('/:id/service/',[validateJWT,
 //             validateUserID,

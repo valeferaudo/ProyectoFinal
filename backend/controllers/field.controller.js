@@ -40,7 +40,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     uid = req.uid
     searchText = req.query.text;
     state = req.query.state === undefined ? '' : req.query.state;
-    sportCenterID = req.query.sportCenterID === undefined ? '' : req.query.sportCenterID;
+    sportCenterID = req.query.sportCenterID;
     try {
         let fields;
         let booleanState;
@@ -60,7 +60,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
             booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
         }
         sportCenterID !== '' ? query['$and'].push({sportCenter: sportCenterID}) : query;
-        query['$and'].length > 0 ? fields = await Field.find(query).populate('sportCenter') : fields = await Field.find().populate('sportCenter'); 
+        query['$and'].length > 0 ? fields = await Field.find(query).populate('sportCenter') : fields = await Field.find().populate('sportCenter features sports.sport'); 
         //Armo el selected filters
         if(searchText !== ''){
             selectedFilters.push(' Texto: ', searchText)
@@ -69,10 +69,8 @@ fieldCtrl.getFields = async (req = request , res = response) => {
             selectedFilters.push(' Estado: ', state)
         }
         if(sportCenterID !== ''){
-            const userDB = await User.findById(uid)
-            if(userDB.sportCenter.toString() !== sportCenterID){
-                const sportCenterDB = await SportCenter.findById(sportCenterID, 'name')
-                selectedFilters.push(' Centro deportivo: ', sportCenterDB.name)
+            if(fields.length > 0){
+                selectedFilters.push(' Centro deportivo: ', fields[0].sportCenter.name)
             }
         }
         res.json({
@@ -93,26 +91,22 @@ fieldCtrl.createField = async (req = request , res = response) => {
     const name = req.body.name;
     const price = req.body.price;
     try {
-        //valida que el nombre no exista, pero en igual igual en cuanto a mayus y minus
-        const existsName = await Field.findOne({name});
-        if(existsName){
-            return existsNameResponse(res);
-        }
-
         const field = new Field(req.body)
         let fieldDB = await field.save();
         const fieldPrice = new FieldPrice({field: fieldDB.id, sinceDate: new Date(), price: price})
-        let fieldPriceDB = await fieldPrice.save();
+        await fieldPrice.save();
         res.json({
             ok:true,
             msg:'Created Field',
             param: {
                 field: fieldDB,
-                price: fieldPriceDB
             }
         })
     } catch (error) {
         console.log(error);
+        if (error.name === 'MongoError' && error.code === 11000) {
+           return existsNameResponse(res);
+        }
         errorResponse(res);
     }
 }
@@ -127,11 +121,6 @@ fieldCtrl.updateField = async (req = request , res = response) => {
         const changes = req.body;
         if(changes.name === fieldDB.name){
             delete changes.name
-        }else{
-            const existsName = await Field.findOne({name});
-            if(existsName){
-                return existsNameResponse(res)
-            }
         }
         await Field.findByIdAndUpdate(id,changes,{new:true});
         let price = await FieldPrice.findOne({field:id}).sort({'sinceDate' : -1}).limit(1);
@@ -148,6 +137,9 @@ fieldCtrl.updateField = async (req = request , res = response) => {
         })
     } catch (error) {
         console.log(error);
+        if (error.name === 'MongoError' && error.code === 11000) {
+           return existsNameResponse(res);
+        }
         errorResponse(res);
     }
 }
@@ -205,23 +197,17 @@ fieldCtrl.getCombo = async (req = request, res = response)=> {
 }
 fieldCtrl.getMinMaxPrices = async (req = request, res = response)=> {
     try {
-        // let fieldsID = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id')
-        // let fieldsPrices = await findPrices();
-        // let fieldsPrices = []
-        // fieldsID.forEach(field => {
-            // const x = await findPrices(field)
-            // fieldsPrices.push(x);
-        // });
-        // console.log(fieldsPrices.price)
-        // let combo = [];
-        // fields.forEach(field => {
-        //     let x = {id:field.id, text:field.name};
-        //     combo.push(x);
-        // });
+        let fieldsPrices = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id price')
+        let minPrice;
+        let maxPrice;
+        minPrice = getMin(fieldsPrices);
+        maxPrice = getMax(fieldsPrices);
         res.json({
             ok: true,
-            msg:'Found field combo',
+            msg:'Found Min-Max Prices',
             param: {
+                minPrice,
+                maxPrice
             }
         })
     } catch (error) {
@@ -229,11 +215,19 @@ fieldCtrl.getMinMaxPrices = async (req = request, res = response)=> {
         errorResponse(res);
     }
 }
-function findPrices(field){
-    return FieldPrice.findOne({field:field.id}).sort({'sinceDate' : -1}).limit(1).populate({path: 'field',
-                                                                    model: 'Field',
-                                                                    match: { $and: [ {deletedDate: null }, { state:true } ] },
-                                                                })
+function getMin(fieldPrices){
+    let prices = [];
+    fieldPrices.forEach(field => {
+       prices.push(field.price) 
+    });
+    return Math.min(...prices)
+}
+function getMax(fieldPrices){
+    let prices = [];
+    fieldPrices.forEach(field => {
+       prices.push(field.price) 
+    });
+    return Math.max(...prices)
 }
 function errorResponse(res){
     res.status(500).json({
@@ -256,10 +250,5 @@ function existsNameResponse(res){
         msg:'A Field already exists with this name'
     })
 }
-//No se si se usan
 
-function setDate(hour){
-    const date = new Date(`1970/01/01 ${hour}:00`) 
-    return new Date(date.getTime() - process.env.UTC_ARG)
-}
 module.exports = fieldCtrl;

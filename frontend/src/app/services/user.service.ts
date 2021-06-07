@@ -32,17 +32,15 @@ export class UserService {
                       localStorage.setItem('x-token', resp.token);
                     }));
   }
-
   signUp(dataForm: User, role){
     dataForm.role = role;
     return this.http.post(`${baseUrl}/users`, dataForm);
   }
-
   validateToken(): Observable<boolean>{
     return this.http.get(`${baseUrl}/login/renew`)
               .pipe(map((resp: any) => {
-                        const{name,lastName, uid, email, role, phone, address, sportCenter} = resp.user;
-                        this.user  = new User( name, lastName, address, phone, email, '', role, uid,sportCenter);
+                        const{name,lastName, uid, email, role, phone, address, favorites, sportCenter} = resp.user;
+                        this.user  = new User( name, lastName, address, phone, email, '', role, uid, favorites,sportCenter);
                         localStorage.setItem('token', resp.token);
                         return true;
             }), catchError(error => {
@@ -97,5 +95,11 @@ export class UserService {
   }
   changeRole(id){
     return this.http.put(`${baseUrl}/users/changeRole/${id}`,{});
+  }
+  addRemoveFavorite(id){
+    return this.http.put(`${baseUrl}/favorites/${id}`,{});
+  }
+  getFavorites(){
+    return this.http.get(`${baseUrl}/favorites`);
   }
 }

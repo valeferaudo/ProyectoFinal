@@ -1,3 +1,4 @@
+import { SportCenterService } from "../interfaces/sportCenterService.interface";
 import { Schedule } from "./schedule.model";
 
 export class SportCenter{
@@ -9,6 +10,7 @@ export class SportCenter{
            public aditionalElectricity: number,
            public mercadoPago: boolean,
            public deletedDate?: any,
+           public services?: SportCenterService[],
            public images?: any [],
            public state?: boolean,
            public id?: string,

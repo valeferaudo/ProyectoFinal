@@ -103,13 +103,13 @@ appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = res
             }
         })
 
-} catch (error) {
+    } catch (error) {
     console.log(error)
     res.status(500).json({
         ok:false,
         msg:'An unexpected error ocurred'
     })
-}
+    }
 }
 appointmentCtrl.createAppointment = async (req = request, res = response) =>{
     const body = req.body;

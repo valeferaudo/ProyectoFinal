@@ -14,7 +14,6 @@ const baseUrl = environment.base_url;
 export class FieldService {
 
   constructor(private http: HttpClient) { }
-
   getField(id: string){
     return this.http.get(`${baseUrl}/fields/${id}`)
   }

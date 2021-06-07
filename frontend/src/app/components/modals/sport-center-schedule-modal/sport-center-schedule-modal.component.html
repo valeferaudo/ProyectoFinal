@@ -1,17 +1,18 @@
-<div class="background-modal" [class.hidden]="hiddenModal" >
+<div class="background-modal" [class.hidden]="hiddenModal" style="z-index: 1050;" >
     <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
         aria-labelledby="exampleModalLabel1" aria-hidden="true" 
-        style="display: block" data-backdrop="static" data-keyboard="false">
+        style="display: block;" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="exampleModalLabel"><i class="far fa-clock fa-1x"></i> Actualizar Horarios</h4>
+              <h4 class="modal-title" id="exampleModalLabel" *ngIf="mode === 'update'"><i class="far fa-clock fa-1x"></i> Actualizar Horarios</h4>
+              <h4 class="modal-title" id="exampleModalLabel" *ngIf="mode === 'get'"><i class="far fa-clock fa-1x"></i> Horarios</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-                <p class="mb-2">Modifique los datos de los horarios.</p>
+                <p  *ngIf="mode === 'update'" class="mb-2">Modifique los datos de los horarios.</p>
               <form [formGroup]="scheduleForm">
                 <div class="form-group m-t-5" formArrayName="schedules">
                     <div class="alert alert-info" role="alert" *ngIf="schedules.length === 0">
@@ -34,13 +35,18 @@
                                             <input type="text" [value]="days[i]" disabled>
                                         </td>
                                     <td>
-                                        <input type="time" name="" formControlName="openingHour">
+                                        <input type="time" name="" formControlName="openingHour" *ngIf="mode ==='update'">
+                                        <input type="time" name="" formControlName="openingHour" *ngIf="mode ==='get'" disabled>
                                     </td>
                                     <td>
-                                        <input type="time" name="" formControlName="closingHour">
+                                        <input type="time" name="" formControlName="closingHour" *ngIf="mode ==='update'">
+                                        <input type="time" name="" formControlName="closingHour" *ngIf="mode ==='get'" disabled>
                                     </td>
                                     <td class="text-center">
-                                      <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]">
+                                      <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]" *ngIf="mode ==='update'">
+                                        {{openSlide[i]? 'SI': 'NO'}}
+                                      </mat-slide-toggle>
+                                      <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]" *ngIf="mode ==='get'" disabled>
                                         {{openSlide[i]? 'SI': 'NO'}}
                                       </mat-slide-toggle>
                                     </td>                       
@@ -57,7 +63,7 @@
                 </div>
               </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" *ngIf="mode === 'update'">
               <button type="button" class="btn btn-info" (click)="updateSchedule()" [hidden]="formsEquals">Modificar</button>
               <button type="button" class="btn btn-danger"  (click)="closedModal()">Cancelar</button>
             </div>

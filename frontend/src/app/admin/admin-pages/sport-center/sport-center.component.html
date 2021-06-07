@@ -12,6 +12,9 @@
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><p class="mb-0">Editar</p></a>
         </div>
         <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="openServiceModal()" class=" text-info"><i class="fas fa-certificate"></i><br><p class="mb-0">Servicios</p></a>
+        </div>
+        <div class="col text-center">
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="updateSchedule()" class="text-info"><i class="far fa-clock"></i><br><p class="mb-0">Horarios</p></a>
         </div>
     </div>
@@ -79,7 +82,12 @@
     </div>            
 </div>
 
-<app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" 
+<app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'update'"
                                         [sportCenter]="sportCenter" [sportCenterID]="sportCenter.id"
                                     (closeModal)="closeScheduleModal()" (getSportCenter)="getSportCenter()">
 </app-sport-center-schedule-modal>
+<app-sport-center-service-modal *ngIf="hiddenServiceModal" [hiddenModal]="!hiddenServiceModal" 
+                                [sportCenter]="sportCenter" (closeModal)="closeServiceModal()" (getSportCenter)="getSportCenter()">
+
+</app-sport-center-service-modal>
+

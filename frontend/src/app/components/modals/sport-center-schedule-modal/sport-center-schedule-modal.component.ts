@@ -20,6 +20,7 @@ export class SportCenterScheduleModalComponent implements OnInit {
   @Input() hiddenModal: boolean;
   @Input() sportCenter: SportCenter;
   @Input() sportCenterID: string;
+  @Input() mode : 'get' | 'update';
   @Output() closeModal = new EventEmitter<string>();
   @Output() getSportCenter = new EventEmitter<string>();
   @Output() createSchedules = new EventEmitter<string>();

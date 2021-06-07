@@ -94,7 +94,8 @@ authCtrl.renewToken = async (req,res)=>{
         phone: userDB.phone,
         email: userDB.email,
         role: userDB.role,
-        sportCenter: userDB.sportCenter
+        sportCenter: userDB.sportCenter,
+        favorites: userDB.favorites
     }
     res.json({
         ok:true,

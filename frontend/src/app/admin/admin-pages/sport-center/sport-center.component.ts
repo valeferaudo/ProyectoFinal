@@ -25,7 +25,8 @@ export class SportCenterComponent implements OnInit {
   slideElectricity: boolean = false;
   slideMercadoPago:boolean = false;
   hiddenScheduleModal: boolean = false;
-  images: File [] = []
+  images: File [] = [];
+  hiddenServiceModal: boolean = false;
 
   constructor(private userService: UserService,
               private fb: FormBuilder,
@@ -67,161 +68,167 @@ export class SportCenterComponent implements OnInit {
     });
   }
   setSlide(){
-    if(this.sportCenter.aditionalElectricity === null){
-      this.slideElectricity = false;
-    }
-    else{
-      this.slideElectricity = true;
-    }
-    this.sportCenter.mercadoPago === true ? this.slideMercadoPago = true : this.slideMercadoPago = false;
+      if(this.sportCenter.aditionalElectricity === null){
+        this.slideElectricity = false;
+      }
+      else{
+        this.slideElectricity = true;
+      }
+      this.sportCenter.mercadoPago === true ? this.slideMercadoPago = true : this.slideMercadoPago = false;
   }
   getFieldValid(field: string){
-    return this.sportCenterForm.get(field).invalid &&
-            this.sportCenterForm.get(field).touched;
- }
+      return this.sportCenterForm.get(field).invalid &&
+              this.sportCenterForm.get(field).touched;
+  }
   unlockForm(){
-    this.editMode= true;
-    Object.values(this.sportCenterForm.controls).forEach(control=>{
-      control.enable();
-    })
+      this.editMode= true;
+      Object.values(this.sportCenterForm.controls).forEach(control=>{
+        control.enable();
+      })
   }
   cancel(){
-    this.fillForm();
-    this.setSlide();
-    this.editMode = false;
-    this.disableForm();
+      this.fillForm();
+      this.setSlide();
+      this.editMode = false;
+      this.disableForm();
   }
   fillForm(){
-    this.sportCenterForm.patchValue({
-      name: this.sportCenter.name,
-      address: this.sportCenter.address,
-      phone: this.sportCenter.phone,
-      aditionalElectricity: this.sportCenter.aditionalElectricity,
-      aditionalElectricityHour: this.sportCenter.aditionalElectricityHour,
-      mercadoPago: this.sportCenter.mercadoPago,
-    })
+      this.sportCenterForm.patchValue({
+        name: this.sportCenter.name,
+        address: this.sportCenter.address,
+        phone: this.sportCenter.phone,
+        aditionalElectricity: this.sportCenter.aditionalElectricity,
+        aditionalElectricityHour: this.sportCenter.aditionalElectricityHour,
+        mercadoPago: this.sportCenter.mercadoPago,
+      })
   }
   disableForm(){
-    Object.values(this.sportCenterForm.controls).forEach(control => {
-      control.disable(); });
+      Object.values(this.sportCenterForm.controls).forEach(control => {
+        control.disable(); });
   }
   goBack(){
-    if(this.userLogged.role === 'CENTER-ADMIN'){
-      this.router.navigateByUrl('admin/home');
-    }
-    else if(this.userLogged.role === 'CENTER-SUPER-ADMIN'){
-      this.router.navigateByUrl('admin/users');
-    }
+      if(this.userLogged.role === 'CENTER-ADMIN'){
+        this.router.navigateByUrl('admin/home');
+      }
+      else if(this.userLogged.role === 'CENTER-SUPER-ADMIN'){
+        this.router.navigateByUrl('admin/users');
+      }
   }
   updateSportCenter(){
-    if (this.sportCenterForm.invalid){
-      Object.values(this.sportCenterForm.controls).forEach(control => {
-        control.markAsTouched();
-      });
-      return;
-    }
+      if (this.sportCenterForm.invalid){
+        Object.values(this.sportCenterForm.controls).forEach(control => {
+          control.markAsTouched();
+        });
+        return;
+      }
+      this.sweetAlertService.showSwalConfirmation({
+        title: '¿Editar centro deportivo?',
+        text: ``,
+        icon: 'question',
+      })
+      .then((result) => {
+        if (result.value) {
+        this.sportCenterService.updateSportCenter(this.sportCenter.id, this.sportCenterForm.value)
+                          .subscribe((resp: any) => {
+                            if(resp.ok){
+                              if(this.images.length > 0){
+                                this.updateImages(this.sportCenter.id);
+                              }
+                              else{
+                                this.sweetAlertService.showSwalResponse({
+                                  title: 'Centro deportivo editado',
+                                  text:'(Sin imágenes)',
+                                  icon: 'success',
+                                })
+                              }
+                              this.sportCenter = resp.param.sportCenter;
+                              this.fillForm();
+                              this.editMode = false;
+                              this.sportCenterForm.disable();
+                            }
+                          }, (err) => {
+                            console.log(err)
+                            this.errorService.showErrors('nada',99)
+                          });
+        }
+      })
+  }
+  electricitySlideChange(event: MatSlideToggle){
+      this.slideElectricity = event.checked;
+      if(this.slideElectricity === false){
+        this.sportCenterForm.controls['aditionalElectricity'].reset();
+      }
+  }
+  mercadoPagoSlideChange(event: MatSlideToggle){
+    this.sportCenterForm.patchValue({
+      mercadoPago: event.checked
+    });
+    this.slideMercadoPago = event.checked;
+  }
+  updateSchedule(){
+    this.hiddenScheduleModal = true;
+  }
+  closeScheduleModal(){
+    this.hiddenScheduleModal = false;
+  }
+  updateImages(sportCenterID){
+    this.uploadFileService.uploadImage(this.images,'sportCenter',sportCenterID)
+                    .then((resp: any) =>{
+                      this.loaderService.closeLineLoader();
+                      if(resp.ok){
+                        this.sweetAlertService.showSwalResponse({
+                          title: 'Centro deportivo editado',
+                          text:'(Con imágenes)',
+                          icon: 'success'
+                        })
+                        resp.param.uploadImages.forEach(element => {
+                          this.sportCenter.images.push(element)
+                        });
+                      }
+                    },(err)=>{
+                      console.log(err);
+                      //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ //ponerlo en el servicio de upñload
+                      this.loaderService.closeLineLoader();
+                      this.errorService.showErrors(99,'nada');
+                    })
+  }
+  setImages(images){
+    this.images = images;
+  }
+  deleteImage(image){
     this.sweetAlertService.showSwalConfirmation({
-      title: '¿Editar centro deportivo?',
+      title: '¿Eliminar imagen?',
       text: ``,
-      icon: 'question',
-    })
+      icon: 'question'})
     .then((result) => {
       if (result.value) {
-      this.sportCenterService.updateSportCenter(this.sportCenter.id, this.sportCenterForm.value)
-                        .subscribe((resp: any) => {
-                          if(resp.ok){
-                            if(this.images.length > 0){
-                              this.updateImages(this.sportCenter.id);
-                            }
-                            else{
-                              this.sweetAlertService.showSwalResponse({
-                                title: 'Centro deportivo editado',
-                                text:'(Sin imágenes)',
-                                icon: 'success',
-                              })
-                            }
-                            this.sportCenter = resp.param.sportCenter;
-                            this.fillForm();
-                            this.editMode = false;
-                            this.sportCenterForm.disable();
-                          }
-                        }, (err) => {
-                          console.log(err)
-                          this.errorService.showErrors('nada',99)
-                        });
+        this.loaderService.openLineLoader();
+        this.uploadFileService.deleteImage(image, this.sportCenter.id, 'sportCenter')
+                    .subscribe((resp: any) =>{
+                      this.loaderService.closeLineLoader();
+                      if(resp.ok){
+                        this.sweetAlertService.showSwalResponse({
+                          title: 'Imagen eliminada',
+                          text:'',
+                          icon: 'success'
+                        })
+                        this.deleteArrayImage(image);
+                      }
+                    },(err)=>{
+                      console.log(err);
+                      this.loaderService.closeLineLoader();
+                      this.errorService.showErrors(99,'nada');
+                    })
       }
     })
   }
-  electricitySlideChange(event: MatSlideToggle){
-    this.slideElectricity = event.checked;
-    if(this.slideElectricity === false){
-      this.sportCenterForm.controls['aditionalElectricity'].reset();
-    }
+  deleteArrayImage(imageDeleted){
+    this.sportCenter.images = this.sportCenter.images.filter(image => image !== imageDeleted)
   }
-  mercadoPagoSlideChange(event: MatSlideToggle){
-   this.sportCenterForm.patchValue({
-     mercadoPago: event.checked
-   });
-   this.slideMercadoPago = event.checked;
- }
- updateSchedule(){
-  this.hiddenScheduleModal = true;
-}
-closeScheduleModal(){
-  this.hiddenScheduleModal = false;
-}
-updateImages(sportCenterID){
-  this.uploadFileService.uploadImage(this.images,'sportCenter',sportCenterID)
-                  .then((resp: any) =>{
-                    this.loaderService.closeLineLoader();
-                    if(resp.ok){
-                      this.sweetAlertService.showSwalResponse({
-                        title: 'Centro deportivo editado',
-                        text:'(Con imágenes)',
-                        icon: 'success'
-                      })
-                      resp.param.uploadImages.forEach(element => {
-                        this.sportCenter.images.push(element)
-                      });
-                    }
-                  },(err)=>{
-                    console.log(err);
-                    //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ //ponerlo en el servicio de upñload
-                    this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada');
-                  })
-}
-setImages(images){
-  this.images = images;
-}
-deleteImage(image){
-  this.sweetAlertService.showSwalConfirmation({
-    title: '¿Eliminar imagen?',
-    text: ``,
-    icon: 'question'})
-  .then((result) => {
-    if (result.value) {
-      this.loaderService.openLineLoader();
-      this.uploadFileService.deleteImage(image, this.sportCenter.id, 'sportCenter')
-                  .subscribe((resp: any) =>{
-                    this.loaderService.closeLineLoader();
-                    if(resp.ok){
-                      this.sweetAlertService.showSwalResponse({
-                        title: 'Imagen eliminada',
-                        text:'',
-                        icon: 'success'
-                      })
-                      this.deleteArrayImage(image);
-                    }
-                  },(err)=>{
-                    console.log(err);
-                    this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada');
-                  })
-    }
-  })
-}
-deleteArrayImage(imageDeleted){
-  this.sportCenter.images = this.sportCenter.images.filter(image => image !== imageDeleted)
-}
+  openServiceModal(){
+    this.hiddenServiceModal = true;
+  }
+  closeServiceModal(){
+    this.hiddenServiceModal = false;
+  }
 }

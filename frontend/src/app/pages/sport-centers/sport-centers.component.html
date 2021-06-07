@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col-md-6">
-            <h2 class="card-title"><strong>Listado de Centros Deportivos </strong></h2>
+            <h2 class="card-title"><strong>Centros Deportivos </strong></h2>
         </div>
     </div>
 </div>
@@ -64,7 +64,7 @@
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
                         <div class="filters__items-container__item__menu__options-container__option" *ngFor="let service of servicesCombo; let i = index">
-                            <mat-checkbox  (change)="changeFeatureSelected($event,service)" #myCheckBoxCategory [checked]="servicesSelected.includes(service)">
+                            <mat-checkbox  (change)="changeServiceSelected($event,service)" #myCheckBoxCategory [checked]="servicesSelected.includes(service.id)">
                             <span>{{service.text}}</span>
                             </mat-checkbox>
                         </div>
@@ -76,7 +76,32 @@
                         <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterServices()">Aplicar</button>
                     </div>
                     </mat-menu>
-                </div>  
+                </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDay">
+                    <span class="filters__items-container__item__button__resume">Día</span>
+                    <span class="filters__items-container__item__button__name">Día</span>
+                    </button>
+                                <!-- FILTER MENU -->
+                    <mat-menu #menuDay="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                        <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__options-container">
+                        <div class="filters__items-container__item__menu__options-container__option" *ngFor="let day of daysCombo; let i = index">
+                            <mat-checkbox  (change)="changeDaysSelected($event,day)" #myCheckBoxCategory [checked]="daysSelected.includes(day.id)">
+                            <span>{{day.text}}</span>
+                            </mat-checkbox>
+                        </div>
+                        </div>
+                    </div>
+                                    <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetDays()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDays()">Aplicar</button>
+                    </div>
+                    </mat-menu>
+                </div> 
                 <div class="filters__items-container__item">
                     <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuHours">
@@ -138,7 +163,10 @@
 </div>
 <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="card-group">
-    <!-- <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let field of sportCenters">
-        <app-card-field [field]="field"></app-card-field>
-    </div> -->
+    <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
+        <app-card-sport-center [sportCenter]="sportCenter"></app-card-sport-center>
+    </div>
+</div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0"> 
+    <i class="fas fa-times"></i> No se encontraron <strong>Centros Deportivos</strong>.
 </div>

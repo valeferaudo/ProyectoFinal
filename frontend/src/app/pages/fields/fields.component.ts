@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Combo } from 'src/app/interfaces/combo.interface';
 import { FieldFilter } from 'src/app/interfaces/filters/fieldFilter.interface';
 import { Field } from 'src/app/models/field.model';
@@ -19,6 +20,7 @@ import { FieldService } from '../../services/field.service'
 })
 export class FieldsComponent implements OnInit {
 
+  sportCenterInParam: string = '';
   searchText: string = '';
   fields: Field[] = [];
   filterON: boolean = false;
@@ -46,6 +48,7 @@ export class FieldsComponent implements OnInit {
 
   constructor(private fieldService: FieldService,
               private activatedRoute: ActivatedRoute,
+              private location: Location,
               private featureService: FeatureService,
               private sportService: SportService,
               private loaderService: LoaderService,
@@ -60,7 +63,7 @@ export class FieldsComponent implements OnInit {
       this.getFeatureCombo();
       this.getSportCombo();
       this.getPrices();
-      this.getFields();
+      this.getSportCenterInParam();
     }
     getFeatureCombo(){
       this.featureService.getCombo()
@@ -89,12 +92,25 @@ export class FieldsComponent implements OnInit {
       this.fieldService.getMinMaxPrices()
                   .subscribe((resp: any) => {
                     if(resp.ok){
-                      //asignar precio min y precio max a this.sinceBDPrice
+                      this.sinceBDPrice = resp.param.minPrice;
+                      this.sincePriceSelected = this.sinceBDPrice;
+                      this.untilBDPrice = resp.param.maxPrice;
+                      this.untilPriceSelected = this.untilBDPrice;
                     }
                   },(err)=>{
                     console.log(err);
                     this.errorService.showErrors(99,'nada');
                   })
+    }
+    getSportCenterInParam(){
+      this.activatedRoute.params.subscribe(params => {
+        this.sportCenterInParam = params.id === undefined ? '' : params.id;
+        this.fillFilterObject();
+        this.getFields();
+    });
+    }
+    goBack(){
+      this.location.back();
     }
     getFields(){
       this.fieldService.getFields(this.filters)
@@ -123,8 +139,8 @@ export class FieldsComponent implements OnInit {
       this.featuresSelected = [];
       this.sinceHourSelected = 0;
       this.untilHourSelected = 23;
-      this.sincePriceSelected = null;
-      this.untilPriceSelected = null;
+      this.sincePriceSelected = this.sinceBDPrice;
+      this.untilPriceSelected = this.untilBDPrice;
       this.selectedFilters = [];
       this.fillFilterObject();
       this.getFields();
@@ -182,8 +198,8 @@ export class FieldsComponent implements OnInit {
       this.getFields();
     }
     resetPrice(){
-      this.sincePriceSelected = null;
-      this.untilPriceSelected = null;
+      this.sincePriceSelected = this.sinceBDPrice;
+      this.untilPriceSelected = this.untilBDPrice;
       this.fillFilterObject();
       this.getFields();
     }
@@ -196,7 +212,7 @@ export class FieldsComponent implements OnInit {
         text: this.searchText,
         // sports: this.sportsSelected,
         state: '',
-        sportCenterID: '',
+        sportCenterID: this.sportCenterInParam,
         features: this.featuresSelected,
         sincePrice: this.sincePriceSelected,
         untilPrice: this.untilPriceSelected,

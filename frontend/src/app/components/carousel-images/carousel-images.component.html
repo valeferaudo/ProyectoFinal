@@ -10,6 +10,9 @@
       </div>
     </ng-template>
   </ngb-carousel>
-<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="images.length === 0"> 
+  <div class="picsum-img-wrapper text-center" *ngIf="images.length === 0 && mode === 'get'">
+    <img src= "../../../assets/img/fileUpload/no-image.png" class="img-field img-fluid">
+  </div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="images.length === 0 && mode === 'update'"> 
     <i class="fas fa-times"></i> No hay <strong>Imágenes</strong> subidas.
 </div>

@@ -26,6 +26,7 @@ export class SportCentersComponent implements OnInit {
     state: '',
     services: [],
     sports: [],
+    days: [],
     sinceHour: 1,
     untilHour: 23,
   }
@@ -33,6 +34,8 @@ export class SportCentersComponent implements OnInit {
   sportsSelected = [];
   servicesCombo: Combo[];
   servicesSelected = [];
+  daysCombo: Combo [] = [{'id':'1','text':'Lunes'},{'id':'2','text':'Martes'},{'id':'3','text':'Miércoles'},{'id':'4','text':'Jueves'},{'id':'5','text':'Viernes'},{'id':'6','text':'Sábado'},{'id':'7','text':'Domingo'}]
+  daysSelected = [];
   sinceHourSelected = 0;
   untilHourSelected = 23;
   sinceBDPrice;
@@ -57,7 +60,7 @@ export class SportCentersComponent implements OnInit {
     getCombos(){
       this.getServicesCombo();
       this.getSportCombo();
-      // this.getSportCenters();
+      this.getSportCenters();
     }
     getServicesCombo(){
       this.serviceService.getServiceCombo()
@@ -94,14 +97,17 @@ export class SportCentersComponent implements OnInit {
                   })
     }
     getSportCenters(){
+      this.loaderService.openLineLoader();
       this.sportCenterService.getSportCenters(this.filters)
                 .subscribe((resp: any) => {
+                  this.loaderService.closeLineLoader();
                   if(resp.ok){
-                    this.sportCenters = resp.param.fields;
+                    this.sportCenters = resp.param.sportCenters;
                     this.selectedFilters = resp.param.selectedFilters;
                   }
                 },(err)=>{
                   console.log(err);
+                  this.loaderService.closeLineLoader();
                   this.errorService.showErrors(99,'nada');
                 })
     }
@@ -118,6 +124,7 @@ export class SportCentersComponent implements OnInit {
       this.filterON = false;
       this.sportsSelected = [];
       this.servicesSelected = [];
+      this.daysSelected = [];
       this.sinceHourSelected = 0;
       this.untilHourSelected = 23;
       this.sincePriceSelected = null;
@@ -128,10 +135,10 @@ export class SportCentersComponent implements OnInit {
     }
     changeSportSelected(event:MatCheckboxChange,sport){
       if(event.checked){
-        this.sportsSelected.push(sport)
+        this.sportsSelected.push(sport.id)
       }
       else{
-        var i = this.sportsSelected.indexOf( sport );
+        var i = this.sportsSelected.indexOf( sport.id );
         if ( i !== -1 ) {
             this.sportsSelected.splice( i, 1 );
         }
@@ -146,12 +153,12 @@ export class SportCentersComponent implements OnInit {
       this.fillFilterObject();
       this.getSportCenters();
     }
-    changeFeatureSelected(event:MatCheckboxChange,feature){
+    changeServiceSelected(event:MatCheckboxChange,service){
       if(event.checked){
-        this.servicesSelected.push(feature)
+        this.servicesSelected.push(service.id)
       }
       else{
-        var i = this.servicesSelected.indexOf( feature );
+        var i = this.servicesSelected.indexOf( service.id );
         if ( i !== -1 ) {
             this.servicesSelected.splice( i, 1 );
         }
@@ -163,6 +170,26 @@ export class SportCentersComponent implements OnInit {
       this.getSportCenters();
     }
     filterServices(){
+      this.fillFilterObject();
+      this.getSportCenters();
+    }
+    changeDaysSelected(event:MatCheckboxChange,day){
+      if(event.checked){
+        this.daysSelected.push(day.id)
+      }
+      else{
+        var i = this.daysSelected.indexOf( day.id );
+        if ( i !== -1 ) {
+            this.daysSelected.splice( i, 1 );
+        }
+      }
+    }
+    resetDays(){
+      this.daysSelected = [];
+      this.fillFilterObject();
+      this.getSportCenters();
+    }
+    filterDays(){
       this.fillFilterObject();
       this.getSportCenters();
     }
@@ -181,8 +208,9 @@ export class SportCentersComponent implements OnInit {
     fillFilterObject(){
       this.filters = {
         text: this.searchText,
-        // sports: this.sportsSelected,
         state: '',
+        sports: this.sportsSelected,
+        days:this.daysSelected,
         services: this.servicesSelected,
         sinceHour: this.sinceHourSelected,
         untilHour: this.untilHourSelected,

@@ -294,10 +294,11 @@ userCtrl.changeRole = async (req = request, res = response) =>{
         errorResponse(res);
     }
 }
-userCtrl.addFavorite = async (req = request, res = response) =>{
+userCtrl.addRemoveFavorite = async (req = request, res = response) =>{
     const userID = req.uid;
     const newFavorite = req.params.id;
     try {
+        let newUser;
         const userDB = await User.findById(userID);
         if(userDB.deletedDate !== null){
             return userBlockedResponse(res);
@@ -308,28 +309,56 @@ userCtrl.addFavorite = async (req = request, res = response) =>{
             return unknownIDResponse(res);
         }
         if (userDB.favorites.includes(newFavorite)){
-            for (let i = 0; i < userDB.favorites.length; i++) {
-                if (userDB.favorites[i] = newFavorite){
-                    this.userDB.favorites.splice(i,1)
-                }
-            }
+            userDB.favorites.splice(userDB.favorites.indexOf(newFavorite),1)
+            newUser = await User.findByIdAndUpdate(userID,userDB,{new:true});
             return res.json({
                 ok:true,
-                msg: 'Favorite item deleted'
+                msg: 'Favorite item deleted',
+                param: {
+                    user: newUser
+                }
             })
+        }else{
+            userDB.favorites.push(newFavorite);
+            newUser = await User.findByIdAndUpdate(userID,userDB,{new:true});
         }
-        this.userDB.favorites.push(newFavorite);
-        await User.findByIdAndUpdate(uid,userDB,{new:true});
-        // sendAcceptUser(userDB)
         res.json({
             ok:true,
-            msg:'Favorite item added'
+            msg:'Favorite item added',
+            param: {
+                user: newUser
+            }
         })
     } catch (error) {
         console.log(error);
         errorResponse(res);
     }
 }
+userCtrl.getFavorites = async (req = request, res = response) => {
+    const userID = req.uid;
+    try {
+        const userDB = await User.findById(userID);
+        if(userDB.deletedDate !== null){
+            return userBlockedResponse(res);
+        }
+        let fields = [];
+        fields = await Field.find({ _id : { $in : userDB.favorites } })
+        let sportCenters = [];
+        sportCenters = await SportCenter.find({ _id : { $in : userDB.favorites } })
+        res.json({
+            ok:true,
+            msg:'Found Favorite items',
+            param: {
+                fields,
+                sportCenters
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
+
 userCtrl.changePassword = async (req = request, res = response) =>{
     const userID = req.params.id;
     const passwords = req.body;

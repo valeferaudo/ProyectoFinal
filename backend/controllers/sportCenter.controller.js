@@ -5,7 +5,8 @@ const Day = require ('../models/day.model')
 const Field = require ('../models/field.model')
 const {request, response} = require('express');
 const sportCenterCtrl ={};
-
+var moment = require('moment');
+moment().format();
 
 sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
     sportCenterID = req.params.id;
@@ -31,6 +32,11 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
     //FALTAN FILTROS
     searchText = req.query.text;
     state = req.query.state;
+    days = req.query.day;
+    sports = req.query.sport;
+    services = req.query.service;
+    sinceHour = req.query.sinceHour;
+    untilHour = req.query.untilHour;
     try {
         let sportCenters;
         let booleanState;
@@ -41,35 +47,46 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
         else if(state === 'Bloqueado'){
             booleanState = false;
         }
+        let query = {
+            '$and': []
+        };
+        searchText !== '' ? query['$and'].push({ name: new RegExp(searchText, 'i')}) : query ;
+        if (state !== ''){
+            booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
+        }
+        services !== undefined ? query['$and'].push({services: {$elemMatch: {service:{ $in: services}}}}) : query ;
+        // days !== undefined ? query['$and'].push({schedules: {$elemMatch: {day:{ $in: days}}}}) : query ;
+        if(days !== undefined){
+            query['$and'].push({$and: [ {schedules: {$elemMatch: {day:{ $in: days}}}},
+                                        {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
+                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]})
+
+        }
+        else{
+            query['$and'].push({$and: [ {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
+                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]})
+        }
+        let sportCenterSport = [];
+        let sportCenterSportID = [];
+        if(sports !== undefined){
+            sportCenterSport = await Field.find({sports: {$elemMatch: {sport:{ $in: sports}}}},'sportCenter');
+            sportCenterSport.forEach(item => {
+                sportCenterSportID.push(item.sportCenter)
+            });
+            sportCenterSport !== [] ? query['$and'].push({_id: {$in: sportCenterSportID}}) : query 
+        } 
+        query['$and'].length > 0 ? sportCenters = await SportCenter.find(query) : sportCenters = await SportCenter.find(); 
 
         if(searchText === '' && state === '' ){
-            sportCenters = await SportCenter.find();
             selectedFilters = [];
         }
         else if(searchText !== '' && state === ''){
-            sportCenters = await SportCenter.find({ 
-                                        name: new RegExp(searchText, 'i')
-            })
             selectedFilters = ['Texto: ', searchText];
         }
         else if(searchText === '' && state !== ''){
-            if(booleanState){
-                sportCenters = await SportCenter.find({deletedDate: null})
-            }
-            else{
-                sportCenters = await SportCenter.find({deletedDate: {$ne: null} })
-            }
             selectedFilters = ['Estado: ',state];
         }
         else if(text !== '' && state !== ''){
-            if(booleanState){
-                sportCenters = await SportCenter.find({deletedDate: null,
-                                            name: new RegExp(searchText, 'i')})
-            }
-            else{
-                sportCenters = await SportCenter.find({deletedDate: {$ne: null},
-                                            name: new RegExp(searchText, 'i')})
-            }
             selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
         }
         res.json({
@@ -273,7 +290,36 @@ sportCenterCtrl.updateSchedule = async (req = request, res = response) =>{
         })
     }
 }
-
+sportCenterCtrl.updateService = async (req = request, res = response) =>{
+    const sportCenterID = req.params.id;
+    try {
+        let sportCenterDB = await SportCenter.findById(sportCenterID);
+        if(!sportCenterDB){
+            return unknownIDResponse(res);
+        }
+        const changes = req.body.service;
+        let arrayChanges = [];
+        changes.forEach(sf => {
+            const obj = {
+                service: sf.service,
+                description: sf.description,
+            }
+            arrayChanges.push(obj)
+        });
+        sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,{$set:{services:arrayChanges}},{new:true})
+        res.json({
+            ok:true,
+            msg:'Updated Sport Center Services',
+            param: { sportCenter }
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error occurred'
+        })
+    }
+}
 //ESTO NO SE SI SE USA TODO
 sportCenterCtrl.deleteSportCenter = async (req = request, res = response) =>{
     const userID = req.uid;
@@ -317,184 +363,6 @@ sportCenterCtrl.deleteSportCenter = async (req = request, res = response) =>{
         res.json({
             ok:true,
             msg:'Deleted Sport Center'
-        })
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
-    }
-}
-sportCenterCtrl.addService = async (req = request, res = response) =>{
-    const userID = req.uid;
-    const sportCenterID = req.params.id;
-    try {
-        const userDB = await User.findById(userID);
-        if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
-        }
-        const sportCenterDB = await SportCenter.findById(sportCenterID);
-        if(!sportCenterDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Sport Center ID'
-            })
-        }
-        if (userDB.sportCenter !== sportCenterID) {
-            return res.status(403).json({
-                ok:false,
-                msg:'This User doesn´t have the permissions to add Sport Center Service'
-            })
-        }
-        const userRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(userRole.role !== 'CENTER-SUPER-ADMIN'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions to add Sport Center Service'
-            })
-        }
-        sportCenterService = new SportCenterService({
-            sportCenter: sportCenterID,
-            service: req.body.service,
-            price: req.body.price,
-            observation: req.body.observation,
-        })
-        await sportCenterService.save();
-        res.json({
-            ok:true,
-            msg:'Created Sport Center - Service'
-        })
-        
-    } catch (error) {
-        if (error.name === 'MongoError' && error.code === 11000) {
-            return res.status(400).json({
-                    ok:false,
-                    msg:'The Field is already reserved for the requested date'
-            })
-        }
-        console.log(error)
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
-    }
-}
-sportCenterCtrl.updateService = async (req = request, res = response) =>{
-    const userID = req.uid;
-    const sportCenterID = req.params.id;
-    const serviceID = req.params.service;
-    try {
-        const userDB = await User.findById(userID);
-        if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
-        }
-        const sportCenterDB = await SportCenter.findById(sportCenterID);
-        if(!sportCenterDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Sport Center ID'
-            })
-        }
-        const serviceDB = await Service.findById(serviceID);
-        if(!serviceDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Service ID'
-            })
-        }
-        if (userDB.sportCenter !== sportCenterID) {
-            return res.status(404).json({
-                ok:false,
-                msg:'This User doesn´t have the permissions to update this Sport Center Service'
-            })
-        }
-        const userRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(userRole.role !== 'CENTER-SUPER-ADMIN'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions to update Sport Center Service'
-            })
-        }
-        if(sportCenterDB.deletedDate !== null){
-            return res.status(404).json({
-                ok:false,
-                msg:'This Sport Center is blocked'
-            })
-        }
-        changes = {
-            price : req.body.price,
-            observation : req.body.observation
-        }
-        await SportCenterService.findOneAndUpdate({sportCenter:sportCenterID, service: serviceID},changes, {new:true});
-        res.json({
-            ok:true,
-            msg:'Updated Sport Center Service'
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg:'An unexpected error occurred'
-        })
-    }
-}
-sportCenterCtrl.deleteService = async (req = request, res = response) =>{
-    const userID = req.uid;
-    const sportCenterID = req.params.id;
-    const serviceID = req.params.service;
-    try {
-        const userDB = await User.findById(userID);
-        if(!userDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct User ID'
-            })
-        }
-        const sportCenterDB = await SportCenter.findById(sportCenterID);
-        if(!sportCenterDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Sport Center ID'
-            })
-        }
-        const serviceDB = await Service.findById(serviceID);
-        if(!serviceDB){
-            return res.status(404).json({
-                ok:false,
-                msg:'Unknown ID. Please insert a correct Service ID'
-            })
-        }
-        if (userDB.sportCenter !== sportCenterID) {
-            return res.status(404).json({
-                ok:false,
-                msg:'This User doesn´t have the permissions to delete this Sport Center Service'
-            })
-        }
-        const userRole = await UserRoleHistorial.findOne({user:userID}).sort({'sinceDate' : -1}).limit(1);
-        if(userRole.role !== 'CENTER-SUPER-ADMIN'){
-            return res.status(403).json({
-                ok:false,
-                msg:'This User role doesn´t have the permissions to delete Sport Center Service'
-            })
-        }
-        if(sportCenterDB.deletedDate !== null){
-            return res.status(404).json({
-                ok:false,
-                msg:'This Sport Center is blocked'
-            })
-        }
-        await SportCenter.findOneAndDelete({sportCenter:sportCenterID, service:serviceID})
-        res.json({
-            ok:true,
-            msg:'Deleted Sport Center Service'
         })
         
     } catch (error) {

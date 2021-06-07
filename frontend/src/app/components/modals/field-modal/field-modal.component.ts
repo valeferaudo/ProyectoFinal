@@ -27,7 +27,6 @@ export class FieldModalComponent implements OnInit {
   @Output() newField = new EventEmitter<Field>();
   @Output() createFieldSport = new EventEmitter<string>();
 
-  fieldPrice: any;
   fieldForm: FormGroup;
   formsEquals: boolean = true;
   images: File [] = []
@@ -62,7 +61,6 @@ export class FieldModalComponent implements OnInit {
                   this.loaderService.closeLineLoader();
                   if(resp.ok){
                     this.fieldSelected = resp.param.field;
-                    this.fieldPrice = resp.param.price;
                     this.fillForm();
                   }
                 },(err) => {
@@ -79,7 +77,7 @@ export class FieldModalComponent implements OnInit {
       duration: this.fieldSelected.duration,
       features: this.fieldSelected.features,
       sportCenter: this.sportCenterID,
-      price: this.fieldPrice
+      price: this.fieldSelected.price
     })
   }
   getFeatureCombo(){

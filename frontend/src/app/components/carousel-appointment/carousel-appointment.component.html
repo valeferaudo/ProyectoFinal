@@ -1,0 +1,28 @@
+<ngb-carousel *ngIf="appointments.length>0" class="mb-1 mt-1 animated fadeIn text-center" isShown="false" [showNavigationArrows]="appointments.length>1" [showNavigationIndicators]="false">
+    <ng-template *ngFor="let appointment of appointments" ngbSlide>
+      <div class="picsum-img-wrapper" style="background-color: rgb(207, 207, 207); overflow-y: hidden !important;">
+        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Centro Deportivo</span> <br>{{appointment.field.name}}</p>
+        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Centro Deportivo</span> <br> {{appointment.field.sportCenter.name}}</p>
+        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Fecha</span> <br> {{appointment.date | date:"dd-MM-yyyy":'+0'}} {{appointment.date | date:'HH:mm':'+0'}} hs.</p>
+        <hr class="m-1">
+        <button class="btn btn-success m-1 content-tooltip">
+          <i class="fas fa-dollar-sign"></i>
+          <span class="tooltip-box">Pagar</span>
+        </button>
+        <button class="btn btn-info m-1 content-tooltip">
+          <i class="fas fa-map-marker-alt"></i>
+          <span class="tooltip-box">¿Cómo llegar?</span>
+        </button>
+        <button class="btn btn-danger m-1 content-tooltip" *ngIf="type === 'Reservados'" (click)="cancelAppointment(appointment)">
+          <i class="fas fa-trash-alt"></i>
+          <span class="tooltip-box">Cancelar</span>
+        </button>
+      </div>
+    </ng-template>
+  </ngb-carousel>
+<div class="alert alert-danger animated fadeIn mb-1 mt-1" role="alert" *ngIf="appointments.length === 0 && type === 'Por comenzar'"> 
+    <i class="fas fa-times"></i> No hay <strong>Turnos</strong> por comenzar.
+</div>
+<div class="alert alert-danger animated fadeIn mb-1 mt-1" role="alert" *ngIf="appointments.length === 0 && type === 'Reservados'"> 
+    <i class="fas fa-times"></i> No hay <strong>Canchas</strong> reservadas.
+</div>

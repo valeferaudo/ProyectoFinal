@@ -21,28 +21,30 @@ export class NavbarComponent implements OnInit{
   this.userLogged = this.userService.user;
   } 
   searchField(text: string){
-    this.router.navigate(['/fields'], {queryParams: {search: text},
-                            replaceUrl: true,
-                            queryParamsHandling: 'merge'});
-}
-logOut(){
-  this.sweetAlertService.showSwalConfirmation({
-    title: '¿Desea cerrar sesión?',
-    text:'',
-    icon: 'question',
-  })
-  .then((result) => {
-  if (result.value) {
-    this.sweetAlertService.showSwalResponse({
-      title: 'Cerrando sesión',
-      text:'',
-    icon: 'warning',
-    })
-    this.userService.logOut();
-    this.router.navigateByUrl('/login');
+    if(text !== ''){
+      this.router.navigate(['/user/search'], {queryParams: {search: text},
+                              replaceUrl: true,
+                              queryParamsHandling: 'merge'});
+    }
   }
-});
-}
+  logOut(){
+    this.sweetAlertService.showSwalConfirmation({
+      title: '¿Desea cerrar sesión?',
+      text:'',
+      icon: 'question',
+    })
+    .then((result) => {
+      if (result.value) {
+        this.sweetAlertService.showSwalResponse({
+          title: 'Cerrando sesión',
+          text:'',
+        icon: 'warning',
+        })
+        this.userService.logOut();
+        this.router.navigateByUrl('/login');
+      }
+    });
+  }
 goProfile(){
 
 }

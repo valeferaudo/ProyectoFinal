@@ -2,6 +2,7 @@ const SportCenter = require ('../models/sportCenter.model');
 const Service = require ('../models/service.model');
 const User = require ('../models/user.model');
 const Day = require ('../models/day.model')
+const Sport = require ('../models/sport.model')
 const Field = require ('../models/field.model')
 const {request, response} = require('express');
 const sportCenterCtrl ={};
@@ -40,7 +41,7 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
     try {
         let sportCenters;
         let booleanState;
-        let selectedFilters;
+        let selectedFilters = [];
         if(state === 'Activo'){
             booleanState = true;
         }
@@ -50,45 +51,59 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
         let query = {
             '$and': []
         };
-        searchText !== '' ? query['$and'].push({ name: new RegExp(searchText, 'i')}) : query ;
-        if (state !== ''){
-            booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
+        if(searchText !== ''){
+            query['$and'].push({ name: new RegExp(searchText, 'i')});
+            selectedFilters.push('Texto: ',searchText,' - ')
         }
-        services !== undefined ? query['$and'].push({services: {$elemMatch: {service:{ $in: services}}}}) : query ;
-        // days !== undefined ? query['$and'].push({schedules: {$elemMatch: {day:{ $in: days}}}}) : query ;
+        if (state !== ''){
+            booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null});
+            selectedFilters.push('Estado: ',state, ' - ');
+        }
+        if(services !== undefined){
+            query['$and'].push({services: {$elemMatch: {service:{ $in: services}}}});
+            const servicesName = await Service.find({_id:{ $in: services}},'name');
+            selectedFilters.push('Servicio: ');
+            servicesName.forEach(item => {
+                selectedFilters.push(item.name,', ')
+            });
+            selectedFilters.push('- ');
+        }
         if(days !== undefined){
             query['$and'].push({$and: [ {schedules: {$elemMatch: {day:{ $in: days}}}},
                                         {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
-                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]})
-
+                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]});
+            const daysName = await Day.find({idDia:{ $in: days}},'name');
+            selectedFilters.push('Día: ');
+            daysName.forEach(item => {
+                selectedFilters.push(item.name,', ')
+            });
+            selectedFilters.push('- ');
         }
         else{
             query['$and'].push({$and: [ {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
                                         {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]})
         }
+        if(parseInt(sinceHour) !== 0 || parseInt(untilHour) !== 23){
+            selectedFilters.push('Hora desde: ',sinceHour,' - ')
+            selectedFilters.push('Hora hasta: ',untilHour,' - ')
+        }
         let sportCenterSport = [];
         let sportCenterSportID = [];
         if(sports !== undefined){
-            sportCenterSport = await Field.find({sports: {$elemMatch: {sport:{ $in: sports}}}},'sportCenter');
+            sportCenterSport = await Field.find({sports: {$elemMatch: {sport:{ $in: sports}}}},'sportCenter sports').populate('sports.sport');
             sportCenterSport.forEach(item => {
                 sportCenterSportID.push(item.sportCenter)
             });
-            sportCenterSport !== [] ? query['$and'].push({_id: {$in: sportCenterSportID}}) : query 
+            sportCenterSport !== [] ? query['$and'].push({_id: {$in: sportCenterSportID}}) : query;
+            const sportsName = await Sport.find({_id:{ $in: sports}},'name');
+            selectedFilters.push('Deporte: ');
+            sportsName.forEach(item => {
+                selectedFilters.push(item.name,', ')
+            });
+            selectedFilters.push('- ');
         } 
         query['$and'].length > 0 ? sportCenters = await SportCenter.find(query) : sportCenters = await SportCenter.find(); 
-
-        if(searchText === '' && state === '' ){
-            selectedFilters = [];
-        }
-        else if(searchText !== '' && state === ''){
-            selectedFilters = ['Texto: ', searchText];
-        }
-        else if(searchText === '' && state !== ''){
-            selectedFilters = ['Estado: ',state];
-        }
-        else if(text !== '' && state !== ''){
-            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
-        }
+    
         res.json({
             ok: true,
             msg:'Found SportCenters',

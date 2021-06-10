@@ -122,3 +122,5 @@
 <app-table-appointment *ngIf="filterReservedON" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
 <app-table-appointment *ngIf="filterInProgressON" [appointments]="inProgressAppointments" [text]="'en curso.'"></app-table-appointment>
 <app-table-appointment *ngIf="filterCompletedON" [appointments]="completedAppointments" [text]="'finalizados.'"></app-table-appointment>
+
+<app-line-loader></app-line-loader>

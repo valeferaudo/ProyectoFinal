@@ -18,6 +18,10 @@ import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 })
 export class SportCentersComponent implements OnInit {
 
+  hiddenSportCenterModal: boolean = false;
+  sportCenterSelected: any;
+  hiddenScheduleModal:boolean = false;
+
   searchText: string = '';
   sportCenters: SportCenter[] = [];
   filterON: boolean = false;
@@ -27,7 +31,7 @@ export class SportCentersComponent implements OnInit {
     services: [],
     sports: [],
     days: [],
-    sinceHour: 1,
+    sinceHour: 0,
     untilHour: 23,
   }
   sportsCombo: Combo[];
@@ -63,8 +67,10 @@ export class SportCentersComponent implements OnInit {
       this.getSportCenters();
     }
     getServicesCombo(){
+      this.loaderService.openLineLoader();
       this.serviceService.getServiceCombo()
                     .subscribe((resp: any)=>{
+                      this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.servicesCombo = resp.param.combo
                       }
@@ -75,28 +81,21 @@ export class SportCentersComponent implements OnInit {
                     })
     }
     getSportCombo(){
+      this.loaderService.openLineLoader();
       this.sportService.getSportCombo()
                       .subscribe((resp: any) => {
+                        this.loaderService.closeLineLoader();
                         if(resp.ok){
                           this.sportsCombo = resp.param.combo
                         }
                       },(err)=>{
                         console.log(err);
+                        this.loaderService.closeLineLoader();
                         this.errorService.showErrors(99,'nada');
                       })
     }
-    getPrices(){
-      this.fieldService.getMinMaxPrices()
-                  .subscribe((resp: any) => {
-                    if(resp.ok){
-                      //asignar precio min y precio max a this.sinceBDPrice
-                    }
-                  },(err)=>{
-                    console.log(err);
-                    this.errorService.showErrors(99,'nada');
-                  })
-    }
     getSportCenters(){
+      this.filterON = true;
       this.loaderService.openLineLoader();
       this.sportCenterService.getSportCenters(this.filters)
                 .subscribe((resp: any) => {
@@ -104,6 +103,7 @@ export class SportCentersComponent implements OnInit {
                   if(resp.ok){
                     this.sportCenters = resp.param.sportCenters;
                     this.selectedFilters = resp.param.selectedFilters;
+                    this.filterON = false;
                   }
                 },(err)=>{
                   console.log(err);
@@ -215,5 +215,19 @@ export class SportCentersComponent implements OnInit {
         sinceHour: this.sinceHourSelected,
         untilHour: this.untilHourSelected,
       }
+    }
+    openSportCenterModal(sportCenter){
+      this.sportCenterSelected = sportCenter;
+      this.hiddenSportCenterModal = true;
+    }
+    closeSportCenterModal(){
+      this.hiddenSportCenterModal = false;
+    }
+    openScheduleModal(sportCenter){
+      this.sportCenterSelected = sportCenter;
+      this.hiddenScheduleModal = true;
+    }
+    closeScheduleModal(){
+      this.hiddenScheduleModal = false;
     }
 }

@@ -1,43 +1,54 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Field } from 'src/app/models/field.model';
 import { SportCenter } from 'src/app/models/sportCenter.model';
 import { User } from 'src/app/models/user.model';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
-import { SweetAlertService } from 'src/app/services/sweet-alert.service';
-import { UserService } from 'src/app/services/user.service';
+import { SearchService } from 'src/app/services/search.service';
 
 @Component({
-  selector: 'app-favorites',
-  templateUrl: './favorites.component.html',
-  styleUrls: ['./favorites.component.css']
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.css']
 })
-export class FavoritesComponent implements OnInit {
+export class SearchComponent implements OnInit {
 
   searchText: string = '';
+  filterON: boolean = false;
   fields: Field [] = [];
   sportCenters: SportCenter [] = [];
   userLogged : User;
-  filterON: boolean = false;
 
-  constructor(private userService: UserService,
-              private loaderService: LoaderService,
-              private sweetAlertService: SweetAlertService,
-              private errorService: ErrorsService) { }
+  constructor(private loaderService: LoaderService,
+              private searchService: SearchService,
+              private router: Router,
+              private activatedRoute: ActivatedRoute,
+              private errorService: ErrorsService,) { }
 
   ngOnInit(): void {
-    this.userLogged = this.userService.user;
-    this.getFavorites();
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.searchText = params.search;
+      if(params['search'] === undefined){
+        this.router.navigateByUrl('/user/home')
+      }
+      if(this.searchText !== ''){
+        this.search();
+      }
+      else{
+        this.router.navigateByUrl('/user/home')
+      }
+    });
   }
-  getFavorites(){
+  search(){
     this.filterON = true;
     this.loaderService.openLineLoader();
-    this.userService.getFavorites()
-                  .subscribe((resp: any)=>{
+    this.searchService.getServices(this.searchText)
+                  .subscribe((resp: any) => {
                     this.loaderService.closeLineLoader();
                     if(resp.ok){
-                      this.fields = resp.param.fields;
                       this.sportCenters = resp.param.sportCenters;
+                      this.fields = resp.param.fields;
                       this.filterON = false;
                     }
                   },(err)=>{

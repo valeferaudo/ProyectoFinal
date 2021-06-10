@@ -5,7 +5,7 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 *ngIf="mode === 'create'" class="modal-title font-bold" id="exampleModalLabel"><i class="fas fa-running"></i><strong> Cancha-Deporte</strong></h4>
+              <h4 *ngIf="mode === 'create'" class="modal-title font-bold" id="exampleModalLabel"><i class="fas fa-running"></i> Cancha-Deporte</h4>
               <h4 *ngIf="mode === 'update'" class="modal-title" id="exampleModalLabel"><i class="fas fa-running"></i><strong> Cancha-Deporte</strong></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
                 <span aria-hidden="true">&times;</span>
@@ -40,8 +40,8 @@
                                 </tbody>
                             <!-- poner un ng if en el footer -->
                             <tfoot>
-                                <td class="text-center" *ngIf="sportFields.length < sportsCombo.length">
-                                    <button class="btn btn-ok mt-0" (click)="addSportField()">
+                                <td colspan="3" class="text-center" *ngIf="sportFields.length < sportsCombo.length">
+                                    <button class="btn btn-success mt-0" (click)="addSportField()">
                                         <i class="fas fa-plus-circle"></i> Agregar
                                     </button>
                                 </td>  

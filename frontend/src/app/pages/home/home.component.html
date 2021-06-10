@@ -1,34 +1,27 @@
 <div class="card-group">
-    <div class="card col-6 m-4 text-center">
-        <div class="card-img card-inverse bg-app">
-            <img src="../assets/img/icons/avatar-user.jpg" class="img-circle pt-2" width="100">
-            <h2 class="card-title">{{userLogged.name}} {{userLogged.lastName}}</h2>
+    <div class="card col-md-6">
+        <div class="card-img card-inverse bg-app text-center">
+            <h2 class="card-title m-2">Turnos</h2>
         </div>
-        <div class="card-body text-center bg-white">
-            <div class="row">
-                <div class="col">
-                    <h3 class="m-b-0">12K</h3>
-                    <h5 class="font-light">Turnos</h5></div>
-                <div class="col">
-                    <h3 class="m-b-0">420</h3>
-                    <h5 class="font-light">Canchas</h5></div>
-                <div class="col">
-                    <h3 class="m-b-0">5</h3>
-                    <h5 class="font-light">Deportes</h5></div>
-            </div>
+        <div class="card-body bg-white p-0 ">
+            <h4 class="card-title mt-2">Por comenzar:</h4>
+                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'" (getAppointments)="  getAboutToStartAppointments()"></app-carousel-appointment>
             <hr>
-                <app-table-appointment [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
-                <hr>
-                <app-table-appointment [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
+            <h4 class="card-title">Reservados:</h4>
+                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'" (getAppointments)="getReservedAppointments()"></app-carousel-appointment>
+            <hr>
+            <button class="btn btn-success btn-block" [routerLink]="['/user/fields']"><strong>Reservar cancha</strong></button>
         </div>
     </div>
-    <div class="card">
+    <div class="card col-md-6 text-center">
+        <div class="card-img card-inverse bg-app">
+            <h2 class="card-title m-2">Clima</h2>
+        </div>
         <div class="card-body">
             <select class="custom-select pull-right">
                 <option selected="">Today</option>
                 <option value="1">Weekly</option>
             </select>
-            <h4 class="card-title">Clima</h4>
             <div class="d-flex align-items-center flex-row m-t-30">
                 <div class="p-2 display-5 text-info"><i class="wi wi-day-showers"></i> <span>73<sup>°</sup></span></div>
                 <div class="p-2">
@@ -72,3 +65,4 @@
         </div>
     </div>
 </div>
+<app-line-loader></app-line-loader>

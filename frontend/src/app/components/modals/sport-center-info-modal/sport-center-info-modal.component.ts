@@ -29,7 +29,6 @@ export class SportCenterInfoModalComponent implements OnInit {
   ngOnInit(): void {
     this.createSportCenterForm();
     this.getSportCenter();
-    console.log('soprsa')
   }
   closedModal(){
     this.closeModal.emit()

@@ -2,29 +2,28 @@ const Field = require ('../models/field.model');
 const User = require ('../models/user.model');
 const FieldPrice = require('../models/fieldPrice.model');
 const SportCenter = require('../models/sportCenter.model');
-const Appointments = require ('../models/appointment.model');
+const Feature = require ('../models/feature.model');
+const Sport = require ('../models/sport.model');
+const Day = require ('../models/day.model');
 const { request, response} = require ('express');
 const fieldCtrl = {};
+var moment = require('moment');
+moment().format();
 
 const uploadCtrl = require('../controllers/uploadFile.controller')
 
 fieldCtrl.getField = async (req = request , res = response) => {
     const id = req.params.id
     try {
-        const fieldDB = await Field.findById(id);
+        const fieldDB = await Field.findById(id).populate('sportCenter').populate('sports.sport').populate('features');
         if(!fieldDB){
             return unknownIDResponse(res);
         }
-        //OBTNER ULTIMO PRECIO
-        let price = await FieldPrice.findOne({field:id}).sort({'sinceDate' : -1}).limit(1);
-        price = price.price;
-        //DEPORTES ASOCIADOS CON CANT MAX DE PLAYER, DÍAS Y HORARIOS
         res.json({
             ok:true,
             msg:'Found Field',
             param:{
                 field: fieldDB,
-                price
             }
         })
     } catch (error) {
@@ -36,11 +35,17 @@ fieldCtrl.getField = async (req = request , res = response) => {
     }
 }
 fieldCtrl.getFields = async (req = request , res = response) => {
-    //FALTAn FILTRos
     uid = req.uid
     searchText = req.query.text;
     state = req.query.state === undefined ? '' : req.query.state;
     sportCenterID = req.query.sportCenterID;
+    sinceHour = req.query.sinceHour;
+    untilHour = req.query.untilHour;
+    sincePrice = req.query.sincePrice;
+    untilPrice = req.query.untilPrice;
+    features = req.query.feature;
+    sports = req.query.sport;
+    days = req.query.day;
     try {
         let fields;
         let booleanState;
@@ -55,24 +60,89 @@ fieldCtrl.getFields = async (req = request , res = response) => {
         let query = {
             '$and': []
         };
-        searchText !== '' ? query['$and'].push({ name: new RegExp(searchText, 'i')}) : query ;
+        if(searchText !== ''){
+            const sportCenters = await SportCenter.find({ name: new RegExp(searchText, 'i')},'_id')
+            if(sportCenters.length > 0){
+                let sportCentersID = [];
+                sportCenters.forEach(item => {
+                    sportCentersID.push(item._id)
+                });
+                query['$and'].push({ $or: [ { sportCenter:{$in: sportCentersID} }, { name: new RegExp(searchText, 'i') } ] });
+            }
+            else{
+                query['$and'].push({ name: new RegExp(searchText, 'i')});
+            }
+            selectedFilters.push('Texto: ',searchText,' - ')
+        }
         if (state !== ''){
-            booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
+            booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null});
+            selectedFilters.push('Estado: ',state, ' - ');
         }
         sportCenterID !== '' ? query['$and'].push({sportCenter: sportCenterID}) : query;
-        query['$and'].length > 0 ? fields = await Field.find(query).populate('sportCenter') : fields = await Field.find().populate('sportCenter features sports.sport'); 
-        //Armo el selected filters
-        if(searchText !== ''){
-            selectedFilters.push(' Texto: ', searchText)
+        if(features !== undefined){
+            if (typeof(features) === 'object'){
+                query['$and'].push({features:  {$in: features}})
+            }
+            else if (typeof(features) === 'string'){
+                query['$and'].push({features: features})
+            }
+            const featuresName = await Feature.find({_id:{ $in: features}},'name');
+            selectedFilters.push('Servicio: ');
+            featuresName.forEach(item => {
+                selectedFilters.push(item.name,', ')
+            });
+            selectedFilters.push('- ');
         }
-        if(state !== ''){
-            selectedFilters.push(' Estado: ', state)
-        }
-        if(sportCenterID !== ''){
-            if(fields.length > 0){
-                selectedFilters.push(' Centro deportivo: ', fields[0].sportCenter.name)
+        if(sincePrice !== 'undefined' && untilPrice !== 'undefined'){
+            query['$and'].push({$and: [ {price: {$gte: sincePrice}},
+                {price: {$lte: untilPrice}}]});
+            let fieldsPrices = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id price')
+            let minPrice = getMin(fieldsPrices);
+            let maxPrice = getMax(fieldsPrices);
+            if(minPrice !== parseInt(sincePrice) || maxPrice !== parseInt(untilPrice)){
+            selectedFilters.push('Precio desde: ',sincePrice,' - ')
+            selectedFilters.push('Precio hasta: ',untilPrice,' - ')
             }
         }
+        if(sports !== undefined){
+            query['$and'].push({sports: {$elemMatch: {sport:{ $in: sports}}}});
+            const sportsName = await Sport.find({_id:{ $in: sports}},'name');
+            selectedFilters.push('Deporte: ');
+            sportsName.forEach(item => {
+                selectedFilters.push(item.name,', ')
+            });
+            selectedFilters.push('- ');
+        } 
+        let sportCentersDay = [];
+        if(days !== undefined){
+            sportCentersDay = await SportCenter.find({$and: [ {schedules: {$elemMatch: {day:{ $in: days}}}},
+                                        {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
+                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]},'_id')
+            const daysName = await Day.find({idDia:{ $in: days}},'name');
+            selectedFilters.push('Día: ');
+            daysName.forEach(item => {
+                selectedFilters.push(item.name,', ')
+            });
+            selectedFilters.push('- ');
+        }
+        else{
+            sportCentersDay = await SportCenter.find({$and: [ {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
+                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]},'_id')
+        }
+        let sportCentersDayID = [];
+        if(sportCentersDay.length > 0){
+            sportCentersDay.forEach(item => {
+                sportCentersDayID.push(item._id)
+            });
+            query['$and'].push({ sportCenter:{$in: sportCentersDayID}})
+        }
+        if(sinceHour !== 'undefined' && untilHour !== 'undefined'){
+            if(parseInt(sinceHour) !== 0 || parseInt(untilHour) !== 23){
+                selectedFilters.push('Hora desde: ',sinceHour,' - ')
+                selectedFilters.push('Hora hasta: ',untilHour,' - ')
+            }
+        }
+        query['$and'].length > 0 ? fields = await Field.find(query).populate('sportCenter features sports.sport') : fields = await Field.find().populate('sportCenter features sports.sport');
         res.json({
             ok: true,
             msg:'Found sports',
@@ -160,7 +230,7 @@ fieldCtrl.updateFieldSport = async (req = request , res = response) => {
             arrayChanges.push(obj)
         });
         let state;
-        arrayChanges === [] ? state = false : state = true;
+        arrayChanges.length === 0 ? state = false : state = true;
         const field = await Field.findByIdAndUpdate(fieldID, {$set:{sports:arrayChanges, state: state}},{new:true})
         res.json({
             ok:true,
@@ -208,6 +278,25 @@ fieldCtrl.getMinMaxPrices = async (req = request, res = response)=> {
             param: {
                 minPrice,
                 maxPrice
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
+fieldCtrl.getPriceHistorial = async (req = request, res = response) => {
+    const fieldID = req.params.id;
+    try {
+        let fieldPrices = await FieldPrice.find({field: fieldID})
+        fieldPrices.sort((elem1,elem2)=>{
+            return (moment(elem2.sinceDate).diff(moment(elem1.sinceDate)))
+        })
+        res.json({
+            ok: true,
+            msg:'Found Prices historial',
+            param: {
+                priceHistorial : fieldPrices
             }
         })
     } catch (error) {

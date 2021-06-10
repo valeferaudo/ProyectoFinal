@@ -1,8 +1,8 @@
 <hr>
-<h3 *ngIf="text === 'por comenzar.'">Por comenzar</h3>
-<h3 *ngIf="text === 'reservados.'">Reservado</h3>
-<h3 *ngIf="text === 'en curso.'">En curso</h3>
-<h3 *ngIf="text === 'finalizados.'">Finalizado</h3>
+<h4 *ngIf="text === 'por comenzar.'">Por comenzar</h4>
+<h4 *ngIf="text === 'reservados.'">Reservado</h4>
+<h4 *ngIf="text === 'en curso.'">En curso</h4>
+<h4 *ngIf="text === 'finalizados.'">Finalizado</h4>
 
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="appointments.length===0" > 
   <i class="fas fa-times"></i> No se encontraron turnos <strong>{{text}}</strong>

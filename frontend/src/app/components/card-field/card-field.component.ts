@@ -17,6 +17,9 @@ export class CardFieldComponent implements OnInit {
   userLogged: User;
   hiddenScheduleModal: boolean = false;
   @Output() removeFavorite = new EventEmitter<string>();
+  @Output() goSportCenterModal = new EventEmitter<Field>();
+  @Output() goScheduleModal = new EventEmitter<Field>();
+  
   constructor(private router: Router,
               private userService: UserService,
               private fieldService: FieldService,
@@ -29,18 +32,12 @@ export class CardFieldComponent implements OnInit {
   }
   goAppointment(fieldID){
     this.router.navigateByUrl(`/user/appointment/${fieldID}`)
-    //ir a la pagina de turnos ya con la cancha
-
   }
-  goSportCenter(sportCenterID){
-    //ABRIR EL MODAL DE INFO DEL CENTRO DEPORTIVO
-    // que te muestre un mapa con la ubicacion tambien
+  goSportCenter(){
+    this.goSportCenterModal.emit(this.field)
   }
-  openScheduleModal(sportCenterID){
-    this.hiddenScheduleModal = true;
-  }
-  closeScheduleModal(){
-    this.hiddenScheduleModal = false;
+  openScheduleModal(){
+    this.goScheduleModal.emit(this.field)
   }
   openMap(fieldID){
 

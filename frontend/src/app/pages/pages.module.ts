@@ -19,6 +19,7 @@ import { AppointmentsComponent } from './appointments/appointments.component';
 import { SportCentersComponent } from './sport-centers/sport-centers.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { PaymentsComponent } from './payments/payments.component';
+import { SearchComponent } from './search/search.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { PaymentsComponent } from './payments/payments.component';
     AppointmentsComponent,
     SportCentersComponent,
     FavoritesComponent,
-    PaymentsComponent
+    PaymentsComponent,
+    SearchComponent
   ],
   imports: [
     CommonModule,

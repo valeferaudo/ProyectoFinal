@@ -25,7 +25,6 @@ export class FieldModalComponent implements OnInit {
   @Output() closeModal = new EventEmitter<string>();
   @Output() getFields = new EventEmitter<string>();
   @Output() newField = new EventEmitter<Field>();
-  @Output() createFieldSport = new EventEmitter<string>();
 
   fieldForm: FormGroup;
   formsEquals: boolean = true;
@@ -136,9 +135,7 @@ export class FieldModalComponent implements OnInit {
                         }
                         this.newField.emit(resp.param.field)
                         this.getFields.emit();
-                        this.closedModal();
-                        this.createFieldSport.emit();
-                      }
+                        this.closedModal();                      }
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();

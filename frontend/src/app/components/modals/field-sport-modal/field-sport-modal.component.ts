@@ -18,7 +18,7 @@ export class FieldSportModalComponent implements OnInit {
 
   @Input() hiddenModal: boolean;
   @Input() mode: 'create' | 'update';
-  @Input() fieldSelected: Field;
+  @Input() fieldSelected: Field = null;
   @Input() sportCenterID: string;
   @Output() closeModal = new EventEmitter<string>();
   @Output() getFields = new EventEmitter<string>();
@@ -78,7 +78,7 @@ export class FieldSportModalComponent implements OnInit {
     this.fieldSelected.sports.forEach(fs => {
       this.addSportField();
       this.sportFields.controls[i].patchValue({
-        sport: fs.sport,
+        sport: fs.sport._id,
         cantPlayers: fs.cantPlayers
       })
       i++

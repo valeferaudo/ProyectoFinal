@@ -1,4 +1,4 @@
 export interface FieldSport{
-    sport: string;
+    sport: any;
     cantPlayers: string;
 }

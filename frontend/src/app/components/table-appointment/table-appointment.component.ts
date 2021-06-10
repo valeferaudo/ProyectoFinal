@@ -46,7 +46,11 @@ export class TableAppointmentComponent implements OnInit {
                                   this.loaderService.closeLineLoader();
                                   this.sendResponse(resp.param.userPhone);
                                 }
-                              });
+                              },(err)=>{
+                                console.log(err);
+                                this.loaderService.closeLineLoader();
+                                this.errorService.showErrors(99,'nada');
+                              })
       }
     });
   }

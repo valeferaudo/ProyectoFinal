@@ -11,31 +11,26 @@ serviceCtrl.getServices = async (req = request,res = response)=>{
     try {
         let services;
         let booleanState;
-        let selectedFilters;
+        let selectedFilters = [];
         if(state === 'Activo'){
             booleanState = true;
         }
         else if(state === 'Bloqueado'){
             booleanState = false;
         }
+        let query = {
+            '$and': []
+        };
+        if(searchText !== ''){
+            query['$and'].push({ name: new RegExp(searchText, 'i')});
+            selectedFilters.push('Texto: ',searchText);
+        }
+        if(state !== ''){
+            query['$and'].push({state:booleanState});
+            selectedFilters.push('Estado: ',state);
+        }
+        query['$and'].length > 0 ? services = await Service.find(query) : services = await Service.find(); 
 
-        if(searchText === '' && state === '' ){
-            services = await Service.find();
-            selectedFilters = [];
-        }
-        else if(searchText !== '' && state === ''){
-            services = await Service.find({name : new RegExp(searchText, 'i')})
-            selectedFilters = ['Texto: ', searchText];
-        }
-        else if(searchText === '' && state !== ''){
-            services = await Service.find({state:booleanState})
-            selectedFilters = ['Estado: ',state];
-        }
-        else if(searchText !== '' && state !== ''){
-            services = await Service.find({name : new RegExp(searchText, 'i'),
-                                    state:booleanState})
-            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
-        }
         res.json({
             ok: true,
             msg:'Found services',

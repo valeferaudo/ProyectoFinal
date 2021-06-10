@@ -20,6 +20,10 @@ import { FieldService } from '../../services/field.service'
 })
 export class FieldsComponent implements OnInit {
 
+  hiddenSportCenterModal: boolean = false;
+  fieldSelected: any;
+  hiddenScheduleModal:boolean = false;
+
   sportCenterInParam: string = '';
   searchText: string = '';
   fields: Field[] = [];
@@ -30,13 +34,16 @@ export class FieldsComponent implements OnInit {
     state: '',
     features: [],
     sports: [],
-    sinceHour: 1,
+    days: [],
+    sinceHour: 0,
     untilHour: 23,
   }
   sportsCombo: Combo[];
   sportsSelected = [];
   featureCombo: Combo[];
   featuresSelected = [];
+  daysCombo: Combo [] = [{'id':'1','text':'Lunes'},{'id':'2','text':'Martes'},{'id':'3','text':'Miércoles'},{'id':'4','text':'Jueves'},{'id':'5','text':'Viernes'},{'id':'6','text':'Sábado'},{'id':'7','text':'Domingo'}]
+  daysSelected = [];
   sinceHourSelected = 0;
   untilHourSelected = 23;
   sinceBDPrice;
@@ -60,14 +67,16 @@ export class FieldsComponent implements OnInit {
      this.getCombos();
     }
     getCombos(){
+      this.getSportCenterInParam();
       this.getFeatureCombo();
       this.getSportCombo();
       this.getPrices();
-      this.getSportCenterInParam();
     }
     getFeatureCombo(){
+      this.loaderService.openLineLoader();
       this.featureService.getCombo()
                     .subscribe((resp: any)=>{
+                      this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.featureCombo = resp.param.combo
                       }
@@ -78,27 +87,35 @@ export class FieldsComponent implements OnInit {
                     })
     }
     getSportCombo(){
+      this.loaderService.openLineLoader();
       this.sportService.getSportCombo()
                       .subscribe((resp: any) => {
+                        this.loaderService.closeLineLoader();
                         if(resp.ok){
                           this.sportsCombo = resp.param.combo
                         }
                       },(err)=>{
                         console.log(err);
+                        this.loaderService.closeLineLoader();
                         this.errorService.showErrors(99,'nada');
                       })
     }
     getPrices(){
+      this.loaderService.openLineLoader();
       this.fieldService.getMinMaxPrices()
                   .subscribe((resp: any) => {
+                    this.loaderService.closeLineLoader();
                     if(resp.ok){
                       this.sinceBDPrice = resp.param.minPrice;
                       this.sincePriceSelected = this.sinceBDPrice;
                       this.untilBDPrice = resp.param.maxPrice;
                       this.untilPriceSelected = this.untilBDPrice;
+                      this.fillFilterObject();
+                      this.getFields();
                     }
                   },(err)=>{
                     console.log(err);
+                    this.loaderService.closeLineLoader();
                     this.errorService.showErrors(99,'nada');
                   })
     }
@@ -106,21 +123,25 @@ export class FieldsComponent implements OnInit {
       this.activatedRoute.params.subscribe(params => {
         this.sportCenterInParam = params.id === undefined ? '' : params.id;
         this.fillFilterObject();
-        this.getFields();
     });
     }
     goBack(){
       this.location.back();
     }
     getFields(){
+      this.filterON = true;
+      this.loaderService.openLineLoader();
       this.fieldService.getFields(this.filters)
                 .subscribe((resp: any) => {
+                  this.loaderService.closeLineLoader();
                   if(resp.ok){
                     this.fields = resp.param.fields;
                     this.selectedFilters = resp.param.selectedFilters;
+                    this.filterON = false;
                   }
                 },(err)=>{
                   console.log(err);
+                  this.loaderService.closeLineLoader();
                   this.errorService.showErrors(99,'nada');
                 })
     }
@@ -137,6 +158,7 @@ export class FieldsComponent implements OnInit {
       this.filterON = false;
       this.sportsSelected = [];
       this.featuresSelected = [];
+      this.daysSelected = [];
       this.sinceHourSelected = 0;
       this.untilHourSelected = 23;
       this.sincePriceSelected = this.sinceBDPrice;
@@ -147,10 +169,10 @@ export class FieldsComponent implements OnInit {
     }
     changeSportSelected(event:MatCheckboxChange,sport){
       if(event.checked){
-        this.sportsSelected.push(sport)
+        this.sportsSelected.push(sport.id)
       }
       else{
-        var i = this.sportsSelected.indexOf( sport );
+        var i = this.sportsSelected.indexOf( sport.id );
         if ( i !== -1 ) {
             this.sportsSelected.splice( i, 1 );
         }
@@ -167,10 +189,10 @@ export class FieldsComponent implements OnInit {
     }
     changeFeatureSelected(event:MatCheckboxChange,feature){
       if(event.checked){
-        this.featuresSelected.push(feature)
+        this.featuresSelected.push(feature.id)
       }
       else{
-        var i = this.featuresSelected.indexOf( feature );
+        var i = this.featuresSelected.indexOf( feature.id );
         if ( i !== -1 ) {
             this.featuresSelected.splice( i, 1 );
         }
@@ -182,6 +204,26 @@ export class FieldsComponent implements OnInit {
       this.getFields();
     }
     filterFeatures(){
+      this.fillFilterObject();
+      this.getFields();
+    }
+    changeDaysSelected(event:MatCheckboxChange,day){
+      if(event.checked){
+        this.daysSelected.push(day.id)
+      }
+      else{
+        var i = this.daysSelected.indexOf( day.id );
+        if ( i !== -1 ) {
+            this.daysSelected.splice( i, 1 );
+        }
+      }
+    }
+    resetDays(){
+      this.daysSelected = [];
+      this.fillFilterObject();
+      this.getFields();
+    }
+    filterDays(){
       this.fillFilterObject();
       this.getFields();
     }
@@ -210,7 +252,8 @@ export class FieldsComponent implements OnInit {
     fillFilterObject(){
       this.filters = {
         text: this.searchText,
-        // sports: this.sportsSelected,
+        sports: this.sportsSelected,
+        days: this.daysSelected,
         state: '',
         sportCenterID: this.sportCenterInParam,
         features: this.featuresSelected,
@@ -219,5 +262,19 @@ export class FieldsComponent implements OnInit {
         sinceHour: this.sinceHourSelected,
         untilHour: this.untilHourSelected,
       }
+    }
+    openSportCenterModal(field){
+      this.fieldSelected = field;
+      this.hiddenSportCenterModal = true;
+    }
+    closeSportCenterModal(){
+      this.hiddenSportCenterModal = false;
+    }
+    openScheduleModal(field){
+      this.fieldSelected = field;
+      this.hiddenScheduleModal = true;
+    }
+    closeScheduleModal(){
+      this.hiddenScheduleModal = false;
     }
 }

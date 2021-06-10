@@ -10,6 +10,7 @@ import { FaqComponent } from '../shared/faq/faq.component';
 import { SportCentersComponent } from './sport-centers/sport-centers.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { PaymentsComponent } from './payments/payments.component';
+import { SearchComponent } from './search/search.component';
 
 
 export const PagesRoutes: Routes = [
@@ -21,6 +22,7 @@ export const PagesRoutes: Routes = [
    {path: 'fields', component: FieldsComponent, canActivate: [UserGuard]},
    {path: 'fields/:id', component: FieldsComponent, canActivate: [UserGuard]},
    {path: 'sportCenters', component: SportCentersComponent,  canActivate: [UserGuard]},
+   {path: 'search', component: SearchComponent, canActivate: [UserGuard]},
    {path: 'favorites', component: FavoritesComponent,  canActivate: [UserGuard]},
    {path: 'payments', component: PaymentsComponent,  canActivate: [UserGuard]},
    {path: 'appointments', component: AppointmentsComponent, canActivate: [UserGuard]},

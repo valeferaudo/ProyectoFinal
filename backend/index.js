@@ -30,13 +30,13 @@ app.use('/api/users',require('./routes/user.routes'));
 app.use('/api/sports',require('./routes/sport.routes'));
 app.use('/api/services',require('./routes/service.routes'));
 app.use('/api/features',require('./routes/feature.routes'));
+app.use('/api/search',require('./routes/search.routes'));
 app.use('/api/favorites',require('./routes/favorites.routes'));
 app.use('/api/requests',require('./routes/request.routes'));
 app.use('/api/sportcenters',require('./routes/sportCenter.routes'));
 app.use('/api/schedules',require('./routes/schedule.routes'));
 app.use('/api/specialschedules',require('./routes/specialSchedule.routes'));
 app.use('/api/login',require('./routes/auth.routes'))
-// app.use('/api/usertypes',require('./routes/userType.routes'));
 app.use('/api/fields',require('./routes/field.routes'));
 app.use('/api/appointments',require('./routes/appointment.routes'));
 app.use('/api/uploads',require('./routes/upload.routes'));

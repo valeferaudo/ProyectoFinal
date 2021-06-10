@@ -10,44 +10,26 @@ sportCtrl.getSports = async (req = request , res = response) => {
     try {
         let sports;
         let booleanState;
-        let selectedFilters;
+        let selectedFilters = [];
         if(state === 'Activo'){
             booleanState = true;
         }
         else if(state === 'Bloqueado'){
             booleanState = false;
         }
+        let query = {
+            '$and': []
+        };
+        if(searchText !== ''){
+            query['$and'].push({ name: new RegExp(searchText, 'i')});
+            selectedFilters.push('Texto: ',searchText);
+        }
+        if(state !== ''){
+            booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
+            selectedFilters.push('Estado: ',state);
+        }
+        query['$and'].length > 0 ? sports = await Sport.find(query) : sports = await Sport.find(); 
 
-        if(searchText === '' && state === '' ){
-            sports = await Sport.find();
-            selectedFilters = [];
-        }
-        else if(searchText !== '' && state === ''){
-            sports = await Sport.find({ 
-                                        name: new RegExp(searchText, 'i')
-            })
-            selectedFilters = ['Texto: ', searchText];
-        }
-        else if(searchText === '' && state !== ''){
-            if(booleanState){
-                sports = await Sport.find({deletedDate: null})
-            }
-            else{
-                sports = await Sport.find({deletedDate: {$ne: null} })
-            }
-            selectedFilters = ['Estado: ',state];
-        }
-        else if(searchtext !== '' && state !== ''){
-            if(booleanState){
-                sports = await Sport.find({deletedDate: null,
-                                            name: new RegExp(searchText, 'i')})
-            }
-            else{
-                sports = await Sport.find({deletedDate: {$ne: null},
-                                            name: new RegExp(searchText, 'i')})
-            }
-            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
-        }
         res.json({
             ok: true,
             msg:'Found sports',

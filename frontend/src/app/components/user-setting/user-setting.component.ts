@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
 import { ErrorsService } from 'src/app/services/errors.service';
+import { LoaderService } from 'src/app/services/loader.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
 import { ValidatorService } from 'src/app/services/validator.service';
@@ -28,8 +29,8 @@ export class UserSettingComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private userService: UserService,
-              private validator: ValidatorService,
               private router: Router,
+              private loaderService: LoaderService,
               private activatedRoute: ActivatedRoute,
               private sweetAlertService: SweetAlertService,
               private errorService: ErrorsService) {}
@@ -37,6 +38,7 @@ export class UserSettingComponent implements OnInit {
   ngOnInit(){
     this.getUser();
     this.createForm();
+    this.disableForm();
   }
   getUser(){
       this.userID = this.activatedRoute.snapshot.params.id;
@@ -52,7 +54,7 @@ export class UserSettingComponent implements OnInit {
       address: [{value: this.userLogged.address, disabled: true},[]],
       phone: [{value: this.userLogged.phone, disabled: true}, [Validators.required]],
       email: [{value: this.userLogged.email, disabled: true}, [Validators.required, Validators.email]],
-    }, {validators: this.validator.passEqual('password', 'password2')});
+    });
   }
 
   updateUser(){
@@ -69,17 +71,23 @@ export class UserSettingComponent implements OnInit {
     })
     .then((result) => {
       if (result.value) {
-      this.userService.updateUser(this.userLogged.uid, this.createUpdateObject())
-                        .subscribe(resp => {
-                          this.sweetAlertService.showSwalResponse({
-                            title: 'Usuario Editado',
-                            text:'',
-                            icon: 'success',
-                          })
-                          this.editMode = false;
-                          this.userForm.disable();
+        this.loaderService.openLineLoader();
+        this.userService.updateUser(this.userLogged.uid, this.createUpdateObject())
+                        .subscribe((resp: any) => {
+                          this.loaderService.closeLineLoader();
+                          if(resp.ok){
+                            this.sweetAlertService.showSwalResponse({
+                              title: 'Usuario Editado',
+                              text:'',
+                              icon: 'success',
+                            })
+                            this.userLogged = resp.param.user;
+                            this.editMode = false;
+                            this.userForm.disable();
+                          }
                         }, (err) => {
-                          console.log(err)
+                          console.log(err);
+                          this.loaderService.closeLineLoader();
                           this.errorService.showErrors('nada',99)
                         });
       }
@@ -103,7 +111,7 @@ export class UserSettingComponent implements OnInit {
     this.pass = false;
     this.change = false;
     this.editMode = false;
-    this.createForm();
+    this.fillForm();
     this.disableForm();
   }
   disableForm(){
@@ -122,9 +130,17 @@ export class UserSettingComponent implements OnInit {
   closeChangePasswordModal(closeModal){
     this.hiddenPasswordModal = closeModal;
   }
+  fillForm(){
+    this.userForm.patchValue({
+      name: this.userLogged.name,
+      lastName: this.userLogged.lastName,
+      phone: this.userLogged.phone,
+      address: this.userLogged.address
+    })
+  }
   goBack(){
     if(this.userLogged.role === 'USER'){
-      this.router.navigateByUrl('home');
+      this.router.navigateByUrl('/user/home');
     }
     else if(this.userLogged.role === 'CENTER-ADMIN'){
       this.router.navigateByUrl('admin/home');

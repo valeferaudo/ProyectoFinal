@@ -23,7 +23,6 @@ export class TableDoAppointmentComponent implements OnInit {
 
 
   
-  @Input() field;
 
   constructor(private appointmentsService: AppointmentService,
               private userService: UserService,
@@ -57,7 +56,7 @@ export class TableDoAppointmentComponent implements OnInit {
     this.appointment = {
       date: appointmentDate,
       user: this.userService.user.uid,
-      field: this.field.id,
+      field: this.fieldID,
       owner: {
         name: this.userService.user.name,
         oid: this.userService.user.uid,
@@ -136,7 +135,7 @@ export class TableDoAppointmentComponent implements OnInit {
   }
   goAppointments(){
     if (this.userLogged.role === 'USER'){
-      this.router.navigate(['/appointments']);
+      this.router.navigate(['/user/appointments']);
     }
     if (this.userLogged.role === 'CENTER-ADMIN' || this.userLogged.role === 'CENTER-SUPER-ADMIN'){
       this.router.navigate(['/admin/appointments']);

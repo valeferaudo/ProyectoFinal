@@ -17,8 +17,9 @@ router.get('/minMaxPrices',[validateJWT,
 router.get('/:id',[validateJWT,
             validateUserID],fieldCtrl.getField);
 router.get('/',[validateJWT,
-            validateUserID],fieldCtrl.getFields)
-
+            validateUserID],fieldCtrl.getFields);
+router.get('/priceHistorial/:id',[validateJWT,
+            validateUserID],fieldCtrl.getPriceHistorial);
 //Este post crea solo la cancha y el precio.
 router.post('/',[validateJWT,
             validateUserID,

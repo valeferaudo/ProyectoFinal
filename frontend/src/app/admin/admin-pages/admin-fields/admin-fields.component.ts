@@ -19,7 +19,7 @@ export class AdminFieldsComponent implements OnInit {
   userLogged: User;
   hiddenFieldModal: boolean = false;
   hiddenSportModal: boolean = false;
-
+  hiddenPriceHistorialModal: boolean = false;
   searchText: string = '';
   fields: Field[] = [];
   filterON: boolean = false;
@@ -31,6 +31,8 @@ export class AdminFieldsComponent implements OnInit {
     text: '',
     state: '',
     features:[],
+    sports: [],
+    days: []
   }
   selectedFilters: string [] = [];
   fieldStates = ['Activo', 'Bloqueado']
@@ -97,6 +99,8 @@ export class AdminFieldsComponent implements OnInit {
       state: this.fieldStateSelected,
       sportCenterID: this.userLogged.sportCenter.id,
       features:[],
+      sports: [],
+      days: []
     }
   }
   activateBlockField(field, action: 'active' | 'block'){
@@ -147,7 +151,6 @@ export class AdminFieldsComponent implements OnInit {
   createFieldModal(){
     this.modalMode = 'create';
     this.hiddenFieldModal = true;
-    console.log(this.fieldSelected)
   }
   updateFieldModal(field){
     this.fieldSelected = field
@@ -160,6 +163,7 @@ export class AdminFieldsComponent implements OnInit {
   }
   createFieldSportModal(){
     this.modalMode = 'create';
+    console.log(this.fieldSelected)
     this.hiddenSportModal = true;
   }
   updateFieldSport(field){
@@ -171,8 +175,15 @@ export class AdminFieldsComponent implements OnInit {
     this.hiddenSportModal = false;
   }
   setNewField(field){
-    this.fieldSelected = field;
+    //falta pasar bien el fieldSelected, porque llega null
+      // this.fieldSelected = field;
+      // this.createFieldSportModal();
   }
-
-
+  openPriceHistorial(field){
+    this.fieldSelected = field;
+    this.hiddenPriceHistorialModal = true;
+  }
+  closePriceHistorial(){
+    this.hiddenPriceHistorialModal = false;
+  }
 }

@@ -164,9 +164,19 @@
 <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="card-group">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
-        <app-card-sport-center [sportCenter]="sportCenter"></app-card-sport-center>
+        <app-card-sport-center [sportCenter]="sportCenter" (goSportCenterModal)="openSportCenterModal($event)" (goScheduleModal)="openScheduleModal($event)"></app-card-sport-center>
     </div>
 </div>
-<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0"> 
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0 && !filterON"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Centros Deportivos</strong>.
 </div>
+
+<app-line-loader></app-line-loader>
+<app-sport-center-info-modal *ngIf="hiddenSportCenterModal" [hiddenModal]="!hiddenSportCenterModal" [sportCenterSelectedID]="sportCenterSelected.id"
+                                (closeModal)="closeSportCenterModal()">
+
+</app-sport-center-info-modal>
+<app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
+                                [sportCenter]="sportCenterSelected" [sportCenterID]="sportCenterSelected.id"
+                                (closeModal)="closeScheduleModal()">
+</app-sport-center-schedule-modal>

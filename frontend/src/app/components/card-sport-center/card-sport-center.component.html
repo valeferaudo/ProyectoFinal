@@ -38,7 +38,7 @@
                             <span class="tooltip-box">Canchas</span>
                     </button>
                     <button class="btn btn-info m-1 content-tooltip"
-                            (click)="openScheduleModal(sportCenter)"><i class="fas fa-clock"></i>
+                            (click)="openScheduleModal()"><i class="fas fa-clock"></i>
                             <span class="tooltip-box">Horarios</span>
                     </button>
                     <button class="btn btn-info m-1 content-tooltip"
@@ -52,13 +52,3 @@
             </div>
 </div>
 </div>
-
-<app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
-                                        [sportCenter]="sportCenter" [sportCenterID]="sportCenter.id"
-                                    (closeModal)="closeScheduleModal()">
-</app-sport-center-schedule-modal>
-
-<app-sport-center-info-modal *ngIf="hiddenSportCenterModal" [hiddenModal]="!hiddenSportCenterModal" [sportCenterSelectedID]="sportCenter.id"
-                                (closeModal)="closeSportCenterModal()">
-
-</app-sport-center-info-modal>

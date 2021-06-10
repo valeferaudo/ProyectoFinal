@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Field } from '../models/field.model';
 import { FieldForm } from '../interfaces/fieldForm.inteface';
 import { FieldFilter } from '../interfaces/filters/fieldFilter.interface';
@@ -22,6 +21,25 @@ export class FieldService {
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
     params = params.append('sportCenterID',filters.sportCenterID);
+    params = params.append('sinceHour',filters.sinceHour);
+    params = params.append('untilHour',filters.untilHour);
+    params = params.append('sincePrice',filters.sincePrice);
+    params = params.append('untilPrice',filters.untilPrice);
+    if(filters.features.length > 0){
+      filters.features.forEach(element => {
+        params = params.append('feature',`${element}`)
+      });
+    }
+    if(filters.sports.length > 0){
+      filters.sports.forEach(element => {
+        params = params.append('sport',`${element}`)
+      });
+    }
+    if(filters.days.length > 0){
+      filters.days.forEach(element => {
+        params = params.append('day',`${element}`)
+      });
+    }
     return this.http.get(`${baseUrl}/fields/` ,{params});
   }
   activateBlockField(id, action){
@@ -47,5 +65,8 @@ export class FieldService {
   }
   getMinMaxPrices(){
     return this.http.get(`${baseUrl}/fields/minMaxPrices`);
+  }
+  getPriceHistorial(fieldID){
+    return this.http.get(`${baseUrl}/fields/priceHistorial/${fieldID}`);
   }
 }

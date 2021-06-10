@@ -261,7 +261,14 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
         query['$and'].push({ user: userID})
         const appointments = await Appointment.find(query)
                                          .populate('user','name')
-                                         .populate('field','name')
+                                         .populate({ 
+                                            path: 'field',
+                                            model: 'Field',
+                                            populate: {
+                                                path: 'sportCenter',
+                                                model: 'SportCenter'
+                                            }
+                                        })
         if(appointments.length > 0){
             if(appointments[0].state === 'Completed'){
                 sortDateFromLargest(appointments);
@@ -288,10 +295,21 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
 }
 appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
     const id = req.params.id;
+    const userID = req.uid;
     try {
         const appointmentDB = await Appointment.findById(id).populate('user');
         if (!appointmentDB) {
             return unknownIDResponse(res)
+        }
+        const userDB = await User.findById(userID);
+        if(userDB.role === 'USER'){
+            if(userDB.id !== appointmentDB.user.id){
+                return res.status(404).json({
+                    ok:false,
+                    code:18,
+                    msg:'The appointment cannot be deleted by this User'
+                })
+            }
         }
         if(appointmentDB.state !== 'Reserved' || moment(appointmentDB.date).add(3,'h').subtract(12,'h') < moment()){
             return res.status(404).json({

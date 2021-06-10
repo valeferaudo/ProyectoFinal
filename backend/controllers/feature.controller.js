@@ -11,31 +11,26 @@ featureCtrl.getFeatures = async (req = request,res = response)=>{
     try {
         let features;
         let booleanState;
-        let selectedFilters;
+        let selectedFilters = [];
         if(state === 'Activo'){
             booleanState = true;
         }
         else if(state === 'Bloqueado'){
             booleanState = false;
         }
+        let query = {
+            '$and': []
+        };
+        if(searchText !== ''){
+            query['$and'].push({ name: new RegExp(searchText, 'i')});
+            selectedFilters.push('Texto: ',searchText);
+        }
+        if(state !== ''){
+            query['$and'].push({state:booleanState});
+            selectedFilters.push('Estado: ',state);
+        }
+        query['$and'].length > 0 ? features = await Feature.find(query) : features = await Feature.find(); 
 
-        if(searchText === '' && state === '' ){
-            features = await Feature.find();
-            selectedFilters = [];
-        }
-        else if(searchText !== '' && state === ''){
-            features = await Feature.find({name : new RegExp(searchText, 'i')})
-            selectedFilters = ['Texto: ', searchText];
-        }
-        else if(searchText === '' && state !== ''){
-            features = await Feature.find({state:booleanState})
-            selectedFilters = ['Estado: ',state];
-        }
-        else if(searchText !== '' && state !== ''){
-            features = await Feature.find({name : new RegExp(searchText, 'i'),
-                                    state:booleanState})
-            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
-        }
         res.json({
             ok: true,
             msg:'Found features',
@@ -44,7 +39,6 @@ featureCtrl.getFeatures = async (req = request,res = response)=>{
                 selectedFilters
             }
         })
-        
     } catch (error) {
         console.log(error);
         errorResponse(res);

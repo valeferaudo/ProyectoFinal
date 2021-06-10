@@ -18,8 +18,8 @@ export class CardSportCenterComponent implements OnInit {
   @Input() sportCenter: SportCenter;
   userLogged: User;
   @Output() removeFavorite = new EventEmitter<string>();
-  hiddenScheduleModal: boolean = false;
-  hiddenSportCenterModal: boolean = false;
+  @Output() goSportCenterModal = new EventEmitter<SportCenter>();
+  @Output() goScheduleModal = new EventEmitter<SportCenter>();
 
   constructor(private router: Router,
               private userService: UserService,
@@ -34,11 +34,8 @@ export class CardSportCenterComponent implements OnInit {
   getFields(fieldID){
     this.router.navigateByUrl(`/user/fields/${fieldID}`)
   }
-  openScheduleModal(sportCenterID){
-    this.hiddenScheduleModal = true;
-  }
-  closeScheduleModal(){
-    this.hiddenScheduleModal = false;
+  openScheduleModal(){
+    this.goScheduleModal.emit(this.sportCenter)
   }
   openMap(sportCenterID){
 
@@ -99,9 +96,6 @@ export class CardSportCenterComponent implements OnInit {
     })
   }
   openSportCenterModal(){
-    this.hiddenSportCenterModal = true;
-  }
-  closeSportCenterModal(){
-    this.hiddenSportCenterModal = false;
+    this.goSportCenterModal.emit(this.sportCenter)
   }
 }

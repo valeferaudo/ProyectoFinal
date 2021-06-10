@@ -200,10 +200,13 @@ userCtrl.updateUser = async (req = request, res = response) =>{
                 delete changes.role
             }
         }
-        await User.findByIdAndUpdate(uid,changes,{new:true})
+        const user = await User.findByIdAndUpdate(uid,changes,{new:true})
         res.json({
             ok:true,
-            msg:'Updated User'
+            msg:'Updated User',
+            param: {
+                user
+            }
         })
     } catch (error) {
         console.log(error);

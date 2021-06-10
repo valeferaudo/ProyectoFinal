@@ -4,7 +4,7 @@
             <h2 class="card-title"><strong>Listado de canchas </strong></h2>
         </div>
         <div class="col-md-6">
-            <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 10;" *ngIf="sportCenterInParam !== undefined" (click)="goBack()">
+            <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 10;" *ngIf="sportCenterInParam !== ''" (click)="goBack()">
                 <i class="fas fa-arrow-alt-circle-left"></i> Atrás
             </button>
         </div>
@@ -45,7 +45,7 @@
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
                         <div class="filters__items-container__item__menu__options-container__option" *ngFor="let sport of sportsCombo; let i = index">
-                            <mat-checkbox  (change)="changeSportSelected($event,sport)" #myCheckBoxCategory [checked]="sportsSelected.includes(sport)">
+                            <mat-checkbox  (change)="changeSportSelected($event,sport)" #myCheckBoxCategory [checked]="sportsSelected.includes(sport.id)">
                             <span>{{sport.text}}</span>
                             </mat-checkbox>
                         </div>
@@ -70,7 +70,7 @@
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
                         <div class="filters__items-container__item__menu__options-container__option" *ngFor="let feature of featureCombo; let i = index">
-                            <mat-checkbox  (change)="changeFeatureSelected($event,feature)" #myCheckBoxCategory [checked]="featuresSelected.includes(feature)">
+                            <mat-checkbox  (change)="changeFeatureSelected($event,feature)" #myCheckBoxCategory [checked]="featuresSelected.includes(feature.id)">
                             <span>{{feature.text}}</span>
                             </mat-checkbox>
                         </div>
@@ -82,7 +82,32 @@
                         <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterFeatures()">Aplicar</button>
                     </div>
                     </mat-menu>
-                </div>  
+                </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDay">
+                    <span class="filters__items-container__item__button__resume">Día</span>
+                    <span class="filters__items-container__item__button__name">Día</span>
+                    </button>
+                                <!-- FILTER MENU -->
+                    <mat-menu #menuDay="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                        <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__options-container">
+                        <div class="filters__items-container__item__menu__options-container__option" *ngFor="let day of daysCombo; let i = index">
+                            <mat-checkbox  (change)="changeDaysSelected($event,day)" #myCheckBoxCategory [checked]="daysSelected.includes(day.id)">
+                            <span>{{day.text}}</span>
+                            </mat-checkbox>
+                        </div>
+                        </div>
+                    </div>
+                                    <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetDays()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDays()">Aplicar</button>
+                    </div>
+                    </mat-menu>
+                </div> 
                 <div class="filters__items-container__item">
                     <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuHours">
@@ -182,9 +207,20 @@
 <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="card-group" *ngIf="fields.length > 0">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let field of fields">
-        <app-card-field [field]="field"></app-card-field>
+        <app-card-field [field]="field" (goSportCenterModal)="openSportCenterModal($event)" (goScheduleModal)="openScheduleModal($event)">
+
+        </app-card-field>
     </div>
 </div>
-<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0"> 
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0 && !filterON"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Canchas</strong>
 </div>
+<app-line-loader></app-line-loader>
+<app-sport-center-info-modal *ngIf="hiddenSportCenterModal" [hiddenModal]="!hiddenSportCenterModal" [sportCenterSelectedID]="fieldSelected.sportCenter._id"
+                                (closeModal)="closeSportCenterModal()">
+
+</app-sport-center-info-modal>
+<app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
+                                [sportCenter]="fieldSelected.sportCenter" [sportCenterID]="fieldSelected.sportCenter.id"
+                                (closeModal)="closeScheduleModal()">
+</app-sport-center-schedule-modal>

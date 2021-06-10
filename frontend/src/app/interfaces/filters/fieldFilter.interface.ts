@@ -6,6 +6,7 @@ export interface FieldFilter{
     sports?: any[];
     sincePrice?: any;
     untilPrice?: any;
+    days?: any[];
     sinceHour?: any;
     untilHour?: any;
 }

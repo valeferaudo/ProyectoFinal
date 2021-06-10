@@ -44,11 +44,11 @@
                                 <span class="tooltip-box">Reservar</span>
                         </button>
                         <button class="btn btn-info m-1 content-tooltip"
-                                (click)="goSportCenter(field.sportCenter)"><i class="fas fa-info-circle"></i>
+                                (click)="goSportCenter()"><i class="fas fa-info-circle"></i>
                                 <span class="tooltip-box">Información Centro Deportivo</span>
                         </button>
                         <button class="btn btn-info m-1 content-tooltip"
-                            (click)="openScheduleModal(field.sportCenter)"><i class="fas fa-clock"></i>
+                            (click)="openScheduleModal()"><i class="fas fa-clock"></i>
                             <span class="tooltip-box">Horarios</span>
                         </button>
                         <button class="btn btn-info m-1 content-tooltip"
@@ -58,7 +58,3 @@
                 </div>
     </div>
   </div>
-  <app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
-                [sportCenter]="field.sportCenter" [sportCenterID]="field.sportCenter.id"
-                (closeModal)="closeScheduleModal()">
-</app-sport-center-schedule-modal>

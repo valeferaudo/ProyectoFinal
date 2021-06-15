@@ -1,0 +1,51 @@
+<div class="background-modal" [class.hidden]="hiddenModal" >
+    <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="display: block; overflow-y: scroll;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title font-bold" id="exampleModalLabel">Nueva fecha especial</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="specialScheduleForm">
+                <div class="row">
+                  <div class="form-group col-md-12 mb-1">
+                    <label for="name" class="col-form-label"><strong>Fecha:</strong></label><br>
+                    <mat-form-field class="p-0">
+                      <mat-label>Ingrese</mat-label>
+                      <input matInput [matDatepicker]="picker" formControlName="date" [min]="minDate">
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker ></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="form-group col-md-6 col-sm-6 mb-1">
+                      <label for="description" class="col-form-label"><strong>Hora desde:</strong></label>
+                      <input type="time" class="form-control" id="description" formControlName="sinceHour" [class.is-invalid]="getFieldValid('sinceHour')">
+                      <p class="text-danger" *ngIf="getFieldValid('sinceHour')">
+                        *Ingrese la <strong>fecha</strong>.
+                      </p>
+                  </div>
+                  <div class="form-group col-md-6 col-sm-6 mb-1">
+                    <label for="description" class="col-form-label"><strong>Hora hasta:</strong></label>
+                    <input type="time" class="form-control" id="duration" formControlName="untilHour" placeholder="Minutos" [class.is-invalid]="getFieldValid('untilHour')">
+                    <p class="text-danger" *ngIf="getFieldValid('untilHour')">
+                      *Ingrese la <strong>fecha</strong>.
+                    </p>
+                  </div>
+                </div>
+              </form>              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" (click)="createSpecialSchedule()">Crear</button>
+              <button type="button" class="btn btn-danger"  (click)="closedModal()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<app-line-loader></app-line-loader>

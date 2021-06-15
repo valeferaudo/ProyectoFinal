@@ -30,7 +30,10 @@
           <td class="text-center" >{{item.date | date:'HH:mm':'+0'}}</td>
           <td class="text-center" >{{item.state| translate}}</td>
           <td class="text-center" *ngIf="item.state==='Reserved'">
-                <i class="fas fa-trash-alt pointer text-danger" (click)="deleteAppointment(item)"></i>
+            <button class="btn btn-sm bg-danger content-tooltip" (click)="deleteAppointment(item)">
+                <i class="fas fa-trash-alt pointer text-white"></i>
+                <span class="tooltip-box">Cancelar</span>
+            </button>
           </td>
           <!-- <td *ngIf="(this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN')&& item.state!=='Reserved'"></td> -->
         </tr>

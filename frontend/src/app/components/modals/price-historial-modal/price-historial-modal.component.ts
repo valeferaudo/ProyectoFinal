@@ -29,7 +29,6 @@ export class PriceHistorialModalComponent implements OnInit {
                 .subscribe((resp: any) =>{
                   this.loaderService.closeLineLoader();
                   if(resp.ok){
-                    console.log(resp)
                     this.prices = resp.param.priceHistorial ;
                   }
                 },(err) => {

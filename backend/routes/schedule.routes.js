@@ -13,4 +13,12 @@ const { validateUserID } = require('../middlewares/validateUserID');
 
 router.get('/combo',[validateJWT,
             validateUserID],scheduleCtrl.getCombo);
+router.get('/special/:id',[validateJWT],scheduleCtrl.getSpecialSchedules);
+router.post('/special/:id',[validateJWT,
+                check('date','Date field is required').not().isEmpty(),
+                check('sinceHour','Since Hour field is required').not().isEmpty(),
+                check('untilHour','Until Hour field is required').not().isEmpty(),
+                validateFields],scheduleCtrl.createSpecialSchedule);
+ router.delete('/special/delete/:id',[validateJWT,
+                 validateFields],scheduleCtrl.deleteSpecialSchedule);
 module.exports = router;

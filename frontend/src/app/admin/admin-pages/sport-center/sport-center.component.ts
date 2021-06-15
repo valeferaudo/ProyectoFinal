@@ -27,6 +27,8 @@ export class SportCenterComponent implements OnInit {
   hiddenScheduleModal: boolean = false;
   images: File [] = [];
   hiddenServiceModal: boolean = false;
+  hiddenSpecialScheduleInfoModal: boolean = false;
+  hiddenSpecialScheduleCreateModal: boolean = false;
 
   constructor(private userService: UserService,
               private fb: FormBuilder,
@@ -230,5 +232,18 @@ export class SportCenterComponent implements OnInit {
   }
   closeServiceModal(){
     this.hiddenServiceModal = false;
+  }
+  openSpecialScheduleInfoModal(){
+    this.hiddenSpecialScheduleInfoModal = true;
+  }
+  closeSpecialScheduleInfoModal(){
+    this.hiddenSpecialScheduleInfoModal = false;
+  }
+  openSpecialScheduleCreateModal(){
+    this.hiddenSpecialScheduleCreateModal = true;
+  }
+  closeSpecialScheduleCreateModal(){
+    this.hiddenSpecialScheduleCreateModal = false;
+    this.hiddenSpecialScheduleInfoModal = true;
   }
 }

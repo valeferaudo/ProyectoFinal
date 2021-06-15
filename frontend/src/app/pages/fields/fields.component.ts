@@ -37,6 +37,7 @@ export class FieldsComponent implements OnInit {
     days: [],
     sinceHour: 0,
     untilHour: 23,
+    available: true,
   }
   sportsCombo: Combo[];
   sportsSelected = [];
@@ -261,6 +262,7 @@ export class FieldsComponent implements OnInit {
         untilPrice: this.untilPriceSelected,
         sinceHour: this.sinceHourSelected,
         untilHour: this.untilHourSelected,
+        available: true
       }
     }
     openSportCenterModal(field){

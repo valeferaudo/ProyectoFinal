@@ -46,6 +46,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     features = req.query.feature;
     sports = req.query.sport;
     days = req.query.day;
+    available = req.query.available;
     try {
         let fields;
         let booleanState;
@@ -60,6 +61,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
         let query = {
             '$and': []
         };
+        available !== 'undefined' ? query['$and'].push({ state: true }) : query;
         if(searchText !== ''){
             const sportCenters = await SportCenter.find({ name: new RegExp(searchText, 'i')},'_id')
             if(sportCenters.length > 0){
@@ -97,8 +99,8 @@ fieldCtrl.getFields = async (req = request , res = response) => {
             query['$and'].push({$and: [ {price: {$gte: sincePrice}},
                 {price: {$lte: untilPrice}}]});
             let fieldsPrices = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id price')
-            let minPrice = getMin(fieldsPrices);
-            let maxPrice = getMax(fieldsPrices);
+            fieldsPrices.length !== 0 ? minPrice = getMin(fieldsPrices) : minPrice =  0;
+            fieldsPrices.length !== 0 ? maxPrice = getMax(fieldsPrices) : maxPrice = 0;
             if(minPrice !== parseInt(sincePrice) || maxPrice !== parseInt(untilPrice)){
             selectedFilters.push('Precio desde: ',sincePrice,' - ')
             selectedFilters.push('Precio hasta: ',untilPrice,' - ')
@@ -247,7 +249,7 @@ fieldCtrl.updateFieldSport = async (req = request , res = response) => {
 fieldCtrl.getCombo = async (req = request, res = response)=> {
     sportCenterID = req.query.sportCenterID
     try {
-        let fields = await Field.find({sportCenter: sportCenterID,state:true});
+        let fields = await Field.find({sportCenter: sportCenterID,state:true, deletedDate: null });
         let combo = [];
         fields.forEach(field => {
             let x = {id:field.id, text:field.name};
@@ -267,11 +269,11 @@ fieldCtrl.getCombo = async (req = request, res = response)=> {
 }
 fieldCtrl.getMinMaxPrices = async (req = request, res = response)=> {
     try {
-        let fieldsPrices = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id price')
+        let fieldsPrices = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id price');
         let minPrice;
         let maxPrice;
-        minPrice = getMin(fieldsPrices);
-        maxPrice = getMax(fieldsPrices);
+        fieldsPrices.length !== 0 ? minPrice = getMin(fieldsPrices) : minPrice =  0;
+        fieldsPrices.length !== 0 ? maxPrice = getMax(fieldsPrices) : maxPrice = 0;
         res.json({
             ok: true,
             msg:'Found Min-Max Prices',
@@ -318,6 +320,49 @@ function getMax(fieldPrices){
     });
     return Math.max(...prices)
 }
+fieldCtrl.activateBlockField = async (req = request, res = response) =>{
+    const fieldID = req.params.id;
+    const action= req.body.action;
+    try {
+        const fieldDB = await Field.findById(fieldID)
+        if(!fieldDB){
+            return unknownIDResponse(res);
+        }
+        if (action === 'block'){
+            if(fieldDB.deletedDate !== null){
+                return fieldBlockedResponse(res);
+            }
+            else{
+                fieldDB.deletedDate = new Date();
+                //ACA FALTA DAR DE BAJA TODO LO REFERIDO A ESTA CAMNCHA
+            }
+        }
+        else if (action === 'active'){
+            if(fieldDB.deletedDate === null){
+                return fieldActiveResponse(res);
+            }
+            else{
+                fieldDB.deletedDate = null;
+            }
+        }
+        await Field.findByIdAndUpdate(fieldID,fieldDB,{new:true});
+        if (action === 'block'){
+            res.json({
+                ok:true,
+                msg:'Blocked Field'
+            })
+        }
+        else if(action === 'active'){
+            res.json({
+                ok:true,
+                msg:'Activated Field'
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
 function errorResponse(res){
     res.status(500).json({
         ok:false,
@@ -339,5 +384,18 @@ function existsNameResponse(res){
         msg:'A Field already exists with this name'
     })
 }
-
+function fieldBlockedResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 6,
+        msg:'This Field is blocked'
+    })
+}
+function fieldActiveResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 7,
+        msg:'This Field is active'
+    })
+}
 module.exports = fieldCtrl;

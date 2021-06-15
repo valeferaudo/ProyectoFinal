@@ -2,6 +2,7 @@ const Appointment = require('../models/appointment.model');
 const User = require('../models/user.model');
 const Field = require('../models/field.model');
 const FieldPrice = require('../models/fieldPrice.model');
+const SpecialSchedule = require('../models/specialSchedule.model');
 const SportCenter = require('../models/sportCenter.model');
 var moment = require('moment');
 moment().format();
@@ -10,6 +11,12 @@ const cron = require('node-cron');
 
 const { request , response } = require('express');
 const appointmentCtrl = {};
+//Mails
+const { cancelAppointmentCenterEmail } = require ('../helpers/emails/cancelAppointmentCenterEmail');
+const { cancelAppointmentUserEmail } = require ('../helpers/emails/cancelAppointmentUserEmail');
+//SMS
+const { cancelAppointmentSMS } = require ('../helpers/sms/cancelAppointmentSms');
+
 
 appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = response) =>{
     const fieldID = req.params.id
@@ -91,7 +98,30 @@ appointmentCtrl.getFieldAvailableAppointments = async (req = request , res = res
                 }
             }
         }
-        //4- ORDENARLOS DE MAS RECIENTES A MAS LEJOS PARA MOSTRARLOS BIEN
+        //4- QUITO LAS FECHAS ESPECIALES
+        //Obtengo las fechas especiales
+        let specialSchedulesDB = await SpecialSchedule.find({ $and: [ { sportCenter: sportCenterDB.id }, 
+                                                                        { date: { $gte: moment(sinceDate).startOf('day') } },
+                                                                        { date: { $lte: moment(untilDate).startOf('day') } } ] })
+        //Armo el arreglo de horarios
+        let specialSchedules = [];
+        specialSchedulesDB.forEach(item => {
+            let minHour = moment(item.sinceHour).add(3,'h').hour() - 1;
+            let maxHour = moment(item.untilHour).add(3,'h').hour() - 1;
+            do {
+                minHour = minHour +1;
+                specialSchedules.push(moment(item.date).add(minHour,'h'))
+            } while (moment(item.date).add(minHour,'h').isBefore(moment(item.date).add(maxHour,'h')));
+        });
+        //filtro el arreglo de turnos disponibles
+        for (let i = 0; i < specialSchedules.length; i++) {
+            for (let j = 0; j < appointments.length; j++) {
+                if(moment(specialSchedules[i]).isSame(moment(appointments[j]))){
+                    appointments.splice(j,1);
+                }
+            }
+        }
+        //5- ORDENARLOS DE MAS RECIENTES A MAS LEJOS PARA MOSTRARLOS BIEN
         appointments.sort((elem1,elem2)=>{
             return (moment(elem1).diff(moment(elem2)))
         })
@@ -297,7 +327,7 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
     const id = req.params.id;
     const userID = req.uid;
     try {
-        const appointmentDB = await Appointment.findById(id).populate('user');
+        const appointmentDB = await Appointment.findById(id).populate('user').populate('field');
         if (!appointmentDB) {
             return unknownIDResponse(res)
         }
@@ -324,6 +354,22 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
         }
         else if(appointmentDB.owner.phone === null){
             userPhone = appointmentDB.user.phone
+        }
+        //ENVIAR MAIL DE CANCELACION --> VERIFICAR QUIEN CANCELA SI USUAIRO COMUN O CENTRO
+        if(userDB.role === 'USER'){
+            let userCenter = await User.find({ $and: [ { sportCenter: appointmentDB.field.sportCenter }, 
+                                                        { role: 'CENTER-SUPER-ADMIN' } ] });
+            userCenter.forEach(user => {
+                cancelAppointmentUserEmail(user,appointmentDB)
+            });
+        }else{
+            if(appointmentDB.user.role === 'USER'){
+                cancelAppointmentCenterEmail(appointmentDB.user, appointmentDB);
+                // cancelAppointmentSMS(appointmentDB)
+            }
+            else{
+                // cancelAppointmentSMS(appointmentDB)
+            }
         }
         await Appointment.findByIdAndDelete(id);
         res.json({

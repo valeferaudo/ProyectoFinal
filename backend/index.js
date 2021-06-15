@@ -35,7 +35,6 @@ app.use('/api/favorites',require('./routes/favorites.routes'));
 app.use('/api/requests',require('./routes/request.routes'));
 app.use('/api/sportcenters',require('./routes/sportCenter.routes'));
 app.use('/api/schedules',require('./routes/schedule.routes'));
-app.use('/api/specialschedules',require('./routes/specialSchedule.routes'));
 app.use('/api/login',require('./routes/auth.routes'))
 app.use('/api/fields',require('./routes/field.routes'));
 app.use('/api/appointments',require('./routes/appointment.routes'));

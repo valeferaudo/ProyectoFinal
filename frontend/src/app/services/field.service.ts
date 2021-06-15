@@ -25,6 +25,7 @@ export class FieldService {
     params = params.append('untilHour',filters.untilHour);
     params = params.append('sincePrice',filters.sincePrice);
     params = params.append('untilPrice',filters.untilPrice);
+    params = params.append('available',`${filters.available}`);
     if(filters.features.length > 0){
       filters.features.forEach(element => {
         params = params.append('feature',`${element}`)

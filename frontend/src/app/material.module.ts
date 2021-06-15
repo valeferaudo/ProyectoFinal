@@ -13,8 +13,10 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
-import {MatSliderModule} from '@angular/material/slider'; 
+import {MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import {MatSliderModule} from '@angular/material/slider';
+import { MatInputModule } from "@angular/material/input";
+ 
 
 @NgModule({
   declarations: [],
@@ -33,7 +35,8 @@ import {MatSliderModule} from '@angular/material/slider';
      MatMenuModule,
      MatRadioModule,
      MatDatepickerModule,
-     MatNativeDateModule
+     MatNativeDateModule,
+     MatInputModule
   ],
   exports:[
     // MatStepperModule,
@@ -49,7 +52,8 @@ import {MatSliderModule} from '@angular/material/slider';
      MatMenuModule,
      MatRadioModule,
      MatDatepickerModule,
-     MatNativeDateModule
+     MatNativeDateModule,
+     MatInputModule
     
   ],
 })

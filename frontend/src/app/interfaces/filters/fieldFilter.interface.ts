@@ -9,4 +9,5 @@ export interface FieldFilter{
     days?: any[];
     sinceHour?: any;
     untilHour?: any;
+    available?: boolean;
 }

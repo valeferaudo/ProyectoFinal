@@ -38,6 +38,8 @@ import { CardSportCenterComponent } from './card-sport-center/card-sport-center.
 import { SportCenterServiceModalComponent } from './modals/sport-center-service-modal/sport-center-service-modal.component';
 import { CarouselAppointmentComponent } from './carousel-appointment/carousel-appointment.component';
 import { PriceHistorialModalComponent } from './modals/price-historial-modal/price-historial-modal.component';
+import { SpecialScheduleInfoModalComponent } from './modals/special-schedule-info-modal/special-schedule-info-modal.component';
+import { SpecialScheduleCreateModalComponent } from './modals/special-schedule-create-modal/special-schedule-create-modal.component';
 
 
 @NgModule({
@@ -70,6 +72,8 @@ import { PriceHistorialModalComponent } from './modals/price-historial-modal/pri
     SportCenterServiceModalComponent,
     CarouselAppointmentComponent,
     PriceHistorialModalComponent,
+    SpecialScheduleInfoModalComponent,
+    SpecialScheduleCreateModalComponent,
   ],
   imports: [
     FormsModule,
@@ -109,7 +113,9 @@ import { PriceHistorialModalComponent } from './modals/price-historial-modal/pri
     CardSportCenterComponent,
     SportCenterServiceModalComponent,
     CarouselAppointmentComponent,
-    PriceHistorialModalComponent
+    PriceHistorialModalComponent,
+    SpecialScheduleCreateModalComponent,
+    SpecialScheduleInfoModalComponent
   ]
 })
 export class ComponentsModule { }

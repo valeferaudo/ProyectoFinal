@@ -26,7 +26,9 @@ router.post('/',[validateJWT,
             validateCSAandOwnerField,
             check('name','Name field is required').not().isEmpty(),
             check('price','Price field is required').not().isEmpty(),
-            validateFields],fieldCtrl.createField)
+            validateFields],fieldCtrl.createField);
+router.put('/activateBlock/:id',[validateJWT,
+            validateUserID],fieldCtrl.activateBlockField);
 router.put('/:id',[validateJWT,
             validateUserID,
             validateCSAandOwnerField,

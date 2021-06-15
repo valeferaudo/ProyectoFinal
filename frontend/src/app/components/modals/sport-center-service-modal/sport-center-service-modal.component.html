@@ -13,8 +13,8 @@
             <div class="modal-body">
               <form [formGroup]="sportCenterServiceForm">
                 <div class="form-group m-t-5" formArrayName="service" [class.has-danger]="getFieldValid('service')">
-                    <div class="alert alert-info" role="alert" *ngIf="service.length === 0">
-                            No hay <strong>Servicios</strong> asociados.
+                    <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="service.length === 0" > 
+                      <i class="fas fa-times"></i>No hay <strong>Servicios</strong> registrados.
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm">

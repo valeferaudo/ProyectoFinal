@@ -14,11 +14,11 @@
             <div class="modal-body">
               <form [formGroup]="fieldSportForm">
                 <div class="form-group m-t-5" formArrayName="sportFields" [class.has-danger]="getFieldValid('sportFields')">
-                    <div class="alert alert-info" role="alert" *ngIf="sportFields.length === 0">
-                            No hay cancha-deporte.
+                    <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportFields.length === 0" > 
+                      <i class="fas fa-times"></i>No hay <strong>Cancha-Deporte</strong> registrados.
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm">
+                        <table id="myTable" class="table table-bordered table-sm">
                             <thead class="thead-dark" *ngIf="sportFields.length > 0">
                                 <th scope="col">Deporte</th>
                                 <th scope="col">Cantidad de jugadores</th>

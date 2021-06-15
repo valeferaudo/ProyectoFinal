@@ -14,4 +14,15 @@ export class ScheduleService {
   getCombo(){
     return this.http.get(`${baseUrl}/schedules/combo`);
   }
+  getSpecialSchedules(sportCenterID){
+    return this.http.get(`${baseUrl}/schedules/special/${sportCenterID}`);
+  }
+  createSpecialSchedule(sportCenterID,schedule){
+    return this.http.post(`${baseUrl}/schedules/special/${sportCenterID}`,schedule);
+
+  }
+  deleteSpecialSchedule(scheduleID){
+    return this.http.delete(`${baseUrl}/schedules/special/delete/${scheduleID}`);
+
+  }
 }

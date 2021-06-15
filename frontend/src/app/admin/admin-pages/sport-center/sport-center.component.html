@@ -17,6 +17,9 @@
         <div class="col text-center">
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="updateSchedule()" class="text-info"><i class="far fa-clock"></i><br><p class="mb-0">Horarios</p></a>
         </div>
+        <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="openSpecialScheduleInfoModal()" class="text-info"><i class="far fa-calendar-plus"></i><br><p class="mb-0">Fecha Especial</p></a>
+        </div>
     </div>
 </div>
 <div>
@@ -81,7 +84,7 @@
         <button (click)="cancel()" class="btn btn-danger"><i class="fas fa-times-circle"></i> Cancelar</button>
     </div>            
 </div>
-
+<app-line-loader></app-line-loader>
 <app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'update'"
                                         [sportCenter]="sportCenter" [sportCenterID]="sportCenter.id"
                                     (closeModal)="closeScheduleModal()" (getSportCenter)="getSportCenter()">
@@ -91,3 +94,10 @@
 
 </app-sport-center-service-modal>
 
+<app-special-schedule-info-modal *ngIf="hiddenSpecialScheduleInfoModal" [hiddenModal]="!hiddenSpecialScheduleInfoModal" 
+                                (closeModal)="closeSpecialScheduleInfoModal()" (openCreateModal)="openSpecialScheduleCreateModal()">
+</app-special-schedule-info-modal>
+
+<app-special-schedule-create-modal *ngIf="hiddenSpecialScheduleCreateModal" [hiddenModal]="!hiddenSpecialScheduleCreateModal" 
+                                    (closeModal)="closeSpecialScheduleCreateModal()">
+</app-special-schedule-create-modal>

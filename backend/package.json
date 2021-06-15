@@ -19,6 +19,7 @@
     "nodemailer": "^6.5.0",
     "nodemon": "^2.0.4",
     "sharp": "^0.28.3",
+    "twilio": "^3.63.1",
     "uuid": "^8.3.1"
   },
   "devDependencies": {},

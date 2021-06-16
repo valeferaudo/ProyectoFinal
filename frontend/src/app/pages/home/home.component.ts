@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { CurrentWeather } from 'src/app/interfaces/currentWeather.interface';
 import { AppointmentTableFilter } from 'src/app/interfaces/filters/appointmentTableFilter.Interface';
 import { User } from 'src/app/models/user.model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { UserService } from 'src/app/services/user.service';
+import { WeatherService } from 'src/app/services/weather.service';
 
 @Component({
   selector: 'app-home',
@@ -34,19 +36,31 @@ export class HomeComponent implements OnInit {
   }
   filterReservedON : boolean = false;
   filterAboutToStartON: boolean = false;
+
+  //weather
+  perHourWeatherON = false;
+  todayWeatherON = false;
+  today = new Date()
+  days = ["Lunes","Martes",'Miércoles','Jueves','Viernes','Sábado','Domingo']
+  todayWeather: CurrentWeather;
+  perHourWeather = [];
+  weatherError = false;
+
   constructor(private userService: UserService,
               private appointmentService: AppointmentService,
               private loaderService: LoaderService,
-              private errorService: ErrorsService) {
-    this.userLogged = this.userService.user;
-    this.getAppointments();
-   }
+              private weatherService: WeatherService,
+              private errorService: ErrorsService) {}
 
   ngOnInit(): void {
+    this.userLogged = this.userService.user;
+    this.getAppointments();
+    this.getCurrentWeather();
+    this.getPerHourWeather();
   }
   getAppointments(){
     this.getReservedAppointments();
-
+    this.getAboutToStartAppointments();
   }
   getReservedAppointments(){
     this.loaderService.openLineLoader();
@@ -77,5 +91,39 @@ export class HomeComponent implements OnInit {
                                         this.errorService.showServerError()
                                         this.loaderService.closeLineLoader();
                                       });
+  }
+  getCurrentWeather(){
+    this.loaderService.openFullScreenLoader();
+    this.weatherService.getCurrentWeather()
+            .subscribe((resp: any)=>{
+              this.todayWeather = resp;
+              this.todayWeatherON = true;
+              console.log(resp)
+              // this.loaderService.closeFullScreenLoader();
+            },(err) =>{
+              console.log(err)
+              // this.errorService.showServerError()
+              this.weatherError = true;
+              this.loaderService.closeLineLoader();
+            });
+  }
+  getPerHourWeather(){
+    this.loaderService.openLineLoader();
+    this.weatherService.getPerHour()
+              .subscribe((resp: any)=>{
+                this.perHourWeather = resp.list;
+                this.perHourWeatherON = true;
+                console.log(resp)
+
+                this.loaderService.closeLineLoader();
+              },(err) =>{
+                console.log(err)
+                // this.errorService.showServerError()
+                this.weatherError = true;
+                this.loaderService.closeLineLoader();
+              });
+  }
+  formatDate(date){
+    return new Date(date)
   }
 }

@@ -12,6 +12,8 @@ const { validateUserID } = require('../middlewares/validateUserID');
 
 router.get('/combo',[validateJWT,
             validateUserID],fieldCtrl.getCombo);
+router.get('/roofed/:id',[validateJWT,
+            validateUserID],fieldCtrl.checkRoofed);
 router.get('/minMaxPrices',[validateJWT,
             validateUserID],fieldCtrl.getMinMaxPrices);
 router.get('/:id',[validateJWT,

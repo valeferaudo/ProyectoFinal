@@ -361,7 +361,6 @@ userCtrl.getFavorites = async (req = request, res = response) => {
         errorResponse(res);
     }
 }
-
 userCtrl.changePassword = async (req = request, res = response) =>{
     const userID = req.params.id;
     const passwords = req.body;

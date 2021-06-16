@@ -267,6 +267,34 @@ fieldCtrl.getCombo = async (req = request, res = response)=> {
         errorResponse(res);
     }
 }
+fieldCtrl.checkRoofed = async (req = request, res = response)=> {
+    fieldID = req.params.id
+    try {
+        let fieldDB = await Field.findById(fieldID,('features'));
+        let roofedFeatures = await Feature.find({$or:[{ name: new RegExp('techado', 'i')},
+                                                        { name: new RegExp('techada', 'i')},
+                                                        { name: new RegExp('Techado', 'i')},
+                                                        { name: new RegExp('Techada', 'i')},
+                                                        { name: new RegExp('TECHADO', 'i')},
+                                                        { name: new RegExp('TECHADA', 'i')}]},'_id')
+        let roofed = false;
+        roofedFeatures.forEach(item => {
+            if(fieldDB.features.includes(item._id)){
+                roofed = true;
+            }
+        });
+        res.json({
+            ok: true,
+            msg:'Found field combo',
+            param: {
+                roofed: roofed
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
 fieldCtrl.getMinMaxPrices = async (req = request, res = response)=> {
     try {
         let fieldsPrices = await Field.find({ $and: [ {deletedDate: null }, { state:true } ] },'id price');

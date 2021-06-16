@@ -17,51 +17,76 @@
         <div class="card-img card-inverse bg-app">
             <h2 class="card-title m-2">Clima</h2>
         </div>
-        <div class="card-body">
-            <select class="custom-select pull-right">
-                <option selected="">Today</option>
-                <option value="1">Weekly</option>
-            </select>
-            <div class="d-flex align-items-center flex-row m-t-30">
-                <div class="p-2 display-5 text-info"><i class="wi wi-day-showers"></i> <span>73<sup>°</sup></span></div>
-                <div class="p-2">
-                    <h3 class="m-b-0">Sabado</h3><small>Rosario, Santa Fe, Argentina</small></div>
+        <div class="card-body p-0 mt-1" *ngIf="todayWeatherON && perHourWeatherON">
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <div class="display-6">
+                        <i class="wi wi-day-sunny" *ngIf="(todayWeather.weather[0].id === 800) && (today.getHours() < 20 && today.getHours() > 7)"></i>
+                        <i class="wi wi-night-clear" *ngIf="(todayWeather.weather[0].id === 800) && (today.getHours() >= 20 || today.getHours() <= 7)"></i>
+                        <i class="wi wi-thunderstorm" *ngIf="todayWeather.weather[0].id >= 200 && todayWeather.weather[0].id < 300"></i>
+                        <i class="wi wi-day-cloudy" *ngIf="(todayWeather.weather[0].id === 801 || todayWeather.weather[0].id ===802) && (today.getHours() < 20 && today.getHours() > 7)"></i>
+                        <i class="wi wi-night-alt-cloudy" *ngIf="(todayWeather.weather[0].id === 801 && todayWeather.weather[0].id ===802) && (today.getHours() > 20 || today.getHours() <= 7)"></i>
+                        <i class="wi wi-cloud" *ngIf="todayWeather.weather[0].id >= 803 && todayWeather.weather[0].id <=804"></i>
+                        <i class="wi wi-showers" *ngIf="todayWeather.weather[0].id >= 300 && todayWeather.weather[0].id <= 400"></i>
+                        <i class="wi wi-rain" *ngIf="todayWeather.weather[0].id >=500  && todayWeather.weather[0].id <= 501"></i>
+                        <i class="wi wi-thunderstorm" *ngIf="todayWeather.weather[0].id >=502 && todayWeather.weather[0].id <= 531"></i>
+                        <i class="wi wi-snow" *ngIf="todayWeather.weather[0].id >=600 && todayWeather.weather[0].id <= 700"></i>
+                        <br>
+                        <span>{{todayWeather.main.temp | number:'1.0-0'}}<sup>°</sup></span>
+                    </div>
                 </div>
+                <div class="col-md-8 col-sm-12 font-medium" style="display: flex; align-items:center;">
+                    <h3 class="m-b-0">{{days[today.getDay()-1]}} <br> <small>Rosario, Santa Fe, Argentina</small></h3>
+                </div>
+            </div>
+            <hr class="m-1">
                 <table class="table no-border">
                     <tbody>
                         <tr>
-                            <td>Wind</td>
-                            <td class="font-medium">ESE 17 mph</td>
+                            <td class="p-1">Mínima</td>
+                            <td class="font-medium p-1">{{todayWeather.main.temp_min | number:'1.0-0'}}<sup>°</sup></td>
                         </tr>
                         <tr>
-                            <td>Humidity</td>
-                            <td class="font-medium">83%</td>
+                            <td class="p-1">Máxima</td>
+                            <td class="font-medium p-1">{{todayWeather.main.temp_max | number:'1.0-0'}}<sup>°</sup></td>
                         </tr>
                         <tr>
-                            <td>Pressure</td>
-                    <td class="font-medium">28.56 in</td>
-                </tr>
-                <tr>
-                    <td>Cloud Cover</td>
-                    <td class="font-medium">78%</td>
-                </tr>
-                <tr>
-                    <td>Ceiling</td>
-                    <td class="font-medium">25760 ft</td>
-                </tr>
+                            <td class="p-1">Humedad</td>
+                            <td class="font-medium p-1">{{todayWeather.main.humidity}}%</td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">Cielo nublado</td>
+                            <td class="font-medium p-1">{{todayWeather.clouds.all}}%</td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">Viento</td>
+                            <td class="font-medium p-1">{{todayWeather.wind.speed * 3.6 | number:'1.0-0'}} km/h</td>
+                        </tr>
             </tbody>
         </table>
-        <hr>
+        <hr class="m-1">
         <ul class="list-unstyled row text-center city-weather-days">
-            <li class="col"><i class="wi wi-day-sunny"></i><span>09:30</span>
-                <h3>70<sup>°</sup></h3></li>
-                <li class="col"><i class="wi wi-day-cloudy"></i><span>11:30</span>
-                    <h3>72<sup>°</sup></h3></li>
-                    <li class="col"><i class="wi wi-day-hail"></i><span>13:30</span>
-                        <h3>75<sup>°</sup></h3></li>
-                        <li class="col"><i class="wi wi-day-sprinkle"></i><span>15:30</span>
-                <h3>76<sup>°</sup></h3></li>
+            <li class="col" *ngFor="let item of perHourWeather">
+                <i class="wi wi-day-sunny" *ngIf="(item.weather[0].id === 800) && (formatDate(item.dt_txt).getHours() < 20 && formatDate(item.dt_txt).getHours() > 7)"></i>
+                <i class="wi wi-night-clear" *ngIf="(item.weather[0].id === 800) && (formatDate(item.dt_txt).getHours() >= 20 || formatDate(item.dt_txt).getHours() <= 7)"></i>
+                <i class="wi wi-thunderstorm" *ngIf="item.weather[0].id >= 200 && item.weather[0].id < 300"></i>
+                <i class="wi wi-day-cloudy" *ngIf="(item.weather[0].id === 801 || item.weather[0].id ===802) && (formatDate(item.dt_txt).getHours() < 20 && formatDate(item.dt_txt).getHours() > 7)"></i>
+                <i class="wi wi-night-alt-cloudy" *ngIf="(item.weather[0].id === 801 || item.weather[0].id ===802) && (formatDate(item.dt_txt).getHours() > 20 || formatDate(item.dt_txt).getHours() < 7)"></i>
+                <i class="wi wi-cloud" *ngIf="item.weather[0].id >= 803 && item.weather[0].id <=804"></i>
+                <i class="wi wi-showers" *ngIf="item.weather[0].id >= 300 && item.weather[0].id <= 400"></i>
+                <i class="wi wi-rain" *ngIf="item.weather[0].id >=500  && item.weather[0].id <= 501"></i>
+                <i class="wi wi-thunderstorm" *ngIf="item.weather[0].id >=502 && item.weather[0].id <= 531"></i>
+                <i class="wi wi-snow" *ngIf="item.weather[0].id >=600 && item.weather[0].id <= 700"></i>
+                <span>{{formatDate(item.dt_txt) |date:'HH:mm':'-3'}}</span>
+                <h3>{{item.main.temp | number:'1.0-0'}}<sup>°</sup></h3>
+            </li>
             </ul>
+        </div>
+        <div class="card-body p-0 mt-1" *ngIf="!todayWeatherON && !perHourWeatherON && weatherError">
+            <div class="alert alert-danger animated fadeIn text-left" role="alert"> 
+                <i class="fas fa-times"></i> No se encontraron datos del <strong>Clima</strong>.<br>
+                Por favor, comuníquese con soporte.
+              </div>
         </div>
     </div>
 </div>

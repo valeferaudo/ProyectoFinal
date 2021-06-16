@@ -70,4 +70,7 @@ export class FieldService {
   getPriceHistorial(fieldID){
     return this.http.get(`${baseUrl}/fields/priceHistorial/${fieldID}`);
   }
+  checkRoofed(fieldID: string){
+    return this.http.get(`${baseUrl}/fields/roofed/${fieldID}`);
+  }
 }

@@ -18,6 +18,7 @@ export class TableAppointmentComponent implements OnInit {
 
   @Input() text: string;
   @Input() appointments: Appointment[];
+  @Input() page: any;
   @Output() getAppointments = new EventEmitter<string>();
   userLogged: User;
 

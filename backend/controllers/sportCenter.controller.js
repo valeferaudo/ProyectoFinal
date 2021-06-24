@@ -30,7 +30,6 @@ sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
     }
 }
 sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
-    //FALTAN FILTROS
     searchText = req.query.text;
     state = req.query.state;
     days = req.query.day;
@@ -38,6 +37,8 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
     services = req.query.service;
     sinceHour = req.query.sinceHour;
     untilHour = req.query.untilHour;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         let sportCenters;
         let booleanState;
@@ -102,14 +103,26 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
             });
             selectedFilters.push('- ');
         } 
-        query['$and'].length > 0 ? sportCenters = await SportCenter.find(query) : sportCenters = await SportCenter.find(); 
-    
+        if(query['$and'].length > 0){
+                [sportCenters,total] = await Promise.all([SportCenter.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    SportCenter.find(query).countDocuments()
+                                                ])
+        }else{
+                [sportCenters,total] = await Promise.all([SportCenter.find().skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    SportCenter.find().countDocuments()
+                                                ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok: true,
             msg:'Found SportCenters',
             param: {
                 sportCenters: sportCenters,
-                selectedFilters: selectedFilters
+                selectedFilters: selectedFilters,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
         
@@ -152,6 +165,10 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
         sportCenter = new SportCenter({
             name: sportCenterBody.name,
             address: sportCenterBody.address,
+            coords:{
+                latitude: sportCenterBody.latitude,
+                longitude: sportCenterBody.longitude
+            },
             phone: sportCenterBody.phone,
             aditionalElectricityHour: sportCenterBody.aditionalElectricityHour,
             aditionalElectricity: sportCenterBody.aditionalElectricity,
@@ -235,6 +252,10 @@ sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
             if(existsName){
                 return existsNameResponse(res);
             }
+        }
+        changes.coords = {
+            latitude: req.body.latitude,
+            longitude: req.body.longitude
         }
         sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,changes,{new:true})
         res.json({
@@ -333,6 +354,26 @@ sportCenterCtrl.updateService = async (req = request, res = response) =>{
             ok:false,
             msg:'An unexpected error occurred'
         })
+    }
+}
+sportCenterCtrl.getCombo = async (req = request, res = response)=> {
+    try {
+        let sportCenters = await SportCenter.find({$and:[{deletedDate: null},{schedules:{$ne:[]}}]},'name coords');
+        let combo = [];
+        sportCenters.forEach(sportCenter => {
+            let x = {id:sportCenter.id, text:sportCenter.name, coords: sportCenter.coords};
+            combo.push(x);
+        });
+        res.json({
+            ok: true,
+            msg:'Found SportCenter combo',
+            param: {
+                combo
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
     }
 }
 //ESTO NO SE SI SE USA TODO

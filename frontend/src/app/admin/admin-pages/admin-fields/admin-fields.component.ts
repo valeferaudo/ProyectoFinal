@@ -36,6 +36,9 @@ export class AdminFieldsComponent implements OnInit {
   }
   selectedFilters: string [] = [];
   fieldStates = ['Activo', 'Bloqueado']
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   fieldStateSelected: '' | 'Activo' | 'Bloqueado' = '';
 
@@ -52,12 +55,14 @@ export class AdminFieldsComponent implements OnInit {
   }
   getFields(){
     this.loaderService.openLineLoader();
-    this.fieldService.getFields(this.filters)
+    this.fieldService.getFields(this.filters, this.page)
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.fields = resp.param.fields;
                         this.selectedFilters = resp.param.selectedFilters;
+                        this.page = resp.param.paginator.page;
+                        this.totalPages = resp.param.paginator.totalPages;
                       }
                     }, (err) => {
                       console.log(err)
@@ -185,5 +190,9 @@ export class AdminFieldsComponent implements OnInit {
   }
   closePriceHistorial(){
     this.hiddenPriceHistorialModal = false;
+  }
+  paginate(page){
+    this.page = page;
+    this.getFields();
   }
 }

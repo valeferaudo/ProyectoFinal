@@ -13,13 +13,14 @@
         </thead>
         <tbody>
             <tr *ngFor="let user of users; let i = index">
-                <td>{{i+1}}</td>
+                <td>{{((page -1) * 6) + i+1}}</td>
                 <td>{{user.name}}</td>
                 <td>{{user.lastName}}</td>
                 <td>{{user.phone}}</td>
                 <td>
                     <span class="badge badge-primary" *ngIf="user.role==='CENTER-ADMIN'">Center-Admin</span>
                     <span class="badge badge-warning" *ngIf="user.role==='CENTER-SUPER-ADMIN'">Center-Super-Admin</span>
+                    <span class="badge badge-info" *ngIf="user.role==='USER'">User</span>
                 </td>
                 <td>{{user.email}}</td>
                 <td>

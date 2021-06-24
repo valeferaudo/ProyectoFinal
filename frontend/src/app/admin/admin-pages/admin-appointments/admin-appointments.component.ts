@@ -53,6 +53,15 @@ export class AdminAppointmentsComponent implements OnInit {
   filterInProgressON: boolean = false;
   states = ['Reservado','Por comenzar','En progreso','Completado']
   statesSelected = ['Reservado','Por comenzar','En progreso'];
+  //PAGINATOR
+  reservedTotalPages = null;
+  reservedPage = 1;
+  aboutToStartTotalPages = null;
+  aboutToStartPage = 1;
+  inProgressTotalPages = null;
+  inProgressPage = 1;
+  completedTotalPages = null;
+  completedPage = 1;
   constructor(private appointmentService: AppointmentService,
               private errorService: ErrorsService,
               private userService: UserService,
@@ -82,11 +91,13 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getReservedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject,this.reservedPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
                                           this.reservedAppointments= resp.param.appointments;
+                                          this.reservedPage = resp.param.paginator.page;
+                                          this.reservedTotalPages = resp.param.paginator.totalPages;
                                           this.filterReservedON = true 
                                         }
                                       }, (err) =>{
@@ -97,11 +108,13 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getAboutToStartAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject,this.aboutToStartPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
-                                          this.aboutToStartAppointments= resp.param.appointments
+                                          this.aboutToStartAppointments= resp.param.appointments;
+                                          this.aboutToStartPage = resp.param.paginator.page;
+                                          this.aboutToStartTotalPages = resp.param.paginator.totalPages;
                                           this.filterAboutToStartON = true;
                                         }
                                       }, (err) =>{
@@ -112,11 +125,13 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getInProgressAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject,this.inProgressPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
                                           this.inProgressAppointments= resp.param.appointments;
+                                          this.inProgressPage = resp.param.paginator.page;
+                                          this.inProgressTotalPages = resp.param.paginator.totalPages;
                                           this.filterInProgressON = true;
                                         }
                                       }, (err) =>{
@@ -127,11 +142,13 @@ export class AdminAppointmentsComponent implements OnInit {
   }
   getCompletedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject,this.completedPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
                                           this.completedAppointments= resp.param.appointments;
+                                          this.completedPage = resp.param.paginator.page;
+                                          this.completedTotalPages = resp.param.paginator.totalPages;
                                           this.filterCompletedON = true;
                                         }
                                       }, (err) =>{
@@ -266,6 +283,26 @@ export class AdminAppointmentsComponent implements OnInit {
     }else{
       this.filterCompletedON = false;
       this.completedAppointments = []
+    }
+  }
+  paginate(page, type : 'reserved' | 'aboutToStart' | 'inProgress' | 'completed'){
+    switch (type) {
+      case 'reserved':
+        this.reservedPage = page;
+        this.getReservedAppointments();
+        break;
+      case 'aboutToStart':
+        this.aboutToStartPage = page;
+        this.getAboutToStartAppointments();
+        break;
+      case 'inProgress':
+        this.inProgressPage = page;
+        this.getInProgressAppointments();
+        break;
+      case 'completed':
+        this.completedPage = page;
+        this.getCompletedAppointments();
+      break;
     }
   }
 }

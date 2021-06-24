@@ -8,6 +8,8 @@ import { SharedModule } from './shared/shared.module';
 import { AdminModule } from './admin/admin.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AgmCoreModule } from '@agm/core';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 //COMPONENTES
 import { AppComponent } from './app.component';
@@ -41,6 +43,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ComponentsModule,
     BrowserAnimationsModule,
     NgbModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4'
+    }),
+    GoogleMapsModule
   ],
   providers: [
     {

@@ -10,6 +10,8 @@ requestCtrl.getSportCenterRequests = async (req = request , res = response) => {
     const searchText = req.query.text;
     const state = req.query.state;
     const seen = req.query.seen;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         const sportCenterDB = await SportCenter.findById(sportCenterID);
         if(!sportCenterDB){
@@ -42,12 +44,25 @@ requestCtrl.getSportCenterRequests = async (req = request , res = response) => {
         if (seen !== ''){
             query['$and'].push({seen: seenState})
         }
-        const requests = await Request.find(query)
+        if(query['$and'].length > 0){
+            [requests,total] = await Promise.all([Request.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Request.find(query).countDocuments()
+                                               ])
+        }else{
+            [requests,total] = await Promise.all([Request.find().skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Request.find().countDocuments()
+                                               ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok:true,
             msg:'Found Requests',
             param:{
                 requests: requests,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
     } catch (error) {
@@ -63,6 +78,8 @@ requestCtrl.getRequests = async (req = request , res = response) => {
     const searchText = req.query.text;
     const state = req.query.state;
     const seen = req.query.seen;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         if(state === 'Aceptada'){
             booleanState = true;
@@ -91,12 +108,25 @@ requestCtrl.getRequests = async (req = request , res = response) => {
         if (seen !== ''){
             query['$and'].push({seen: seenState})
         }
-        const requests = await Request.find(query)
+        if(query['$and'].length > 0){
+            [requests,total] = await Promise.all([Request.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Request.find(query).countDocuments()
+                                               ])
+        }else{
+            [requests,total] = await Promise.all([Request.find().skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Request.find().countDocuments()
+                                               ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok:true,
             msg:'Found Requests',
             param:{
                 requests: requests,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
     } catch (error) {

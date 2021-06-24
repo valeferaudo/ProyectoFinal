@@ -25,7 +25,10 @@ export class FeaturesComponent implements OnInit {
     state: '',
   }
   selectedFilters: string [] = [];
-  featureStates = ['Activo', 'Bloqueado']
+  featureStates = ['Activo', 'Bloqueado'];
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   featureStateSelected: '' | 'Activo' | 'Bloqueado' = '';
 
@@ -40,12 +43,14 @@ export class FeaturesComponent implements OnInit {
 
   getFeatures(){
     this.loaderService.openLineLoader();
-    this.featureService.getFeatures(this.filters)
+    this.featureService.getFeatures(this.filters,this.page)
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.features = resp.param.features;
-                        this.selectedFilters = resp.param.selectedFilters
+                        this.selectedFilters = resp.param.selectedFilters;
+                        this.page = resp.param.paginator.page;
+                        this.totalPages = resp.param.paginator.totalPages;
                       }
                     }, (err) => {
                       console.log(err)
@@ -143,5 +148,9 @@ export class FeaturesComponent implements OnInit {
   }
   closeModal(){
     this.hiddenModal = false;
+  }
+  paginate(page){
+    this.page = page;
+    this.getFeatures();
   }
 }

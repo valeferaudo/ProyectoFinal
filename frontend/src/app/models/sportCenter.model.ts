@@ -9,6 +9,10 @@ export class SportCenter{
            public aditionalElectricityHour: string,
            public aditionalElectricity: number,
            public mercadoPago: boolean,
+           public coords?:{
+                latitude?:number,
+                longitude?:number
+           },
            public deletedDate?: any,
            public services?: SportCenterService[],
            public images?: any [],

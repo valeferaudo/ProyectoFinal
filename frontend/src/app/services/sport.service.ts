@@ -10,13 +10,15 @@ const baseUrl = environment.base_url;
   providedIn: 'root'
 })
 export class SportService {
-
+  registerPerPage = '6';
   constructor(private http: HttpClient) { }
 
-  getSports( filters: SportFilter){
+  getSports( filters: SportFilter,page){
     let params = new HttpParams();
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/sports/` ,{params});
   }
   getSport(id: string){

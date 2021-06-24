@@ -27,7 +27,7 @@ export class AdminHomeComponent implements OnInit {
     fieldID: null
   }
   doNotCloseMenu = (event) => event.stopPropagation();
-
+  page = 1;
   constructor(private userService: UserService,
               private appointmentService: AppointmentService,
               private loaderService: LoaderService,
@@ -55,7 +55,7 @@ export class AdminHomeComponent implements OnInit {
   }
   getAboutToStartAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject,this.page)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){

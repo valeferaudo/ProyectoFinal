@@ -15,7 +15,7 @@ const baseUrl = environment.base_url;
   providedIn: 'root'
 })
 export class UserService {
-
+  registerPerPage = '6';
   public user: User;
   constructor(private http: HttpClient,
               private router: Router) {
@@ -66,11 +66,13 @@ export class UserService {
   getUser(userID){
     return this.http.get(`${baseUrl}/users/`);
   }
-  getUsers(filters: UserFilter){
+  getUsers(filters: UserFilter, page){
     let params = new HttpParams();
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
-    params = params.append('userType', filters.userType );
+    params = params.append('userType', filters.userType);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/users/` ,{params});
   }
   updateUser(id: string, data){
@@ -99,7 +101,14 @@ export class UserService {
   addRemoveFavorite(id){
     return this.http.put(`${baseUrl}/favorites/${id}`,{});
   }
-  getFavorites(){
-    return this.http.get(`${baseUrl}/favorites`);
+  getFavorites(type: 'field' | 'sportCenter',page){
+    let params = new HttpParams();
+    params = params.append('type',`${type}`);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
+    return this.http.get(`${baseUrl}/favorites`,{params});
+  }
+  getLocation(){
+    return this.http.post(`https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4`,{})
   }
 }

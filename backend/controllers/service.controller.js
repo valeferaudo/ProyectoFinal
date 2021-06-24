@@ -8,6 +8,8 @@ serviceCtrl.getService = async (req = request,res = response)=>{
 serviceCtrl.getServices = async (req = request,res = response)=>{
     searchText = req.query.text;
     state = req.query.state;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         let services;
         let booleanState;
@@ -29,14 +31,26 @@ serviceCtrl.getServices = async (req = request,res = response)=>{
             query['$and'].push({state:booleanState});
             selectedFilters.push('Estado: ',state);
         }
-        query['$and'].length > 0 ? services = await Service.find(query) : services = await Service.find(); 
-
+        if(query['$and'].length > 0){
+            [services,total] = await Promise.all([Service.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Service.find(query).countDocuments()
+                                               ])
+        }else{
+            [services,total] = await Promise.all([Service.find().skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Service.find().countDocuments()
+                                               ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok: true,
             msg:'Found services',
             param: {
                 services,
-                selectedFilters
+                selectedFilters,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
         

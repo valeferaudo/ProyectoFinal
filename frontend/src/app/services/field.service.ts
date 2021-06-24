@@ -11,12 +11,12 @@ const baseUrl = environment.base_url;
   providedIn: 'root'
 })
 export class FieldService {
-
+  registerPerPage = '6';
   constructor(private http: HttpClient) { }
   getField(id: string){
     return this.http.get(`${baseUrl}/fields/${id}`)
   }
-  getFields(filters: FieldFilter){
+  getFields(filters: FieldFilter, page: number){
     let params = new HttpParams();
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
@@ -26,6 +26,8 @@ export class FieldService {
     params = params.append('sincePrice',filters.sincePrice);
     params = params.append('untilPrice',filters.untilPrice);
     params = params.append('available',`${filters.available}`);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     if(filters.features.length > 0){
       filters.features.forEach(element => {
         params = params.append('feature',`${element}`)

@@ -23,7 +23,10 @@ export class AdminUsersComponent implements OnInit {
     userType: 'CENTER-SUPER-ADMIN'
   }
   selectedFilters: string [] = [];
-  userStates = ['Activo', 'Bloqueado']
+  userStates = ['Activo', 'Bloqueado'];
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   userStateSelected : '' | 'Activo' | 'Bloqueado' = '';
 
@@ -37,12 +40,14 @@ export class AdminUsersComponent implements OnInit {
 
   getUsers(){
     this.loaderService.openLineLoader();
-    this.userService.getUsers(this.filters)
+    this.userService.getUsers(this.filters,this.page)
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.users = resp.param.users;
-                        this.selectedFilters = resp.param.selectedFilters
+                        this.selectedFilters = resp.param.selectedFilters;
+                        this.page = resp.param.paginator.page;
+                        this.totalPages = resp.param.paginator.totalPages;
                       }
                     }, (err) => {
                       console.log(err)
@@ -91,5 +96,9 @@ export class AdminUsersComponent implements OnInit {
   }
   closeUserModal(){
     this.hiddenUserModal = false;
+  }
+  paginate(page){
+    this.page = page;
+    this.getUsers();
   }
 }

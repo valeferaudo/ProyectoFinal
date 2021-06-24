@@ -20,6 +20,12 @@ export class SportCenterModalComponent implements OnInit {
   @Output() closeModalOutput: EventEmitter<boolean>;
   slideElectricity;
   slideMercadoPago;
+  //Mapa
+  zoom: number = 13;
+  initialLat: number = -32.9611202;
+  initialLng: number = -60.6847972;
+  mapTypeId: string = 'roadmap'
+  isMarked: boolean = false;
 
   constructor(private fb: FormBuilder,
               private userService: UserService,
@@ -37,9 +43,11 @@ export class SportCenterModalComponent implements OnInit {
 
   createSportCenterForm(){
     this.sportCenterForm = this.fb.group({
-      name:["",[Validators.required],],
-      address:["",[Validators.required],],
-      phone:["",[Validators.required],],
+      name:['',[Validators.required],],
+      address:['',[Validators.required],],
+      latitude: ['',[Validators.required]],
+      longitude: ['',[Validators.required]],
+      phone:['',[Validators.required],],
       aditionalElectricityHour:[null,],
       aditionalElectricity:['',],
       mercadoPago:[false,[Validators.required],]
@@ -103,18 +111,26 @@ export class SportCenterModalComponent implements OnInit {
     return this.sportCenterForm.get(field).invalid &&
             this.sportCenterForm.get(field).touched
  }
- electricitySlideChange(event: MatSlideToggle){
-   this.slideElectricity = event.checked;
-   if(this.slideElectricity === false){
-     this.sportCenterForm.patchValue({
-      aditionalElectricity:''
-     });
-   }
- }
- mercadoPagoSlideChange(event: MatSlideToggle){
-  this.sportCenterForm.patchValue({
-    mercadoPago: event.checked
-  });
-  this.slideMercadoPago = event.checked;
-}
+  electricitySlideChange(event: MatSlideToggle){
+    this.slideElectricity = event.checked;
+    if(this.slideElectricity === false){
+      this.sportCenterForm.patchValue({
+        aditionalElectricity:''
+      });
+    }
+  }
+  mercadoPagoSlideChange(event: MatSlideToggle){
+    this.sportCenterForm.patchValue({
+      mercadoPago: event.checked
+    });
+    this.slideMercadoPago = event.checked;
+  }
+  changeLocation(event){
+    this.sportCenterForm.patchValue({
+      latitude: event.coords.lat,
+      longitude: event.coords.lng
+    })
+    this.isMarked = true;
+    console.log(this.sportCenterForm.value)
+  }
 }

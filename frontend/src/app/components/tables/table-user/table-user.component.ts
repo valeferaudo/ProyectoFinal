@@ -15,10 +15,9 @@ export class TableUserComponent implements OnInit {
 
   @Input() users: User [];
   @Input() type= '';
-  // @Input() totalPages;
+  @Input() page;
   @Output() getUsers = new EventEmitter<boolean>();
 
-  page = 1; 
   userLogged: User;
   searching: boolean = false;
   searchText: string = '';

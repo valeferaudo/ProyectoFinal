@@ -24,55 +24,86 @@
 </div>
 <div>
     <hr class="mb-1"> </div>
-<div class="card-body"> 
+<div class="card-body">
     <form class="m-t-5 row p-0" [formGroup]="sportCenterForm" autocomplete="off">
-        <div class="form-group col-md-6 m-t-5 m-b-5" [class.has-danger]="getFieldValid('name')">
-            <label for=""><strong>Nombre</strong></label>
-            <input type="text" 
-                class="form-control form-control-line" 
-                placeholder="Ingrese un nombre"
-                formControlName="name"
-                [class.form-control-danger]="getFieldValid('name')">
-                <div class="form-control-feedback" *ngIf="getFieldValid('name')">*Ingrese el nombre</div>
+        <div class="col-md-6 col-lg-6">
+            <div class="row">
+                <div class="form-group col-md-12 m-t-5 m-b-5" [class.has-danger]="getFieldValid('name')">
+                    <label for=""><strong>Nombre</strong></label>
+                    <input type="text" 
+                        class="form-control form-control-line" 
+                        placeholder="Ingrese un nombre"
+                        formControlName="name"
+                        [class.form-control-danger]="getFieldValid('name')">
+                        <div class="form-control-feedback" *ngIf="getFieldValid('name')">*Ingrese el nombre</div>
+                    </div>
+                <div class="form-group col-md-12 m-t-5 m-b-5" [class.has-danger]="getFieldValid('phone')">
+                    <label for=""><strong>Teléfono</strong><span class="font-13 text-muted" *ngIf="editMode"> (Ej: 3492658803)</span></label>
+                    <input type="text" 
+                        class="form-control form-control-line"
+                        formControlName="phone"
+                        placeholder="Ingrese un teléfono"
+                        maxlength="13"
+                        [class.form-control-danger]="getFieldValid('phone')">
+                        <div class="form-control-feedback" *ngIf="getFieldValid('phone')">*Ingrese el teléfono (Máx. 13 caracteres)</div> 
+                </div>
+                <div class="form-group col-md-12 m-t-5 m-b-5">
+                    <label for="aditionalElectricity" class="col-form-label mr-2"><strong>Cobro adicional luz</strong></label> <br>
+                    <mat-slide-toggle  color="primary" (change)="electricitySlideChange($event)" [checked]="slideElectricity" [disabled]="!editMode">
+                      {{slideElectricity? 'SI': 'NO'}}
+                    </mat-slide-toggle>
+                    <div class="row">
+                        <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideElectricity">
+                            <label for="aditionalElectricity" class="col-form-label"><strong>Monto adicional</strong></label>
+                            <input type="number" class="form-control" formControlName="aditionalElectricity">
+                        </div>
+                        <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideElectricity">
+                            <label for="aditionalElectricityHour" class="col-form-label"><strong>Hora desde</strong></label>
+                            <input type="time" class="form-control"  formControlName="aditionalElectricityHour">
+                        </div>
+                    </div>
+                </div> 
+            </div>
         </div>
-        <div class="form-group col-md-6 m-t-5 m-b-5">
-            <label for=""><strong>Dirección</strong></label>
-            <input type="text" 
-                class="form-control form-control-line"
-                placeholder="Ingrese una dirección"
-                formControlName="address">
-            <div class="form-control-feedback" *ngIf="getFieldValid('address')">*Ingrese la dirección</div>
+        <div class="col-md-6 col-lg-6">
+            <div class="row">
+                <div class="form-group col-md-12 m-t-5 m-b-5">
+                    <label for="">
+                        <strong>Dirección </strong>
+                        <i class="fas fa-question-circle content-tooltip">
+                            <span class="tooltip-box">Indique la dirección y luego márquela en el mapa</span>
+                        </i>
+                    </label>
+                    <input type="text" 
+                        class="form-control form-control-line m-b-5"
+                        placeholder="Ingrese una dirección"
+                        formControlName="address">
+                    <div class="form-control-feedback" *ngIf="getFieldValid('address')">*Ingrese la dirección</div>
+                    <div [ngClass]="{'map-disable': !editMode}">
+                        <agm-map [latitude]="sportCenterForm.controls['latitude'].value" 
+                                [longitude]="sportCenterForm.controls['longitude'].value" 
+                                [zoom]="zoom" 
+                                [mapTypeId]="mapTypeId"
+                                [mapDraggable]="editMode"
+                                (mapClick)="changeLocation($event)">
+                            <agm-marker [latitude]="sportCenterForm.controls['latitude'].value" [longitude]="sportCenterForm.controls['longitude'].value">
+                                <agm-info-window><strong>{{sportCenter.name}}</strong></agm-info-window>
+                            </agm-marker>
+                        </agm-map>
+                    </div>
+                    <div class="form-control-feedback" *ngIf="getFieldValid('latitude') || getFieldValid('longitude')">*Marque en el mapa la dirección</div>
+                </div>
+                
+            </div>
         </div>
-        <div class="form-group col-md-6 m-t-5 m-b-5" [class.has-danger]="getFieldValid('phone')">
-            <label for=""><strong>Teléfono</strong><span class="font-13 text-muted" *ngIf="editMode"> (Ej: 3492658803)</span></label>
-            <input type="text" 
-                class="form-control form-control-line"
-                formControlName="phone"
-                placeholder="Ingrese un teléfono"
-                maxlength="13"
-                [class.form-control-danger]="getFieldValid('phone')">
-                <div class="form-control-feedback" *ngIf="getFieldValid('phone')">*Ingrese el teléfono (Máx. 13 caracteres)</div> 
-        </div>
-        <div class="form-group col-md-6 m-t-5 m-b-5">
+        <div class="form-group col-md-12 m-t-5 m-b-5">
             <label for="mercadoPago" class="col-form-label mr-2"><strong>Cobro electrónico</strong></label> <br>
             <mat-slide-toggle color="primary" (change)="mercadoPagoSlideChange($event)" [checked]="slideMercadoPago" [disabled]="!editMode">
               {{this.slideMercadoPago? 'SI': 'NO'}}
             </mat-slide-toggle>
           </div> 
-        <div class="form-group col-md-4 m-t-5 m-b-5">
-            <label for="aditionalElectricity" class="col-form-label mr-2"><strong>Cobro adicional luz</strong></label> <br>
-            <mat-slide-toggle  color="primary" (change)="electricitySlideChange($event)" [checked]="slideElectricity" [disabled]="!editMode">
-              {{slideElectricity? 'SI': 'NO'}}
-            </mat-slide-toggle>
-        </div> 
-        <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideElectricity">
-            <label for="aditionalElectricity" class="col-form-label"><strong>Monto adicional</strong></label>
-            <input type="number" class="form-control" formControlName="aditionalElectricity">
-        </div>
-        <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideElectricity">
-            <label for="aditionalElectricityHour" class="col-form-label"><strong>Hora desde</strong></label>
-            <input type="time" class="form-control"  formControlName="aditionalElectricityHour">
-        </div>
+        
+        
         <div class="form-group col-md-12 m-t-5 m-b-5" >
             <label for="description" class="col-form-label"><strong>Imágenes:</strong> ({{sportCenter.images.length}})</label>
             <app-carousel-images [images]="sportCenter.images" [type]="'sportCenter'" [mode]="'update'" (deleteImage)="deleteImage($event)"></app-carousel-images>

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Appointment } from 'src/app/models/appointment.model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
@@ -14,6 +15,7 @@ export class CarouselAppointmentComponent implements OnInit {
   @Input() appointments: any[] = [];
   @Input() type: 'Por comenzar' |  'Reservados';
   @Output() getAppointments = new EventEmitter<string>();
+  @Output() goGPSModal = new EventEmitter<Appointment>();
 
   constructor(private _config: NgbCarouselConfig,
               private sweetAlertService: SweetAlertService,
@@ -53,5 +55,8 @@ export class CarouselAppointmentComponent implements OnInit {
                               })
       }
     });
+  }
+  goGPS(appointment){
+    this.goGPSModal.emit(appointment)
   }
 }

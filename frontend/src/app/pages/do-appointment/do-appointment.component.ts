@@ -44,7 +44,11 @@ export class DoAppointmentComponent  implements OnInit{
     sinceHour: 0,
     untilHour: 23,
   }
-
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
+  registerPerPage = 10;
+  showAvailableAppointments = [];
   //Horarios
   scheduleDisplay: boolean = false;
   scheduleForm: FormGroup;
@@ -226,12 +230,23 @@ export class DoAppointmentComponent  implements OnInit{
                   .subscribe((resp:any) => {
                     this.loaderService.closeLineLoader();
                     if(resp.ok){
-                      this.availableAppointments = resp.param.appointments
+                      this.setInitPaginate(resp)
                     }
                   }, (err) => {
                   console.log(err)
                   this.loaderService.closeLineLoader();
                   this.errorService.showErrors(99,'nada')
                 });
+  }
+  setInitPaginate(resp){
+    this.availableAppointments = resp.param.appointments
+    this.totalPages = Math.ceil(this.availableAppointments.length / this.registerPerPage)
+    this.showAvailableAppointments = this.availableAppointments.slice(0,this.registerPerPage)
+  }
+  paginate(page){
+    let limit;
+    page  * this.registerPerPage > this.availableAppointments.length ? limit = this.availableAppointments.length : limit = page * this.registerPerPage;
+    this.page = page;
+    this.showAvailableAppointments = this.availableAppointments.slice((this.page - 1) * this.registerPerPage,limit)
   }
 }

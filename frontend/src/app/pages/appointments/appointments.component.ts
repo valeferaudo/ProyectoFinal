@@ -53,6 +53,15 @@ export class AppointmentsComponent {
   filterInProgressON: boolean = false;
   states = ['Reservado','Por comenzar','En progreso','Completado']
   statesSelected = ['Reservado','Por comenzar','En progreso'];
+  //PAGINATOR
+  reservedTotalPages = null;
+  reservedPage = 1;
+  aboutToStartTotalPages = null;
+  aboutToStartPage = 1;
+  inProgressTotalPages = null;
+  inProgressPage = 1;
+  completedTotalPages = null;
+  completedPage = 1;
   constructor(private appointmenService: AppointmentService,
               private errorService: ErrorsService,
               private userService: UserService,
@@ -68,60 +77,72 @@ export class AppointmentsComponent {
   }
   getReservedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject)
+    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject,this.reservedPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
                                           this.reservedAppointments= resp.param.appointments;
-                                          this.filterReservedON = true 
+                                          this.reservedPage = resp.param.paginator.page;
+                                          this.reservedTotalPages = resp.param.paginator.totalPages;
+                                          this.filterReservedON = true;
                                         }
                                       }, (err) =>{
-                                        console.log(err)
+                                        console.log(err);
+                                        this.filterReservedON = true;
                                         this.errorService.showServerError()
                                         this.loaderService.closeLineLoader();
                                       });
   }
   getAboutToStartAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject)
+    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject,this.aboutToStartPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
-                                          this.aboutToStartAppointments= resp.param.appointments
+                                          this.aboutToStartAppointments= resp.param.appointments;
+                                          this.aboutToStartPage = resp.param.paginator.page;
+                                          this.aboutToStartTotalPages = resp.param.paginator.totalPages;
                                           this.filterAboutToStartON = true;
                                         }
                                       }, (err) =>{
-                                        console.log(err)
+                                        console.log(err);
+                                        this.filterAboutToStartON = true;
                                         this.errorService.showServerError()
                                         this.loaderService.closeLineLoader();
                                       });
   }
   getInProgressAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject)
+    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject,this.inProgressPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
                                           this.inProgressAppointments= resp.param.appointments;
+                                          this.inProgressPage = resp.param.paginator.page;
+                                          this.inProgressTotalPages = resp.param.paginator.totalPages;
                                           this.filterInProgressON = true;
                                         }
                                       }, (err) =>{
-                                        console.log(err)
+                                        console.log(err);
+                                        this.filterInProgressON = true;
                                         this.errorService.showServerError()
                                         this.loaderService.closeLineLoader();
                                       });
   }
   getCompletedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject)
+    this.appointmenService.getUserAppointments(this.userLogged.uid,this.filterObject,this.completedPage)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
                                           this.completedAppointments= resp.param.appointments;
+                                          this.completedPage = resp.param.paginator.page;
+                                          this.completedTotalPages = resp.param.paginator.totalPages;
                                           this.filterCompletedON = true;
                                         }
                                       }, (err) =>{
-                                        console.log(err)
+                                        console.log(err);
+                                        this.filterCompletedON = true;
                                         this.errorService.showServerError()
                                         this.loaderService.closeLineLoader();
                                       });
@@ -252,6 +273,26 @@ export class AppointmentsComponent {
     }else{
       this.filterCompletedON = false;
       this.completedAppointments = []
+    }
+  }
+  paginate(page, type : 'reserved' | 'aboutToStart' | 'inProgress' | 'completed'){
+    switch (type) {
+      case 'reserved':
+        this.reservedPage = page;
+        this.getReservedAppointments();
+        break;
+      case 'aboutToStart':
+        this.aboutToStartPage = page;
+        this.getAboutToStartAppointments();
+        break;
+      case 'inProgress':
+        this.inProgressPage = page;
+        this.getInProgressAppointments();
+        break;
+      case 'completed':
+        this.completedPage = page;
+        this.getCompletedAppointments();
+      break;
     }
   }
 }

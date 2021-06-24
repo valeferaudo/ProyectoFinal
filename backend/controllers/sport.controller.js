@@ -7,6 +7,8 @@ const sportCtrl = {};
 sportCtrl.getSports = async (req = request , res = response) => {
     searchText = req.query.text;
     state = req.query.state;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         let sports;
         let booleanState;
@@ -28,14 +30,26 @@ sportCtrl.getSports = async (req = request , res = response) => {
             booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
             selectedFilters.push('Estado: ',state);
         }
-        query['$and'].length > 0 ? sports = await Sport.find(query) : sports = await Sport.find(); 
-
+        if(query['$and'].length > 0){
+            [sports,total] = await Promise.all([Sport.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Sport.find(query).countDocuments()
+                                               ])
+        }else{
+            [sports,total] = await Promise.all([Sport.find().skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Sport.find().countDocuments()
+                                               ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok: true,
             msg:'Found sports',
             param: {
                 sports,
-                selectedFilters
+                selectedFilters,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
         

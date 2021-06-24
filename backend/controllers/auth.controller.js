@@ -44,7 +44,7 @@ authCtrl.login = async(req = request,res = response)=>{
                 });
             }
         }
-        if(userDB.status === false){
+        if(userDB.state === false){
             return res.status(403).json({
                 ok:false,
                 msg:'User is not allowed'

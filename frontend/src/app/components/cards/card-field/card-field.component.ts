@@ -1,25 +1,26 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { SportCenter } from 'src/app/models/sportCenter.model';
-import { User } from 'src/app/models/user.model';
-import { ErrorsService } from 'src/app/services/errors.service';
-import { FieldService } from 'src/app/services/field.service';
+import { User } from '../../../models/user.model';
+import { ErrorsService } from '../../../services/errors.service';
+import { FieldService } from '../../..//services/field.service';
+import { UserService } from '../../../services/user.service';
+import { SweetAlertService } from '../../../services/sweet-alert.service';
+import { Field } from 'src/app/models/field.model';
 import { LoaderService } from 'src/app/services/loader.service';
-import { SweetAlertService } from 'src/app/services/sweet-alert.service';
-import { UserService } from 'src/app/services/user.service';
-
+import { SportCenter } from 'src/app/models/sportCenter.model';
 @Component({
-  selector: 'app-card-sport-center',
-  templateUrl: './card-sport-center.component.html',
-  styleUrls: ['./card-sport-center.component.css']
+  selector: 'app-card-field',
+  templateUrl: './card-field.component.html',
+  styleUrls: ['./card-field.component.css']
 })
-export class CardSportCenterComponent implements OnInit {
-
-  @Input() sportCenter: SportCenter;
+export class CardFieldComponent implements OnInit {
+  @Input() field: Field;
   userLogged: User;
+  hiddenScheduleModal: boolean = false;
   @Output() removeFavorite = new EventEmitter<string>();
-  @Output() goSportCenterModal = new EventEmitter<SportCenter>();
-  @Output() goScheduleModal = new EventEmitter<SportCenter>();
+  @Output() goSportCenterModal = new EventEmitter<Field>();
+  @Output() goScheduleModal = new EventEmitter<Field>();
+  @Output() goOpenMap = new EventEmitter<SportCenter>();
 
   constructor(private router: Router,
               private userService: UserService,
@@ -31,16 +32,19 @@ export class CardSportCenterComponent implements OnInit {
   ngOnInit(): void {
     this.userLogged = this.userService.user;
   }
-  getFields(fieldID){
-    this.router.navigateByUrl(`/user/fields/${fieldID}`)
+  goAppointment(fieldID){
+    this.router.navigateByUrl(`/user/appointment/${fieldID}`)
+  }
+  goSportCenter(){
+    this.goSportCenterModal.emit(this.field)
   }
   openScheduleModal(){
-    this.goScheduleModal.emit(this.sportCenter)
+    this.goScheduleModal.emit(this.field)
   }
-  openMap(sportCenterID){
-
+  openMap(){
+    this.goOpenMap.emit(this.field.sportCenter)
   }
-  addFavorite(sportCenterID){
+  addFavorite(fieldID){
     this.sweetAlertService.showSwalConfirmation({
       title: '¿Agregar a favoritos?',
       text: ``,
@@ -48,7 +52,7 @@ export class CardSportCenterComponent implements OnInit {
     .then((result) => {
       if (result.value) {
         this.loaderService.openLineLoader();
-        this.userService.addRemoveFavorite(sportCenterID)
+        this.userService.addRemoveFavorite(fieldID)
                     .subscribe((resp: any) =>{
                       if(resp.ok){
                         this.loaderService.closeLineLoader();
@@ -67,7 +71,7 @@ export class CardSportCenterComponent implements OnInit {
       }
     })
   }
-  deleteFavorite(sportCenterID){
+  deleteFavorite(fieldID){
     this.sweetAlertService.showSwalConfirmation({
       title: '¿Quitar de favoritos?',
       text: ``,
@@ -75,7 +79,7 @@ export class CardSportCenterComponent implements OnInit {
     .then((result) => {
       if (result.value) {
         this.loaderService.openLineLoader();
-        this.userService.addRemoveFavorite(sportCenterID)
+        this.userService.addRemoveFavorite(fieldID)
                     .subscribe((resp: any) =>{
                       if(resp.ok){
                         this.loaderService.closeLineLoader();
@@ -85,7 +89,7 @@ export class CardSportCenterComponent implements OnInit {
                           icon: 'success'
                         })
                         this.userLogged = resp.param.user;
-                        this.removeFavorite.emit(sportCenterID);
+                        this.removeFavorite.emit(fieldID);
                       }
                     },(err)=>{
                       console.log(err);
@@ -94,8 +98,5 @@ export class CardSportCenterComponent implements OnInit {
                     })
       }
     })
-  }
-  openSportCenterModal(){
-    this.goSportCenterModal.emit(this.sportCenter)
   }
 }

@@ -5,10 +5,12 @@
         </div>
         <div class="card-body bg-white p-0 ">
             <h4 class="card-title mt-2">Por comenzar:</h4>
-                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'" (getAppointments)="  getAboutToStartAppointments()"></app-carousel-appointment>
+                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'" 
+                                    (getAppointments)="getAboutToStartAppointments()" (goGPSModal)="openGPSModal($event)"></app-carousel-appointment>
             <hr>
             <h4 class="card-title">Reservados:</h4>
-                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'" (getAppointments)="getReservedAppointments()"></app-carousel-appointment>
+                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'" 
+                                (getAppointments)="getReservedAppointments()" (goGPSModal)="openGPSModal($event)"></app-carousel-appointment>
             <hr>
             <button class="btn btn-success btn-block" [routerLink]="['/user/fields']"><strong>Reservar cancha</strong></button>
         </div>
@@ -90,4 +92,6 @@
         </div>
     </div>
 </div>
+<!-- <google-map></google-map> -->
 <app-line-loader></app-line-loader>
+<app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [appointment]="appointmentSelected" (closeModal)="closeGPSModal()"></app-gps-map>

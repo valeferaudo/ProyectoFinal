@@ -146,7 +146,75 @@
     </div>
 </div>
 
-<app-table-appointment *ngIf="filterAboutToStartON" [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
-<app-table-appointment *ngIf="filterReservedON" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
-<app-table-appointment *ngIf="filterInProgressON" [appointments]="inProgressAppointments" [text]="'en curso.'"></app-table-appointment>
-<app-table-appointment *ngIf="filterCompletedON" [appointments]="completedAppointments" [text]="'finalizados.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterAboutToStartON" [page]="aboutToStartPage" [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
+<div class="row" *ngIf="aboutToStartAppointments.length !==0 && aboutToStartTotalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="aboutToStartPage !== 1" [disabled]="aboutToStartPage === 1" (click)="paginate(1,'aboutToStart')"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="aboutToStartPage !== 1" (click)="paginate(aboutToStartPage - 1,'aboutToStart')"><a class="page-link pointer">{{aboutToStartPage - 1 }}</a></li>
+                <li class="page-item" [class.active]="aboutToStartPage === aboutToStartPage">
+                <a class="page-link">{{aboutToStartPage}}</a>
+                </li>
+                <li class="page-item" *ngIf="aboutToStartTotalPages >= 2 && aboutToStartPage !== aboutToStartTotalPages" (click)="paginate(aboutToStartPage + 1,'aboutToStart')"><a class="page-link pointer">{{aboutToStartPage + 1}}</a></li>
+                <li class="page-item" *ngIf="aboutToStartPage !== aboutToStartTotalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="aboutToStartPage === aboutToStartTotalPages" (click)="paginate(aboutToStartTotalPages, 'aboutToStart')"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
+<app-table-appointment *ngIf="filterReservedON" [page]="reservedPage" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
+<div class="row" *ngIf="reservedAppointments.length !==0 && reservedTotalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="reservedPage !== 1" [disabled]="reservedPage === 1" (click)="paginate(1,'reserved')"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="reservedPage !== 1" (click)="paginate(reservedPage - 1,'reserved')"><a class="page-link pointer">{{reservedPage - 1 }}</a></li>
+                <li class="page-item" [class.active]="reservedPage === reservedPage">
+                <a class="page-link">{{reservedPage}}</a>
+                </li>
+                <li class="page-item" *ngIf="reservedTotalPages >= 2 && reservedPage !== reservedTotalPages" (click)="paginate(reservedPage + 1,'reserved')"><a class="page-link pointer">{{reservedPage + 1}}</a></li>
+                <li class="page-item" *ngIf="reservedPage !== reservedTotalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="reservedPage === reservedTotalPages" (click)="paginate(reservedTotalPages,'reserved')"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
+<app-table-appointment *ngIf="filterInProgressON" [page]="inProgressPage" [appointments]="inProgressAppointments" [text]="'en curso.'"></app-table-appointment>
+<div class="row" *ngIf="inProgressAppointments.length !==0 && inProgressTotalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="inProgressPage !== 1" [disabled]="inProgressPage === 1" (click)="paginate(1,'inProgress')"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="inProgressPage !== 1" (click)="paginate(inProgressPage - 1, 'inProgress')"><a class="page-link pointer">{{inProgressPage - 1 }}</a></li>
+                <li class="page-item" [class.active]="inProgressPage === inProgressPage">
+                <a class="page-link">{{inProgressPage}}</a>
+                </li>
+                <li class="page-item" *ngIf="inProgressTotalPages >= 2 && inProgressPage !== inProgressTotalPages" (click)="paginate(inProgressPage + 1,'inProgress')"><a class="page-link pointer">{{inProgressPage + 1}}</a></li>
+                <li class="page-item" *ngIf="inProgressPage !== inProgressTotalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="inProgressPage === inProgressTotalPages" (click)="paginate(inProgressTotalPages,'inProgress')"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
+<app-table-appointment *ngIf="filterCompletedON" [page]="completedPage" [appointments]="completedAppointments" [text]="'finalizados.'"></app-table-appointment>
+<div class="row" *ngIf="completedAppointments.length!==0 && completedTotalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="completedPage !== 1" [disabled]="completedPage === 1" (click)="paginate(1,'completed')"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="completedPage !== 1" (click)="paginate(completedPage - 1,'completed')"><a class="page-link pointer">{{completedPage - 1 }}</a></li>
+                <li class="page-item" [class.active]="completedPage === completedPage">
+                <a class="page-link">{{completedPage}}</a>
+                </li>
+                <li class="page-item" *ngIf="completedTotalPages >= 2 && completedPage !== completedTotalPages" (click)="paginate(completedPage + 1,'completed')"><a class="page-link pointer">{{completedPage + 1}}</a></li>
+                <li class="page-item" *ngIf="completedPage !== completedTotalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="completedPage === completedTotalPages" (click)="paginate(completedTotalPages,'completed')"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>

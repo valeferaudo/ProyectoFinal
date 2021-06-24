@@ -18,6 +18,8 @@ import Swal from 'sweetalert2';
 export class TableDoAppointmentComponent implements OnInit {
 
   @Input() availableAppointments;
+  @Input() page;
+  @Input() registerPerPage;
   @Input() searchON;
   @Input() fieldID;
   userLogged: User;
@@ -212,8 +214,7 @@ export class TableDoAppointmentComponent implements OnInit {
         phone: this.userService.user.phone
       }
     };
-    console.log(this.appointment)
-    // this.sendAppointment();
+    this.sendAppointment();
   }
   async createCenterAdminAppointment(appointmentDate){
     let name;

@@ -25,7 +25,10 @@ export class ServicesComponent implements OnInit {
     state: '',
   }
   selectedFilters: string [] = [];
-  serviceStates = ['Activo', 'Bloqueado']
+  serviceStates = ['Activo', 'Bloqueado'];
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   serviceStateSelected: '' | 'Activo' | 'Bloqueado' = '';
 
@@ -40,12 +43,14 @@ export class ServicesComponent implements OnInit {
 
   getServices(){
     this.loaderService.openLineLoader();
-    this.serviceService.getServices(this.filters)
+    this.serviceService.getServices(this.filters,this.page)
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.services = resp.param.services;
-                        this.selectedFilters = resp.param.selectedFilters
+                        this.selectedFilters = resp.param.selectedFilters;
+                        this.page = resp.param.paginator.page;
+                        this.totalPages = resp.param.paginator.totalPages;
                       }
                     }, (err) => {
                       console.log(err)
@@ -143,5 +148,9 @@ export class ServicesComponent implements OnInit {
   }
   closeModal(){
     this.hiddenModal = false;
+  }
+  paginate(page){
+    this.page = page;
+    this.getServices();
   }
 }

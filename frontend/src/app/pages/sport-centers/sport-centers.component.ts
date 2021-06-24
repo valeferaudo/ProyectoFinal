@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { Router } from '@angular/router';
 import { Combo } from 'src/app/interfaces/combo.interface';
 import { SportCenterFilter } from 'src/app/interfaces/filters/sportCenter.interface';
 import { SportCenter } from 'src/app/models/sportCenter.model';
@@ -21,7 +22,8 @@ export class SportCentersComponent implements OnInit {
   hiddenSportCenterModal: boolean = false;
   sportCenterSelected: any;
   hiddenScheduleModal:boolean = false;
-
+  hiddenOnePointMap:boolean = false;
+  
   searchText: string = '';
   sportCenters: SportCenter[] = [];
   filterON: boolean = false;
@@ -47,11 +49,21 @@ export class SportCentersComponent implements OnInit {
   sincePriceSelected = null;
   untilPriceSelected = null;
   selectedFilters: string [] = [];
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
+  //Mapa
+  lat: number = -32.9551134;
+  lng: number = -60.6883803;
+  zoom: number = 12.81;
+  mapTypeId: string = 'roadmap';
+  sportCentersCombo: any [] = [];
 
   constructor(private sportService: SportService,
               private sportCenterService: SportCenterService,
               private fieldService: FieldService,
+              private router: Router,
               private serviceService: ServiceService,
               private loaderService: LoaderService,
               private sweetAlertService: SweetAlertService,
@@ -64,6 +76,7 @@ export class SportCentersComponent implements OnInit {
     getCombos(){
       this.getServicesCombo();
       this.getSportCombo();
+      this.getSportCenterCombo();
       this.getSportCenters();
     }
     getServicesCombo(){
@@ -94,15 +107,31 @@ export class SportCentersComponent implements OnInit {
                         this.errorService.showErrors(99,'nada');
                       })
     }
+    getSportCenterCombo(){
+      this.loaderService.openLineLoader();
+      this.sportCenterService.getSportCenterCombo()
+                      .subscribe((resp: any) => {
+                        this.loaderService.closeLineLoader();
+                        if(resp.ok){
+                          this.sportCentersCombo = resp.param.combo
+                        }
+                      },(err)=>{
+                        console.log(err);
+                        this.loaderService.closeLineLoader();
+                        this.errorService.showErrors(99,'nada');
+                      })
+    }
     getSportCenters(){
       this.filterON = true;
       this.loaderService.openLineLoader();
-      this.sportCenterService.getSportCenters(this.filters)
+      this.sportCenterService.getSportCenters(this.filters,this.page)
                 .subscribe((resp: any) => {
                   this.loaderService.closeLineLoader();
                   if(resp.ok){
                     this.sportCenters = resp.param.sportCenters;
                     this.selectedFilters = resp.param.selectedFilters;
+                    this.page = resp.param.paginator.page;
+                    this.totalPages = resp.param.paginator.totalPages;
                     this.filterON = false;
                   }
                 },(err)=>{
@@ -229,5 +258,19 @@ export class SportCentersComponent implements OnInit {
     }
     closeScheduleModal(){
       this.hiddenScheduleModal = false;
+    }
+    openMap(sportCenter){
+      this.sportCenterSelected = sportCenter;
+      this.hiddenOnePointMap = true;
+    }
+    closeMap(){
+      this.hiddenOnePointMap = false;
+    }
+    goFields(fieldID){
+      this.router.navigateByUrl(`/user/fields/${fieldID}`)
+    }
+    paginate(page){
+      this.page = page;
+      this.getSportCenters();
     }
 }

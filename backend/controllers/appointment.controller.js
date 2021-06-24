@@ -199,6 +199,8 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
     const sinceHour = req.query.sinceHour !== undefined ? parseInt(req.query.sinceHour) : '1';
     const untilHour = req.query.untilHour !== undefined ? parseInt(req.query.untilHour) : '23';
     const fieldID = req.query.fieldID === "null" || req.query.fieldID === "undefined" ? null : req.query.fieldID;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         const sportCenterDB = await SportCenter.findById(sportCenterID)
         if(!sportCenterDB){
@@ -223,15 +225,36 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
                   }
             })
         }
-
-        const appointments = await Appointment.find(query)
-                                         .populate('user','name')
-                                         .populate({
-                                            path: "field",
-                                            match: {
-                                                sportCenter: sportCenterID,
-                                            }})
-                                            // lo que andaba pero no filtraba por centro deportivo era .populate('field')
+        if(query['$and'].length > 0){
+            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name')
+                                                                            .populate({
+                                                                            path: "field",
+                                                                            match: {
+                                                                                sportCenter: sportCenterID,
+                                                                            }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Appointment.find(query).populate('user','name')
+                                                                            .populate({
+                                                                            path: "field",
+                                                                            match: {
+                                                                                sportCenter: sportCenterID,
+                                                                            }}).countDocuments()
+                                                ])
+        }else{
+            [appointments,total] = await Promise.all([Appointment.find().populate('user','name')
+                                                                        .populate({
+                                                                        path: "field",
+                                                                        match: {
+                                                                            sportCenter: sportCenterID,
+                                                                        }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Appointment.find().populate('user','name')
+                                                                        .populate({
+                                                                        path: "field",
+                                                                        match: {
+                                                                            sportCenter: sportCenterID,
+                                                                        }}).countDocuments()
+                                                ])
+        }
+        total = Math.ceil(total / registerPerPage);
         if(appointments.length > 0){
             if(appointments[0].state === 'Completed'){
                 sortDateFromLargest(appointments);
@@ -245,6 +268,10 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
             msg:'Found Appointments',
             param:{
                 appointments,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
 
@@ -264,6 +291,8 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
     const sinceHour = req.query.sinceHour !== undefined ? parseInt(req.query.sinceHour) : '1';
     const untilHour = req.query.untilHour !== undefined ? parseInt(req.query.untilHour) : '23';
     const fieldID = req.query.fieldID === "null" || req.query.fieldID === "undefined" ? null : req.query.fieldID;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         const userDB = await User.findById(userID)
         if(!userDB){
@@ -287,18 +316,45 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
                     ]
                   }
             })
+        }                                    
+        if(query['$and'].length > 0){
+            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name')
+                                                                        .populate({ 
+                                                                        path: 'field',
+                                                                        model: 'Field',
+                                                                        populate: {
+                                                                            path: 'sportCenter',
+                                                                            model: 'SportCenter'
+                                                                        }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Appointment.find(query).populate('user','name')
+                                                                            .populate({ 
+                                                                            path: 'field',
+                                                                            model: 'Field',
+                                                                            populate: {
+                                                                                path: 'sportCenter',
+                                                                                model: 'SportCenter'
+                                                                            }}).countDocuments()
+                                                ])
+        }else{
+            [appointments,total] = await Promise.all([Appointment.find().populate('user','name')
+                                                                        .populate({ 
+                                                                        path: 'field',
+                                                                        model: 'Field',
+                                                                        populate: {
+                                                                            path: 'sportCenter',
+                                                                            model: 'SportCenter'
+                                                                        }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Appointment.find().populate('user','name')
+                                                                            .populate({ 
+                                                                            path: 'field',
+                                                                            model: 'Field',
+                                                                            populate: {
+                                                                                path: 'sportCenter',
+                                                                                model: 'SportCenter'
+                                                                            }}).countDocuments()
+                                                ])
         }
-        query['$and'].push({ user: userID})
-        const appointments = await Appointment.find(query)
-                                         .populate('user','name')
-                                         .populate({ 
-                                            path: 'field',
-                                            model: 'Field',
-                                            populate: {
-                                                path: 'sportCenter',
-                                                model: 'SportCenter'
-                                            }
-                                        })
+        total = Math.ceil(total / registerPerPage);
         if(appointments.length > 0){
             if(appointments[0].state === 'Completed'){
                 sortDateFromLargest(appointments);
@@ -312,6 +368,10 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
             msg:'Found Appointments',
             param:{
                 appointments,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
 
@@ -419,7 +479,7 @@ sortDateFromLargest = (array)=>{
 
 cron.schedule('0,10,20,30,43,50 * * * *', async () => {
      try {
-        const appointmentsDB = await Appointment.find()
+        const appointmentsDB = await Appointment.find({state:{$ne:'Completed'}})
         appointmentsDB.forEach(element=>{
             const difference = (element.date.getTime() - (new Date().getTime()- process.env.UTC_ARG))
             changeState(element,difference)

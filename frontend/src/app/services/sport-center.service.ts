@@ -9,15 +9,18 @@ const baseUrl = environment.base_url;
   providedIn: 'root'
 })
 export class SportCenterService {
+  registerPerPage = '6';
 
   constructor(private http: HttpClient) {}
 
-  getSportCenters(filters: SportCenterFilter){
+  getSportCenters(filters: SportCenterFilter,page){
     let params = new HttpParams();
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
     params = params.append('sinceHour',filters.sinceHour);
     params = params.append('untilHour',filters.untilHour);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     if(filters.services.length > 0){
       filters.services.forEach(element => {
         params = params.append('service',`${element}`)
@@ -55,5 +58,8 @@ export class SportCenterService {
   }
   updateServices(id, data){
     return this.http.put(`${baseUrl}/sportcenters/services/${id}`, data);
+  }
+  getSportCenterCombo(){
+    return this.http.get(`${baseUrl}/sportcenters/combo`);
   }
 }

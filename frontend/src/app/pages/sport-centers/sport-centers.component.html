@@ -26,7 +26,7 @@
             <h6 class="pull-left">
                 <strong class="search-title-text">Filtrar:</strong>
             </h6>
-            <div class="filters__items-container ml-3">
+            <div class="filters__items-container">
                 <div class="filters__items-container__item">
                     <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuCat">
@@ -148,7 +148,20 @@
                                 <!-- FILTER MENU -->
                     <mat-menu #menuMap="matMenu">
                     <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
-                         PONER MAPA
+                        <div class="filters__items-container__item__menu__range-container__header">
+                            <h6 class="card-title">Ubicación de centros deportivos</h6>
+                        </div>
+                        <div class="text-center">
+                            <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [mapTypeId]="mapTypeId">
+                                <agm-marker [latitude]="item.coords.latitude" [longitude]="item.coords.longitude" *ngFor="let item of sportCentersCombo">
+                                    <agm-info-window>
+                                        <div class="text-center">
+                                            <span class="font-bold pointer txt" (click)="goFields(item.id)">{{item.text}}</span>
+                                        </div>
+                                    </agm-info-window>
+                                </agm-marker>
+                            </agm-map>
+                        </div>
                     </div>
                                     <!-- ACTIONS -->
                     <div class="filters__items-container__item__actions-container">
@@ -164,13 +177,33 @@
 <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="card-group">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
-        <app-card-sport-center [sportCenter]="sportCenter" (goSportCenterModal)="openSportCenterModal($event)" (goScheduleModal)="openScheduleModal($event)"></app-card-sport-center>
+        <app-card-sport-center [sportCenter]="sportCenter" 
+                            (goSportCenterModal)="openSportCenterModal($event)" 
+                            (goScheduleModal)="openScheduleModal($event)"
+                            (goOpenMap)="openMap($event)">
+        </app-card-sport-center>
     </div>
 </div>
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0 && !filterON"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Centros Deportivos</strong>.
 </div>
-
+<div class="row" *ngIf="sportCenters.length!==0 && totalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                <li class="page-item" [class.active]="page === page">
+                <a class="page-link">{{page}}</a>
+                </li>
+                <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                <li class="page-item" *ngIf="page !== totalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
 <app-line-loader></app-line-loader>
 <app-sport-center-info-modal *ngIf="hiddenSportCenterModal" [hiddenModal]="!hiddenSportCenterModal" [sportCenterSelectedID]="sportCenterSelected.id"
                                 (closeModal)="closeSportCenterModal()">
@@ -180,3 +213,5 @@
                                 [sportCenter]="sportCenterSelected" [sportCenterID]="sportCenterSelected.id"
                                 (closeModal)="closeScheduleModal()">
 </app-sport-center-schedule-modal>
+
+<app-one-point-map *ngIf="hiddenOnePointMap" [hiddenOnePointMap]="!hiddenOnePointMap" [sportCenter]="sportCenterSelected" (closeModal)="closeMap()"></app-one-point-map>

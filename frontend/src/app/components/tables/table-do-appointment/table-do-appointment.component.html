@@ -10,7 +10,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of availableAppointments; let i=index">
-            <th class="text-center" scope="row" >{{i +1}}</th>
+            <th class="text-center" scope="row">{{((page -1) * registerPerPage) + i+1}}</th>
             <td>{{item|date:"dd-MM-yyyy":'-3'}}</td>
             <td>{{item|date:'HH:mm':'-3'}}hs.</td>
             <td><button type="text" class="btn btn-success text-white" (click)="reserveAppointment(item)"><i class="far fa-check-circle"></i> Reservar</button> </td>

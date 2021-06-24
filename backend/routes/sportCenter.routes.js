@@ -18,12 +18,16 @@ const { validateCSAandOwner } = require('../middlewares/roleValidators/validateC
 router.get('/',[validateJWT,
             validateUserID,
             validateUserOrSuperAdmin],sportCenterCtrl.getSportCenters);
+router.get('/combo',[validateJWT,
+            validateUserID],sportCenterCtrl.getCombo);
 router.get('/:id',[validateJWT,
             validateUserID],sportCenterCtrl.getSportCenter);
 router.post('/',[validateJWT,
             validateUserID,
             check('name','Name field is required').not().isEmpty(),
             check('address','Address field is required').not().isEmpty(),
+            check('latitude','Latitude field is required (Mark in the map)').not().isEmpty(),
+            check('longitude','Longitude field is required (Mark in the map)').not().isEmpty(),
             check('phone','Phone field is required').not().isEmpty(),
             validateFields],sportCenterCtrl.createSportCenter);
  router.put('/:id',[validateJWT,
@@ -31,6 +35,8 @@ router.post('/',[validateJWT,
             validateCSAandOwner,
             check('name','Name field is required').not().isEmpty(),
             check('address','Address field is required').not().isEmpty(),
+            check('latitude','Latitude field is required (Mark in the map)').not().isEmpty(),
+            check('longitude','Longitude field is required (Mark in the map)').not().isEmpty(),
             check('phone','Phone field is required').not().isEmpty(),
             validateFields],sportCenterCtrl.updateSportCenter);
 router.put('/delete/:id',[validateJWT,

@@ -7,6 +7,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { ComponentsModule } from '../components/components.module';
 import { MaterialModule } from '../material.module';
+import { AgmCoreModule } from '@agm/core';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 //COMPONENTES
 import { PagesComponent } from './pages.component';
@@ -43,7 +45,11 @@ import { SearchComponent } from './search/search.component';
     FormsModule,
     SharedModule,
     ComponentsModule,
-    MaterialModule
+    MaterialModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4'
+    }),
+    GoogleMapsModule
   ],
   exports:[
     PagesComponent,

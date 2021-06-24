@@ -28,7 +28,10 @@ export class RequestDoComponent implements OnInit {
   selectedFilters: string [] = [];
   requestSections = ['CARACTERÍSTICA','DEPORTE','SERVICIO']
   requestStates = ['Aceptada', 'Rechazada', 'En pausa'];
-  requestSeens = ['Vista', 'No vista']
+  requestSeens = ['Vista', 'No vista'];
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   requestStateSelected: '' | 'Aceptada' | 'Rechazada' | 'En pausa' = '';
   requestSeenSelected: '' | 'Vista' | 'No vista' = '';
@@ -44,11 +47,13 @@ export class RequestDoComponent implements OnInit {
   }
   getRequests(){
     this.loaderService.openLineLoader();
-    this.requestService.getRequests(this.filters)
+    this.requestService.getRequests(this.filters,this.page)
               .subscribe( (resp: any) => {
                 if(resp.ok){
                   this.loaderService.closeLineLoader();
                   this.requests = resp.param.requests;
+                  this.page = resp.param.paginator.page;
+                  this.totalPages = resp.param.paginator.totalPages;
                 }
               }, (err) => {
                 console.log(err)
@@ -185,6 +190,10 @@ export class RequestDoComponent implements OnInit {
   filterRequests(){
     this.filterON = true;
     this.fillFilterObject();
+    this.getRequests();
+  }
+  paginate(page){
+    this.page = page;
     this.getRequests();
   }
 }

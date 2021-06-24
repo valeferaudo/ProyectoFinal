@@ -8,6 +8,8 @@ featureCtrl.getFeature = async (req = request,res = response)=>{}
 featureCtrl.getFeatures = async (req = request,res = response)=>{
     searchText = req.query.text;
     state = req.query.state;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         let features;
         let booleanState;
@@ -29,14 +31,26 @@ featureCtrl.getFeatures = async (req = request,res = response)=>{
             query['$and'].push({state:booleanState});
             selectedFilters.push('Estado: ',state);
         }
-        query['$and'].length > 0 ? features = await Feature.find(query) : features = await Feature.find(); 
-
+        if(query['$and'].length > 0){
+            [features,total] = await Promise.all([Feature.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Feature.find(query).countDocuments()
+                                               ])
+        }else{
+            [features,total] = await Promise.all([Feature.find().skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Feature.find().countDocuments()
+                                               ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok: true,
             msg:'Found features',
             param: {
                 features,
-                selectedFilters
+                selectedFilters,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
     } catch (error) {

@@ -7,3 +7,23 @@
     height: 100%;
     z-index: 1;
 }
+agm-map {
+    height: 250px;
+}
+.tooltip-box{
+    display: none;
+    position: relative;
+    background-color: lightgray;
+    line-height: 20px;
+    z-index: 500;
+    text-align: center;
+    color: black;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    left: 3%;
+    bottom: 100%;
+  }
+.map-disable{
+    pointer-events: none
+}

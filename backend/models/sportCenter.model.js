@@ -5,6 +5,8 @@ const {Schema , model} = mongoose;
 const SportCenterSchema = new Schema({
     name:{type:String, required: true, unique:true},
     address:{type:String,required:true},
+    coords:{latitude:{type:Number, required: true},
+            longitude:{type:Number, required: true}},
     phone:{type:String, required:true},
     deletedDate:{type: Date, default:null},
     aditionalElectricityHour:{type:String, default:null},

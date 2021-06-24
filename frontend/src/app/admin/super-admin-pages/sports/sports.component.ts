@@ -25,7 +25,10 @@ export class SportsComponent implements OnInit {
     state: '',
   }
   selectedFilters: string [] = [];
-  sportStates = ['Activo', 'Bloqueado']
+  sportStates = ['Activo', 'Bloqueado'];
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   sportStateSelected: '' | 'Activo' | 'Bloqueado' = '';
 
@@ -40,12 +43,14 @@ export class SportsComponent implements OnInit {
 
   getSports(){
     this.loaderService.openLineLoader();
-    this.sportService.getSports(this.filters)
+    this.sportService.getSports(this.filters,this.page)
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.sports = resp.param.sports;
-                        this.selectedFilters = resp.param.selectedFilters
+                        this.selectedFilters = resp.param.selectedFilters;
+                        this.page = resp.param.paginator.page;
+                        this.totalPages = resp.param.paginator.totalPages;
                       }
                     }, (err) => {
                       console.log(err)
@@ -143,5 +148,9 @@ export class SportsComponent implements OnInit {
   }
   closeModal(){
     this.hiddenModal = false;
+  }
+  paginate(page){
+    this.page = page;
+    this.getSports();
   }
 }

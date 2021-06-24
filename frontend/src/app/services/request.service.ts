@@ -10,23 +10,28 @@ const baseUrl = environment.base_url
   providedIn: 'root'
 })
 export class RequestService {
+  registerPerPage = '6';
 
   constructor(private http: HttpClient) { }
 
-  getSportCenterRequests(sportCenterID,filters: RequestFilter){
+  getSportCenterRequests(sportCenterID,filters: RequestFilter,page){
     let params = new HttpParams();
     params = params.append('section',filters.section);
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
     params = params.append('seen',filters.seen);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/requests/${sportCenterID}` ,{params});
   }
-  getRequests(filters: RequestFilter){
+  getRequests(filters: RequestFilter,page){
     let params = new HttpParams();
     params = params.append('section',filters.section);
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
     params = params.append('seen',filters.seen);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/requests/`, {params});
   }
   createRequest(request: Request ){

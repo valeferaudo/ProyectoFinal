@@ -35,6 +35,8 @@ userCtrl.getUsers = async (req = request,res = response)=>{
     searchText = req.query.text;
     state = req.query.state;
     userType = req.query.userType;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         let users;
         let booleanState;
@@ -73,12 +75,11 @@ userCtrl.getUsers = async (req = request,res = response)=>{
         query['$and'].push({_id: {$ne: userLoggedID}})
         query['$and'].push({role: {$ne: 'SUPER-ADMIN'}})
         if(userType === 'SUPER-ADMIN'){
-            query['$and'].push({role: {$ne: 'CENTER-ADMIN'}})
+            query['$and'].push({$and: [{role: {$ne: 'CENTER-ADMIN'}},{role: {$ne: 'USER'}}]})
         }
         else if (userType === 'CENTER-SUPER-ADMIN'){
             query['$and'].push({sportCenter: userDB.sportCenter})
         }
-        users = await User.find(query);
         if(searchText === '' && state === '' ){
             selectedFilters = []
         }
@@ -91,12 +92,26 @@ userCtrl.getUsers = async (req = request,res = response)=>{
         else if (searchText !== '' && state !== ''){
             selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
         }
-        res.json({
+        if(query['$and'].length > 0){
+            [users,total] = await Promise.all([User.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                   User.find(query).countDocuments()
+                                               ])
+       }else{
+            [users,total] = await Promise.all([User.find().skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                   User.find().countDocuments()
+                                               ])
+       }
+       total = Math.ceil(total / registerPerPage);
+       res.json({
             ok: true,
             msg:'Found users',
             param: {
                 users,
-                selectedFilters
+                selectedFilters,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
         
@@ -339,21 +354,33 @@ userCtrl.addRemoveFavorite = async (req = request, res = response) =>{
 }
 userCtrl.getFavorites = async (req = request, res = response) => {
     const userID = req.uid;
+    type = req.query.type;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         const userDB = await User.findById(userID);
         if(userDB.deletedDate !== null){
             return userBlockedResponse(res);
         }
-        let fields = [];
-        fields = await Field.find({ _id : { $in : userDB.favorites } })
-        let sportCenters = [];
-        sportCenters = await SportCenter.find({ _id : { $in : userDB.favorites } })
+        if(type === 'field'){
+            [favorites,total] = await Promise.all([Field.find({ _id : { $in : userDB.favorites } }).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Field.find({ _id : { $in : userDB.favorites } }).countDocuments()
+                                               ])
+        }else if(type === 'sportCenter'){
+            [favorites,total] = await Promise.all([SportCenter.find({ _id : { $in : userDB.favorites } }).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                SportCenter.find({ _id : { $in : userDB.favorites } }).countDocuments()
+                                               ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok:true,
             msg:'Found Favorite items',
             param: {
-                fields,
-                sportCenters
+                favorites,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
     } catch (error) {

@@ -1,3 +1,5 @@
+import { SportCenter } from "./sportCenter.model";
+
 export class Appointment{
     constructor(
            public id: string,
@@ -7,7 +9,8 @@ export class Appointment{
            public state: string,
            public field: {
                id: string,
-               name: string
+               name: string,
+               sportCenter?: SportCenter
             },
            public owner: {
                name: string,

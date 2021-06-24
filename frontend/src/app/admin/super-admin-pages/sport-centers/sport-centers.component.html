@@ -71,7 +71,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let sportCenter of sportCenters; let i = index">
-                <td>{{i+1}}</td>
+                <td>{{((page -1) * 1) + i+1}}</td>
                 <td>{{sportCenter.name}}</td>
                 <td>{{sportCenter.address}}</td>
                 <td>{{sportCenter.phone}}</td>
@@ -96,7 +96,23 @@
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Centros deportivos</strong>.
 </div>
-
+<div class="row" *ngIf="sportCenters.length!==0 && totalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                <li class="page-item" [class.active]="page === page">
+                <a class="page-link">{{page}}</a>
+                </li>
+                <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                <li class="page-item" *ngIf="page !== totalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
 <app-sport-center-info-modal *ngIf="hiddenModal" [hiddenModal]="!hiddenModal" [sportCenterSelectedID]="sportCenterID" (closeModal)="closeModal()">
 </app-sport-center-info-modal>
 <app-full-screen-loader [message]="'¡Buscando Características. Por favor espere!'"></app-full-screen-loader>

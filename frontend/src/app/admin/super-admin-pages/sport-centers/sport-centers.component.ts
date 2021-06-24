@@ -23,9 +23,17 @@ export class SportCentersComponent implements OnInit {
   filters: SportCenterFilter = {
     text: '',
     state: '',
+    services: [],
+    days: [],
+    sports: [],
+    sinceHour: 1,
+    untilHour:23
   }
   selectedFilters: string [] = [];
-  sportCenterStates = ['Activo', 'Bloqueado']
+  sportCenterStates = ['Activo', 'Bloqueado'];
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   sportCenterStateSelected: '' | 'Activo' | 'Bloqueado' = '';
 
@@ -40,12 +48,14 @@ export class SportCentersComponent implements OnInit {
 
   getSportCenters(){
     this.loaderService.openLineLoader();
-    this.sportCenterService.getSportCenters(this.filters)
+    this.sportCenterService.getSportCenters(this.filters,this.page)
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         this.sportCenters = resp.param.sportCenters;
-                        this.selectedFilters = resp.param.selectedFilters
+                        this.selectedFilters = resp.param.selectedFilters;
+                        this.page = resp.param.paginator.page;
+                        this.totalPages = resp.param.paginator.totalPages;
                       }
                     }, (err) => {
                       console.log(err)
@@ -85,6 +95,11 @@ export class SportCentersComponent implements OnInit {
     this.filters = {
       text: this.searchText,
       state: this.sportCenterStateSelected,
+      services: [],
+      days: [],
+      sports: [],
+      sinceHour: 1,
+      untilHour:23
     }
   }
   activateBlockSportCenter(sportCenter, action: 'active' | 'block'){
@@ -140,5 +155,8 @@ export class SportCentersComponent implements OnInit {
   closeModal(){
     this.hiddenModal = false;
   }
-
+  paginate(page){
+    this.page = page;
+    this.getSportCenters();
+  }
 }

@@ -12,6 +12,7 @@ const baseUrl = environment.base_url;
   providedIn: 'root'
 })
 export class AppointmentService {
+  registerPerPage = '6';
 
   constructor(private http: HttpClient) { }
 
@@ -26,7 +27,7 @@ export class AppointmentService {
   createAppointments(appointment){
       return this.http.post(`${baseUrl}/appointments`, appointment);
   }
-  getSportCenterAppointments(sportCenterID: string, filterObject: AppointmentTableFilter){
+  getSportCenterAppointments(sportCenterID: string, filterObject: AppointmentTableFilter,page){
     let params = new HttpParams();
     params = params.append('state', `${filterObject.state}`);
     params = params.append('sinceDate', filterObject.sinceDate);
@@ -34,9 +35,11 @@ export class AppointmentService {
     params = params.append('sinceHour', filterObject.sinceHour);
     params = params.append('untilHour', filterObject.untilHour);
     params = params.append('fieldID', filterObject.fieldID);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/appointments/sportCenter/${sportCenterID}`,{params})
   }
-  getUserAppointments(userID: string, filterObject: AppointmentTableFilter){
+  getUserAppointments(userID: string, filterObject: AppointmentTableFilter,page){
     let params = new HttpParams();
     params = params.append('state', `${filterObject.state}`);
     params = params.append('sinceDate', filterObject.sinceDate);
@@ -44,9 +47,10 @@ export class AppointmentService {
     params = params.append('sinceHour', filterObject.sinceHour);
     params = params.append('untilHour', filterObject.untilHour);
     params = params.append('fieldID', filterObject.fieldID);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/appointments/user/${userID}`,{params})
   }
-  //no se si se usa
   deleteAppointment(id: string){
       return this.http.delete(`${baseUrl}/appointments/${id}`);
   }

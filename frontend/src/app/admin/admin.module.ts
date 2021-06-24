@@ -6,6 +6,7 @@ import { AppRoutingModule } from '../app-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AgmCoreModule } from '@agm/core';
 
 // Components
  import { AdminComponent } from './admin.component';
@@ -57,7 +58,10 @@ import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports
     ReactiveFormsModule,
     PipesModule,
     MaterialModule,
-    NgbModule
+    NgbModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4'
+    })
   ],
   exports: [
      AdminComponent,

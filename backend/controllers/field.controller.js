@@ -38,7 +38,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     uid = req.uid
     searchText = req.query.text;
     state = req.query.state === undefined ? '' : req.query.state;
-    sportCenterID = req.query.sportCenterID;
+    sportCenterID = req.query.sportCenterID === 'undefined' ? '' : req.query.sportCenterID; 
     sinceHour = req.query.sinceHour;
     untilHour = req.query.untilHour;
     sincePrice = req.query.sincePrice;
@@ -47,6 +47,8 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     sports = req.query.sport;
     days = req.query.day;
     available = req.query.available;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
     try {
         let fields;
         let booleanState;
@@ -144,13 +146,26 @@ fieldCtrl.getFields = async (req = request , res = response) => {
                 selectedFilters.push('Hora hasta: ',untilHour,' - ')
             }
         }
-        query['$and'].length > 0 ? fields = await Field.find(query).populate('sportCenter features sports.sport') : fields = await Field.find().populate('sportCenter features sports.sport');
+        if(query['$and'].length > 0){
+             [fields,total] = await Promise.all([Field.find(query).populate('sportCenter features sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Field.find(query).populate('sportCenter features sports.sport').countDocuments()
+                                                ])
+        }else{
+             [fields,total] = await Promise.all([Field.find().populate('sportCenter features sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Field.find().populate('sportCenter features sports.sport').countDocuments()
+                                                ])
+        }
+        total = Math.ceil(total / registerPerPage);
         res.json({
             ok: true,
             msg:'Found sports',
             param: {
                 fields,
-                selectedFilters
+                selectedFilters,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
             }
         })
         

@@ -61,7 +61,24 @@
     </div>
 </div>
 <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
-<app-table-user [users]="users" (getUsers)="getUsers()"></app-table-user>
+<app-table-user [users]="users" [page]="page" (getUsers)="getUsers()"></app-table-user>
+<div class="row" *ngIf="users.length!==0 && totalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                <li class="page-item" [class.active]="page === page">
+                <a class="page-link">{{page}}</a>
+                </li>
+                <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                <li class="page-item" *ngIf="page !== totalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
 <app-full-screen-loader [message]="'¡Buscando usuarios. Por favor espere!'"></app-full-screen-loader>
 <app-user-modal *ngIf="hiddenUserModal" [hiddenModal]="!hiddenUserModal" 
                 (closeModal)="closeUserModal()" (getUsers)="getUsers()">

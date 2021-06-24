@@ -174,7 +174,24 @@
             <div class="card-img card-inverse bg-app text-center" *ngIf="searchON">
                 <h2 class="card-title m-0">Turnos disponibles</h2>
             </div>
-        <app-table-do-appointment *ngIf="searchON" [availableAppointments]="availableAppointments" [fieldID]="fieldInParam.id" [searchON]="searchON"></app-table-do-appointment>
+            <app-table-do-appointment *ngIf="searchON" [page]="page" [registerPerPage]="registerPerPage" [availableAppointments]="showAvailableAppointments" [fieldID]="fieldInParam.id" [searchON]="searchON"></app-table-do-appointment>
+            <div class="row" *ngIf="availableAppointments.length !==0 && totalPages > 1">
+                <div class="col-md-12 text-center">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                            <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                            </li>
+                            <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                            <li class="page-item" [class.active]="page === page">
+                            <a class="page-link">{{page}}</a>
+                            </li>
+                            <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                            <li class="page-item" *ngIf="page !== totalPages">
+                            <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                            </li>
+                        </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -10,13 +10,16 @@ const baseUrl = environment.base_url;
   providedIn: 'root'
 })
 export class ServiceService {
+  registerPerPage = '6';
 
   constructor(private http: HttpClient) { }
 
-  getServices(filters: ServiceFilter){
+  getServices(filters: ServiceFilter, page){
     let params = new HttpParams();
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/services/` ,{params});
   }
   getService(){

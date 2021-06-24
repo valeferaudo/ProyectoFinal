@@ -30,6 +30,9 @@ export class SportCenterComponent implements OnInit {
   hiddenSpecialScheduleInfoModal: boolean = false;
   hiddenSpecialScheduleCreateModal: boolean = false;
 
+  //Mapa
+  zoom: number = 15;
+  mapTypeId: string = 'roadmap'
   constructor(private userService: UserService,
               private fb: FormBuilder,
               private router: Router,
@@ -48,7 +51,6 @@ export class SportCenterComponent implements OnInit {
 
   }
   getSportCenter(){
-    //ACA PUEDO HACER UN POPULATE EN EL BACK EN EL GET USUARIO DEL RENEW TOKEN O PUEDO LLAMAR AL GETSPORTCENTER ACA
     this.sportCenterService.getSportCenter(this.userLogged.sportCenter.id)
                 .subscribe((resp:any) => {
                   if(resp.ok){
@@ -62,7 +64,9 @@ export class SportCenterComponent implements OnInit {
   createForm(){
     this.sportCenterForm = this.fb.group({
       name: [{value: this.sportCenter.name, disabled: true}, [Validators.required]],
-      address: [{value: this.sportCenter.address, disabled: true},[]],
+      address: [{value: this.sportCenter.address, disabled: true},[Validators.required]],
+      latitude: [{value: this.sportCenter.coords.latitude, disabled: true},[Validators.required]],
+      longitude: [{value: this.sportCenter.coords.longitude, disabled: true},[Validators.required]],
       phone: [{value: this.sportCenter.phone, disabled: true}, [Validators.required]],
       aditionalElectricity:[{value: this.sportCenter.aditionalElectricity, disabled: true}],
       aditionalElectricityHour: [{value: this.sportCenter.aditionalElectricityHour, disabled: true}],
@@ -98,6 +102,8 @@ export class SportCenterComponent implements OnInit {
       this.sportCenterForm.patchValue({
         name: this.sportCenter.name,
         address: this.sportCenter.address,
+        latitude: this.sportCenter.coords.latitude,
+        longitude: this.sportCenter.coords.longitude,
         phone: this.sportCenter.phone,
         aditionalElectricity: this.sportCenter.aditionalElectricity,
         aditionalElectricityHour: this.sportCenter.aditionalElectricityHour,
@@ -245,5 +251,11 @@ export class SportCenterComponent implements OnInit {
   closeSpecialScheduleCreateModal(){
     this.hiddenSpecialScheduleCreateModal = false;
     this.hiddenSpecialScheduleInfoModal = true;
+  }
+  changeLocation(event){
+    this.sportCenterForm.patchValue({
+      latitude: event.coords.lat,
+      longitude: event.coords.lng
+    })
   }
 }

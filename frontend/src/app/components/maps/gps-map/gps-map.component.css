@@ -1,0 +1,15 @@
+#map{
+    width: 100%;
+    height: 70vh;
+}
+#indicators {
+    padding: 16px;
+    width: 100%;
+    height: auto;
+    overflow-y: auto;
+    display: block;
+  }
+agm-map{
+    width: 100%;
+    height: 300px
+}

@@ -6,12 +6,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
 import { ChartsModule } from 'ng2-charts';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MaterialModule } from '../material.module';
+import { AgmCoreModule } from '@agm/core';
 
 // COMPONENTES
 import { UserSettingComponent } from './user-setting/user-setting.component';
-import { CardFieldComponent } from './card-field/card-field.component';
-import { TableAppointmentComponent } from './table-appointment/table-appointment.component';
-import { TableDoAppointmentComponent } from './table-do-appointment/table-do-appointment.component';
+import { CardFieldComponent } from './cards/card-field/card-field.component';
+import { TableAppointmentComponent } from './tables/table-appointment/table-appointment.component';
+import { TableDoAppointmentComponent } from './tables/table-do-appointment/table-do-appointment.component';
 import { ChartBarComponent } from './charts/chart-bar/chart-bar.component'
 import { ChartLineComponent } from './charts/chart-line/chart-line.component'
 import { ChartDoughnutComponent } from './charts/chart-doughnut/chart-doughnut.component'
@@ -20,8 +23,7 @@ import { ForgetPasswordModalComponent } from './modals/forget-password-modal/for
 import { ChangePasswordModalComponent } from './modals/change-password-modal/change-password-modal.component';
 import { FullScreenLoaderComponent } from './loaders/full-screen-loader/full-screen-loader.component';
 import { LineLoaderComponent } from './loaders/line-loader/line-loader.component'
-import { MaterialModule } from '../material.module';
-import { TableUserComponent } from './table-user/table-user.component';
+import { TableUserComponent } from './tables/table-user/table-user.component';
 import { SportCenterModalComponent } from './modals/sport-center-modal/sport-center-modal.component';
 import { SportModalComponent } from './modals/sport-modal/sport-modal.component';
 import { ServiceModalComponent } from './modals/service-modal/service-modal.component';
@@ -32,14 +34,15 @@ import { FieldSportModalComponent } from './modals/field-sport-modal/field-sport
 import { SportCenterScheduleModalComponent } from './modals/sport-center-schedule-modal/sport-center-schedule-modal.component';
 import { UserModalComponent } from './modals/user-modal/user-modal.component';
 import { ImageDropZoneModalComponent } from './modals/image-drop-zone-modal/image-drop-zone-modal.component';
-import { CarouselImagesComponent } from './carousel-images/carousel-images.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CardSportCenterComponent } from './card-sport-center/card-sport-center.component';
+import { CarouselImagesComponent } from './carousels/carousel-images/carousel-images.component';
+import { CardSportCenterComponent } from './cards/card-sport-center/card-sport-center.component';
 import { SportCenterServiceModalComponent } from './modals/sport-center-service-modal/sport-center-service-modal.component';
-import { CarouselAppointmentComponent } from './carousel-appointment/carousel-appointment.component';
+import { CarouselAppointmentComponent } from './carousels/carousel-appointment/carousel-appointment.component';
 import { PriceHistorialModalComponent } from './modals/price-historial-modal/price-historial-modal.component';
 import { SpecialScheduleInfoModalComponent } from './modals/special-schedule-info-modal/special-schedule-info-modal.component';
 import { SpecialScheduleCreateModalComponent } from './modals/special-schedule-create-modal/special-schedule-create-modal.component';
+import { OnePointMapComponent } from './maps/one-point-map/one-point-map.component';
+import { GpsMapComponent } from './maps/gps-map/gps-map.component';
 
 
 @NgModule({
@@ -74,6 +77,9 @@ import { SpecialScheduleCreateModalComponent } from './modals/special-schedule-c
     PriceHistorialModalComponent,
     SpecialScheduleInfoModalComponent,
     SpecialScheduleCreateModalComponent,
+    OnePointMapComponent,
+    GpsMapComponent,
+
   ],
   imports: [
     FormsModule,
@@ -83,7 +89,10 @@ import { SpecialScheduleCreateModalComponent } from './modals/special-schedule-c
     ChartsModule,
     MaterialModule,
     NgxDropzoneModule,
-    NgbModule
+    NgbModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4'
+    })
   ],
   exports: [
     UserSettingComponent,
@@ -115,7 +124,9 @@ import { SpecialScheduleCreateModalComponent } from './modals/special-schedule-c
     CarouselAppointmentComponent,
     PriceHistorialModalComponent,
     SpecialScheduleCreateModalComponent,
-    SpecialScheduleInfoModalComponent
+    SpecialScheduleInfoModalComponent,
+    OnePointMapComponent,
+    GpsMapComponent
   ]
 })
 export class ComponentsModule { }

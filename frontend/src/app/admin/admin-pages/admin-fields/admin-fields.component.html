@@ -74,7 +74,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let field of fields; let i = index">
-                <td>{{i+1}}</td>
+                <td>{{((page -1) * 6) + i+1}}</td>
                 <td>{{field.name}}</td>
                 <td>{{field.description | ifNull}}</td>
                 <td>{{field.state? 'Activo' : 'Agregar Deporte'}}</td>
@@ -111,7 +111,23 @@
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Canchas</strong>
 </div>
-
+<div class="row" *ngIf="fields.length!==0 && totalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                <li class="page-item" [class.active]="page === page">
+                <a class="page-link">{{page}}</a>
+                </li>
+                <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                <li class="page-item" *ngIf="page !== totalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
 <app-field-modal *ngIf="hiddenFieldModal" [hiddenModal]="!hiddenFieldModal" 
                                         [mode]="modalMode" [fieldSelected]="fieldSelected" [sportCenterID]="userLogged.sportCenter.id"
                         (newField)="setNewField($event)" (closeModal)="closeFieldModal()" (getFields)="getFields()">

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CurrentWeather } from 'src/app/interfaces/currentWeather.interface';
 import { AppointmentTableFilter } from 'src/app/interfaces/filters/appointmentTableFilter.Interface';
+import { Appointment } from 'src/app/models/appointment.model';
 import { User } from 'src/app/models/user.model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { UserService } from 'src/app/services/user.service';
 import { WeatherService } from 'src/app/services/weather.service';
+
 
 @Component({
   selector: 'app-home',
@@ -15,6 +17,9 @@ import { WeatherService } from 'src/app/services/weather.service';
 })
 export class HomeComponent implements OnInit {
   
+  hiddenGPSModal: boolean = false;
+  appointmentSelected: Appointment;
+
   userLogged: User;
   aboutToStartAppointments = [];
   reservedAppointments = [];
@@ -45,6 +50,8 @@ export class HomeComponent implements OnInit {
   todayWeather: CurrentWeather;
   perHourWeather = [];
   weatherError = false;
+  //PAGINATOR
+  page = 1;
 
   constructor(private userService: UserService,
               private appointmentService: AppointmentService,
@@ -55,8 +62,8 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.userLogged = this.userService.user;
     this.getAppointments();
-    this.getCurrentWeather();
-    this.getPerHourWeather();
+    // this.getCurrentWeather();
+    // this.getPerHourWeather();
   }
   getAppointments(){
     this.getReservedAppointments();
@@ -64,7 +71,7 @@ export class HomeComponent implements OnInit {
   }
   getReservedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getUserAppointments(this.userLogged.uid,this.filterObjectReserved)
+    this.appointmentService.getUserAppointments(this.userLogged.uid,this.filterObjectReserved,this.page)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
@@ -79,7 +86,7 @@ export class HomeComponent implements OnInit {
   }
   getAboutToStartAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getUserAppointments(this.userLogged.uid,this.filterObjectAboutToStart)
+    this.appointmentService.getUserAppointments(this.userLogged.uid,this.filterObjectAboutToStart, this.page)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
@@ -125,5 +132,12 @@ export class HomeComponent implements OnInit {
   }
   formatDate(date){
     return new Date(date)
+  }
+  openGPSModal(appointment){
+    this.appointmentSelected = appointment
+    this.hiddenGPSModal = true;
+  }
+  closeGPSModal(){
+    this.hiddenGPSModal = false;
   }
 }

@@ -1,0 +1,54 @@
+<div class="background-modal" [class.hidden]="hiddenModal" >
+    <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="overflow-y: scroll; display: block" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title font-bold" id="exampleModalLabel">¿Cómo llego?</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <button class="btn btn-danger btn-sm pull-right m-1" *ngIf="searchON" (click)="cancel()">Cancelar</button>
+              <div *ngIf="!searchON" class="text-center">
+                <span style="text-decoration: underline;"><strong>Origen</strong></span><br>
+                <div>
+                  <button class="btn btn-outline-info btn-sm m-1" (click)="setUserPosition()" [ngClass]="{'active': selection === 'origin'}" *ngIf="locationISActive">Ubicación actual</button>
+                  <button class="btn btn-outline-info btn-sm m-1" (click)="openOriginMap()" [ngClass]="{'active': selection === 'map'}">Mapa</button>
+                  <agm-map [latitude]="this.appointment.field.sportCenter.coords.latitude" [longitude]="this.appointment.field.sportCenter.coords.longitude"
+                              [zoom]="zoom" [mapTypeId]="mapTypeId" *ngIf="originMapHidden" (mapClick)="setOrigin($event)">
+                    <agm-marker [latitude]="origin.lat" [longitude]="origin.lng" [label]="'ORIGEN'" *ngIf="origin !== null" >
+                      <agm-info-window><strong>Origen</strong></agm-info-window>
+                    </agm-marker>
+                    <agm-marker [latitude]="this.appointment.field.sportCenter.coords.latitude" 
+                              [longitude]="this.appointment.field.sportCenter.coords.longitude"
+                              [label]="'DESTINO'">
+                      <agm-info-window><strong>{{this.appointment.field.sportCenter.name}}</strong></agm-info-window>
+                    </agm-marker>
+                  </agm-map>
+                  <br>
+                  <span style="text-decoration: underline;"><strong>Medio de transporte</strong></span><br>
+                  <button class="btn btn-outline-secondary btn-sm m-1" (click)="changeTransport('car')" [ngClass]="{'active': transport === 'car'}"><i class="fas fa-car"></i></button>
+                  <button class="btn btn-outline-secondary btn-sm m-1" (click)="changeTransport('bike')" [ngClass]="{'active': transport === 'bike'}"><i class="fas fa-bicycle"></i></button>
+                  <button class="btn btn-outline-secondary btn-sm m-1" (click)="changeTransport('bus')" [ngClass]="{'active': transport === 'bus'}"><i class="fas fa-bus-alt"></i></button>
+                  <br>
+                  <button *ngIf="origin !== null" class="btn btn-success btn-sm m-1" (click)="confirmGPS()">Confirmar</button>
+                </div>
+              </div>
+              <div *ngIf="searchON">
+                <div id="map"></div>
+                <div id="indicators"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <!-- <button *ngIf="mode === 'update'" type="button" class="btn btn-info" (click)="updateFeature()" [hidden]="formsEquals">Modificar</button> -->
+              <!-- <button type="button" class="btn btn-danger"  (click)="closedModal()">Cancelar</button> -->
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<app-line-loader></app-line-loader>

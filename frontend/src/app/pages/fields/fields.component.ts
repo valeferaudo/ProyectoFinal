@@ -5,9 +5,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Combo } from 'src/app/interfaces/combo.interface';
 import { FieldFilter } from 'src/app/interfaces/filters/fieldFilter.interface';
 import { Field } from 'src/app/models/field.model';
+import { SportCenter } from 'src/app/models/sportCenter.model';
 import { User } from 'src/app/models/user.model';
 import { FeatureService } from 'src/app/services/feature.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { SportCenterService } from 'src/app/services/sport-center.service';
 import { SportService } from 'src/app/services/sport.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { ErrorsService } from '../../services/errors.service';
@@ -22,7 +24,9 @@ export class FieldsComponent implements OnInit {
 
   hiddenSportCenterModal: boolean = false;
   fieldSelected: any;
+  sportCenterSelected: SportCenter;
   hiddenScheduleModal:boolean = false;
+  hiddenOnePointMap:boolean = false;
 
   sportCenterInParam: string = '';
   searchText: string = '';
@@ -52,7 +56,19 @@ export class FieldsComponent implements OnInit {
   sincePriceSelected = null;
   untilPriceSelected = null;
   selectedFilters: string [] = [];
+  sportCenterIDSelected;
+  sportCenterNameSelected = '';
+
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
+  //Mapa
+  lat: number = -32.9551134;
+  lng: number = -60.6883803;
+  zoom: number = 12.81;
+  mapTypeId: string = 'roadmap';
+  sportCentersCombo: any [] = [];
 
   constructor(private fieldService: FieldService,
               private activatedRoute: ActivatedRoute,
@@ -60,6 +76,7 @@ export class FieldsComponent implements OnInit {
               private featureService: FeatureService,
               private sportService: SportService,
               private loaderService: LoaderService,
+              private sportCenterService: SportCenterService,
               private sweetAlertService: SweetAlertService,
               private errorService: ErrorsService) {
               }
@@ -72,6 +89,7 @@ export class FieldsComponent implements OnInit {
       this.getFeatureCombo();
       this.getSportCombo();
       this.getPrices();
+      this.getSportCenterCombo();
     }
     getFeatureCombo(){
       this.loaderService.openLineLoader();
@@ -120,9 +138,37 @@ export class FieldsComponent implements OnInit {
                     this.errorService.showErrors(99,'nada');
                   })
     }
+    getSportCenterCombo(){
+      this.loaderService.openLineLoader();
+      this.sportCenterService.getSportCenterCombo()
+                      .subscribe((resp: any) => {
+                        this.loaderService.closeLineLoader();
+                        if(resp.ok){
+                          this.sportCentersCombo = resp.param.combo
+                        }
+                      },(err)=>{
+                        console.log(err);
+                        this.loaderService.closeLineLoader();
+                        this.errorService.showErrors(99,'nada');
+                      })
+    }
     getSportCenterInParam(){
       this.activatedRoute.params.subscribe(params => {
-        this.sportCenterInParam = params.id === undefined ? '' : params.id;
+        if(params.id !== undefined ){
+          this.sportCenterService.getSportCenter(params.id)
+                          .subscribe((resp: any) => {
+                            if(resp.ok){
+                              this.sportCenterSelected = resp.param.sportCenter
+                              this.sportCenterInParam = params.id;
+                            }
+                          },(err)=>{
+                            console.log(err);
+                            this.errorService.showErrors(99,'nada');
+                          });
+        }
+        else{
+          this.sportCenterInParam = '';
+        }
         this.fillFilterObject();
     });
     }
@@ -132,12 +178,14 @@ export class FieldsComponent implements OnInit {
     getFields(){
       this.filterON = true;
       this.loaderService.openLineLoader();
-      this.fieldService.getFields(this.filters)
+      this.fieldService.getFields(this.filters,this.page)
                 .subscribe((resp: any) => {
                   this.loaderService.closeLineLoader();
                   if(resp.ok){
                     this.fields = resp.param.fields;
                     this.selectedFilters = resp.param.selectedFilters;
+                    this.page = resp.param.paginator.page;
+                    this.totalPages = resp.param.paginator.totalPages;
                     this.filterON = false;
                   }
                 },(err)=>{
@@ -159,12 +207,14 @@ export class FieldsComponent implements OnInit {
       this.filterON = false;
       this.sportsSelected = [];
       this.featuresSelected = [];
+      this.sportCenterIDSelected = '';
       this.daysSelected = [];
       this.sinceHourSelected = 0;
       this.untilHourSelected = 23;
       this.sincePriceSelected = this.sinceBDPrice;
       this.untilPriceSelected = this.untilBDPrice;
       this.selectedFilters = [];
+      this.sportCenterNameSelected = '';
       this.fillFilterObject();
       this.getFields();
     }
@@ -256,7 +306,7 @@ export class FieldsComponent implements OnInit {
         sports: this.sportsSelected,
         days: this.daysSelected,
         state: '',
-        sportCenterID: this.sportCenterInParam,
+        sportCenterID: this.sportCenterInParam === '' ? this.sportCenterIDSelected : this.sportCenterInParam,
         features: this.featuresSelected,
         sincePrice: this.sincePriceSelected,
         untilPrice: this.untilPriceSelected,
@@ -278,5 +328,29 @@ export class FieldsComponent implements OnInit {
     }
     closeScheduleModal(){
       this.hiddenScheduleModal = false;
+    }
+    openMap(sportCenter){
+      this.sportCenterSelected = sportCenter;
+      this.hiddenOnePointMap = true;
+    }
+    closeMap(){
+      this.hiddenOnePointMap = false;
+    }
+    filterSportCenter(sportCenter,menu){
+      this.sportCenterIDSelected = sportCenter.id
+      this.sportCenterNameSelected = sportCenter.text
+      this.fillFilterObject();
+      this.getFields();
+      menu.close.emit()
+    }
+    resetSportCenter(){
+      this.sportCenterIDSelected = '';
+      this.sportCenterNameSelected = '';
+      this.fillFilterObject();
+      this.getFields();
+    }
+    paginate(page){
+      this.page = page;
+      this.getFields();
     }
 }

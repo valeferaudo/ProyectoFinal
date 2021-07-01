@@ -18,7 +18,7 @@
                     <div class="alert alert-info" role="alert" *ngIf="schedules.length === 0">
                             No hay horarios
                     </div>
-                    <div class="table-responsive">
+                    <div style="overflow-x: auto;">
                         <table class="table table-bordered table-sm">
                             <thead class="thead-dark" *ngIf="schedules.length !== 0">
                                 <th scope="col" width="30%">Día</th>
@@ -36,17 +36,17 @@
                                         </td>
                                     <td>
                                         <input type="time" name="" formControlName="openingHour" *ngIf="mode ==='update'">
-                                        <input type="time" name="" formControlName="openingHour" *ngIf="mode ==='get'" disabled>
+                                        <input type="time" name="" formControlName="openingHour" *ngIf="mode ==='get'" [attr.disabled]="true">
                                     </td>
                                     <td>
                                         <input type="time" name="" formControlName="closingHour" *ngIf="mode ==='update'">
-                                        <input type="time" name="" formControlName="closingHour" *ngIf="mode ==='get'" disabled>
+                                        <input type="time" name="" formControlName="closingHour" *ngIf="mode ==='get'" [attr.disabled]="true">
                                     </td>
                                     <td class="text-center">
                                       <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]" *ngIf="mode ==='update'">
                                         {{openSlide[i]? 'SI': 'NO'}}
                                       </mat-slide-toggle>
-                                      <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]" *ngIf="mode ==='get'" disabled>
+                                      <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]" *ngIf="mode ==='get'" [disabled]="true">
                                         {{openSlide[i]? 'SI': 'NO'}}
                                       </mat-slide-toggle>
                                     </td>                       

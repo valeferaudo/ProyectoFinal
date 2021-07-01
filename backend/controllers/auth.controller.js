@@ -1,6 +1,7 @@
 const User = require ('../models/user.model');
 const {request, response} = require('express');
 const authCtrl ={};
+const Cryptr = require('cryptr');
 
 
 const {generateJWT} = require ('../helpers/jwt');
@@ -96,6 +97,10 @@ authCtrl.renewToken = async (req,res)=>{
         role: userDB.role,
         sportCenter: userDB.sportCenter,
         favorites: userDB.favorites
+    }
+    if(user.role === 'CENTER-SUPER-ADMIN'){
+        const cryptr = new Cryptr(process.env.CRYTPR);
+        user.sportCenter.credentials.accessToken =  cryptr.decrypt(user.sportCenter.credentials.accessToken)
     }
     res.json({
         ok:true,

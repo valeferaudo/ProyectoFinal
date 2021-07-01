@@ -146,7 +146,7 @@
     </div>
 </div>
 
-<app-table-appointment *ngIf="filterAboutToStartON" [page]="aboutToStartPage" [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterAboutToStartON" [page]="aboutToStartPage" [appointments]="aboutToStartAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'por comenzar.'"></app-table-appointment>
 <div class="row" *ngIf="aboutToStartAppointments.length !==0 && aboutToStartTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -164,7 +164,7 @@
             </ul>
     </div>
 </div>
-<app-table-appointment *ngIf="filterReservedON" [page]="reservedPage" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterReservedON" [page]="reservedPage" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'reservados.'"></app-table-appointment>
 <div class="row" *ngIf="reservedAppointments.length !==0 && reservedTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -182,7 +182,7 @@
             </ul>
     </div>
 </div>
-<app-table-appointment *ngIf="filterInProgressON" [page]="inProgressPage" [appointments]="inProgressAppointments" [text]="'en curso.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterInProgressON" [page]="inProgressPage" [appointments]="inProgressAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'en curso.'"></app-table-appointment>
 <div class="row" *ngIf="inProgressAppointments.length !==0 && inProgressTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -200,7 +200,7 @@
             </ul>
     </div>
 </div>
-<app-table-appointment *ngIf="filterCompletedON" [page]="completedPage" [appointments]="completedAppointments" [text]="'finalizados.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterCompletedON" [page]="completedPage" [appointments]="completedAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'finalizados.'"></app-table-appointment>
 <div class="row" *ngIf="completedAppointments.length!==0 && completedTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -218,3 +218,5 @@
             </ul>
     </div>
 </div>
+
+<app-add-payment *ngIf="hiddenPaymentModal" [appointment]="appointmentSelected" [hiddenModal]="!hiddenPaymentModal" (closeModal)="closePaymentModal($event)"></app-add-payment>

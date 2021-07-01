@@ -25,6 +25,7 @@ import { RequestDoComponent } from './super-admin-pages/request-do/request-do.co
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
 import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports.component';
 import { UserSettingComponent } from '../components/user-setting/user-setting.component';
+import { AdminPaymentsComponent } from './admin-pages/admin-payments/admin-payments.component';
 
 
 
@@ -42,6 +43,8 @@ export const AdminRoutes: Routes = [
      {path: 'sportcenter/:id', component: SportCenterComponent, canActivate: [CenterGuard]},
      {path: 'requests', component: AdminRequestsComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'reports', component: AdminReportsComponent, canActivate: [CenterSuperAdminGuard]},
+     {path: 'payments', component: AdminPaymentsComponent, canActivate: [CenterGuard]},
+
      
      //rutas del SUPER-ADMIN
      {path: 'super/users', component: UsersComponent, canActivate: [SuperAdminGuard]},

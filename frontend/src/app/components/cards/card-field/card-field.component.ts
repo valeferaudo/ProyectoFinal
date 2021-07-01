@@ -39,6 +39,7 @@ export class CardFieldComponent implements OnInit {
     this.goSportCenterModal.emit(this.field)
   }
   openScheduleModal(){
+    console.log(this.field)
     this.goScheduleModal.emit(this.field)
   }
   openMap(){

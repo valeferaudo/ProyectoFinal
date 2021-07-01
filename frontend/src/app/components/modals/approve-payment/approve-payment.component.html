@@ -1,0 +1,44 @@
+<div class="background-modal" [class.hidden]="hiddenPaymentModal" >
+    <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="display: block;overflow-y: auto;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-dollar-sign"></i><strong> Confirmar Pago</strong></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" *ngIf="type === 'old'">
+                <p>Estimado <strong>Usuario</strong>, confirme si el pago a realizar coincide con la siguiente información.</p>
+                <hr>
+                <strong>Centro deportivo: </strong>{{appointment.field.sportCenter.name}}
+                <br>
+                <strong>Cancha: </strong>{{appointment.field.name}}
+                <br>
+                <strong>Día: </strong>{{appointment.date | date:"dd-MM-yyyy":'+0'}}
+                <br>
+                <strong>Hora: </strong>{{appointment.date | date:'HH:mm':'+0'}} hs.
+                <br>
+                <span *ngIf="appointment.totalPaid > 0 "><strong>Seña: </strong>{{appointment.totalPaid}}<br></span>
+                <span *ngIf="appointment.totalPaid > 0 "><strong>Total a pagar: </strong>{{appointment.totalAmount - appointment.totalPaid}}</span>
+                <span *ngIf="appointment.totalPaid === 0 "><strong>Total a pagar: </strong>{{appointment.totalAmount}}</span>
+            </div>
+            <div class="modal-body" *ngIf="type === 'new'">
+              <strong>Costo del turno: </strong>{{appointment.totalAmount}}$
+              <br>
+              <strong>Pagar: </strong><span *ngIf="toPaid !== null">{{toPaid}}$ <br></span>
+              <button (click)="setToPaid('safe')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': typePayment === 'Seña'}">Seña ({{appointment.field.sportCenter.minimunAmount}}%)</button>
+              <button (click)="setToPaid('total')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': typePayment === 'Total'}">Total (100%)</button>
+          </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" (click)="confirmPayment()" *ngIf="toPaid !== null">Confirmar</button>
+                <button type="button" class="btn btn-danger" (click)="closedModal()">Cancelar</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- <app-full-screen-loader [message]="'¡Generando pago! Por favor, aguarde un momento.'"></app-full-screen-loader> -->
+<app-line-loader></app-line-loader>

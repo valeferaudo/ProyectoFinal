@@ -22,3 +22,4 @@
     </div>
   </div>
   <app-line-loader></app-line-loader>
+  <app-approve-payment *ngIf="hiddenPaymentModal" [hiddenPaymentModal]="!hiddenPaymentModal" [appointment]="appointmentCreated" [type]="'new'" (closeModal)="closePaymentModal()"></app-approve-payment>

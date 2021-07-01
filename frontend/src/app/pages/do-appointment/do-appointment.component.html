@@ -33,7 +33,7 @@
                                     <div class="alert alert-info" role="alert" *ngIf="schedules.length === 0">
                                             No hay horarios
                                     </div>
-                                    <div class="table-responsive">
+                                    <div style="overflow-x: auto;">
                                         <table class="table table-bordered table-sm">
                                             <thead class="bg-sub-table text-white" *ngIf="schedules.length !== 0">
                                                 <th>Día</th>
@@ -43,16 +43,16 @@
                                             </thead>
                                             <tbody  *ngFor="let horario of schedules.controls; let i = index" [formGroupName]="i" >
                                                         <td >
-                                                            <input type="text" style="text-overflow: ellipsis; width: 100%;" [value]="days[i]" disabled>
+                                                            <input type="text" style="text-overflow: ellipsis; width: 100%;" [value]="days[i]" [attr.disabled]="true">
                                                         </td>
                                                     <td>
-                                                        <input type="time" name="" formControlName="openingHour" disabled>
+                                                        <input type="time" name="" formControlName="openingHour" [attr.disabled]="true">
                                                     </td>
                                                     <td>
-                                                        <input type="time" name="" formControlName="closingHour" disabled>
+                                                        <input type="time" name="" formControlName="closingHour" [attr.disabled]="true">
                                                     </td>
                                                     <td class="text-center">
-                                                      <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]" disabled>
+                                                      <mat-slide-toggle  color="primary" (change)="slideChange($event,i)" [checked]="openSlide[i]" [disabled]="true">
                                                         {{openSlide[i]? 'SI': 'NO'}}
                                                       </mat-slide-toggle>
                                                     </td>                       
@@ -174,7 +174,7 @@
             <div class="card-img card-inverse bg-app text-center" *ngIf="searchON">
                 <h2 class="card-title m-0">Turnos disponibles</h2>
             </div>
-            <app-table-do-appointment *ngIf="searchON" [page]="page" [registerPerPage]="registerPerPage" [availableAppointments]="showAvailableAppointments" [fieldID]="fieldInParam.id" [searchON]="searchON"></app-table-do-appointment>
+            <app-table-do-appointment *ngIf="searchON" [page]="page" [registerPerPage]="registerPerPage" [availableAppointments]="showAvailableAppointments" [field]="fieldInParam" [searchON]="searchON"></app-table-do-appointment>
             <div class="row" *ngIf="availableAppointments.length !==0 && totalPages > 1">
                 <div class="col-md-12 text-center">
                         <ul class="pagination justify-content-center">

@@ -16,7 +16,9 @@ export class Appointment{
                name: string,
                oid: string,
                phone: number,
-           }
+           },
+           public totalAmount?: number,
+           public totalPaid?: number,
         ){}
 
 }

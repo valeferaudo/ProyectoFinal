@@ -9,6 +9,12 @@ export class SportCenter{
            public aditionalElectricityHour: string,
            public aditionalElectricity: number,
            public mercadoPago: boolean,
+           public credentials?: {
+               accessToken?:string,
+               publicKey?:string
+           },
+           public paymentRequired?: boolean,
+           public minimunAmount?: number,
            public coords?:{
                 latitude?:number,
                 longitude?:number
@@ -18,6 +24,7 @@ export class SportCenter{
            public images?: any [],
            public state?: boolean,
            public id?: string,
+           public _id?: string,
            public schedules?: Schedule[]
         ){}
 

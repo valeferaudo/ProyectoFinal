@@ -7,6 +7,7 @@
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="appointments.length===0" > 
   <i class="fas fa-times"></i> No se encontraron turnos <strong>{{text}}</strong>
 </div>
+<div style="overflow-y: auto;">
   <table *ngIf="appointments.length!==0" class="table table-striped">
       <thead [ngClass]="{'bg-reserved':appointments[0].state==='Reserved','bg-completed':appointments[0].state==='Completed','bg-inProgress':appointments[0].state==='InProgress','bg-aboutToStart':appointments[0].state==='AboutToStart'}">
         <tr [ngClass]="{'text-dark':appointments[0].state==='Reserved','text-white':appointments[0].state==='Completed','text-dark':appointments[0].state==='InProgress','text-dark':appointments[0].state==='AboutToStart'}">
@@ -17,7 +18,7 @@
           <th class="text-center" scope="col">Día</th>
           <th class="text-center" scope="col">Horario</th>
           <th class="text-center" scope="col">Estado</th>
-          <th class="text-center" scope="col" *ngIf="appointments[0].state==='Reserved'">Cancelar</th>
+          <th class="text-center" scope="col">Acción</th>
         </tr>
       </thead>
       <tbody>
@@ -30,12 +31,17 @@
           <td class="text-center" >{{item.date | date:'HH:mm':'+0'}}</td>
           <td class="text-center" >{{item.state| translate}}</td>
           <td class="text-center" *ngIf="item.state==='Reserved'">
-            <button class="btn btn-sm bg-danger content-tooltip" (click)="deleteAppointment(item)">
+            <button class="btn btn-sm bg-danger content-tooltip m-1" (click)="deleteAppointment(item)" *ngIf="appointments[0].state==='Reserved'">
                 <i class="fas fa-trash-alt pointer text-white"></i>
                 <span class="tooltip-box">Cancelar</span>
             </button>
+            <button class="btn btn-sm btn-success content-tooltip m-1" (click)="addPayment(item)" *ngIf="appointments[0].totalAmount > appointments[0].totalPaid">
+              <i class="fas fa-dollar-sign"></i>
+              <span class="tooltip-box">Agregar pago</span>
+          </button>
           </td>
           <!-- <td *ngIf="(this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN')&& item.state!=='Reserved'"></td> -->
         </tr>
       </tbody>
-    </table>
+  </table>
+</div>

@@ -24,11 +24,14 @@ export class SportCenterComponent implements OnInit {
   sportCenter: SportCenter;
   slideElectricity: boolean = false;
   slideMercadoPago:boolean = false;
+  slidePaymentRequired:boolean = false;
   hiddenScheduleModal: boolean = false;
   images: File [] = [];
   hiddenServiceModal: boolean = false;
   hiddenSpecialScheduleInfoModal: boolean = false;
   hiddenSpecialScheduleCreateModal: boolean = false;
+  accessTokenIsVisible: boolean;
+  publicKeyIsVisible: boolean;
 
   //Mapa
   zoom: number = 15;
@@ -45,10 +48,9 @@ export class SportCenterComponent implements OnInit {
   ngOnInit(): void {
     this.userLogged = this.userService.user;
     this.sportCenter = this.userLogged.sportCenter;
-    this.getSportCenter();
+    // this.getSportCenter();
     this.createForm();
     this.setSlide();
-
   }
   getSportCenter(){
     this.sportCenterService.getSportCenter(this.userLogged.sportCenter.id)
@@ -70,7 +72,11 @@ export class SportCenterComponent implements OnInit {
       phone: [{value: this.sportCenter.phone, disabled: true}, [Validators.required]],
       aditionalElectricity:[{value: this.sportCenter.aditionalElectricity, disabled: true}],
       aditionalElectricityHour: [{value: this.sportCenter.aditionalElectricityHour, disabled: true}],
-      mercadoPago: [{value: this.sportCenter.mercadoPago, disabled: true}, [Validators.required]]
+      mercadoPago: [{value: this.sportCenter.mercadoPago, disabled: true}, [Validators.required]],
+      paymentRequired: [{value: this.sportCenter.paymentRequired, disabled: true}, ],
+      minimunAmount: [{value: this.sportCenter.minimunAmount, disabled: true},],
+      accessToken: [{value: this.sportCenter.credentials.accessToken, disabled: true}],
+      publicKey: [{value: this.sportCenter.credentials.publicKey, disabled: true}]
     });
   }
   setSlide(){
@@ -81,16 +87,18 @@ export class SportCenterComponent implements OnInit {
         this.slideElectricity = true;
       }
       this.sportCenter.mercadoPago === true ? this.slideMercadoPago = true : this.slideMercadoPago = false;
+      this.sportCenter.paymentRequired === true ? this.slidePaymentRequired = true : this.slidePaymentRequired = false;
+
   }
   getFieldValid(field: string){
       return this.sportCenterForm.get(field).invalid &&
               this.sportCenterForm.get(field).touched;
   }
   unlockForm(){
-      this.editMode= true;
-      Object.values(this.sportCenterForm.controls).forEach(control=>{
-        control.enable();
-      })
+    this.editMode= true;
+    Object.values(this.sportCenterForm.controls).forEach(control=>{
+      control.enable();
+    })
   }
   cancel(){
       this.fillForm();
@@ -108,9 +116,15 @@ export class SportCenterComponent implements OnInit {
         aditionalElectricity: this.sportCenter.aditionalElectricity,
         aditionalElectricityHour: this.sportCenter.aditionalElectricityHour,
         mercadoPago: this.sportCenter.mercadoPago,
+        paymentRequired: this.sportCenter.paymentRequired,
+        minimunAmount: this.sportCenter.minimunAmount,
+        accessToken: this.sportCenter.credentials.accessToken,
+        publicKey: this.sportCenter.credentials.publicKey
       })
   }
   disableForm(){
+    this.publicKeyIsVisible = false;
+    this.accessTokenIsVisible = false;
       Object.values(this.sportCenterForm.controls).forEach(control => {
         control.disable(); });
   }
@@ -136,6 +150,7 @@ export class SportCenterComponent implements OnInit {
       })
       .then((result) => {
         if (result.value) {
+          this.loaderService.openLineLoader();
         this.sportCenterService.updateSportCenter(this.sportCenter.id, this.sportCenterForm.value)
                           .subscribe((resp: any) => {
                             if(resp.ok){
@@ -153,9 +168,13 @@ export class SportCenterComponent implements OnInit {
                               this.fillForm();
                               this.editMode = false;
                               this.sportCenterForm.disable();
+                              this.publicKeyIsVisible = false;
+                              this.accessTokenIsVisible = false;
+                              this.loaderService.closeLineLoader();
                             }
                           }, (err) => {
                             console.log(err)
+                            this.loaderService.closeLineLoader();
                             this.errorService.showErrors('nada',99)
                           });
         }
@@ -165,6 +184,7 @@ export class SportCenterComponent implements OnInit {
       this.slideElectricity = event.checked;
       if(this.slideElectricity === false){
         this.sportCenterForm.controls['aditionalElectricity'].reset();
+        this.sportCenterForm.controls['aditionalElectricityHour'].reset();
       }
   }
   mercadoPagoSlideChange(event: MatSlideToggle){
@@ -172,6 +192,19 @@ export class SportCenterComponent implements OnInit {
       mercadoPago: event.checked
     });
     this.slideMercadoPago = event.checked;
+    if(this.slideMercadoPago === false){
+      this.sportCenterForm.controls['accessToken'].reset();
+      this.sportCenterForm.controls['publicKey'].reset();
+    }
+  }
+  paymentRequiredSlideChange(event: MatSlideToggle){
+    this.sportCenterForm.patchValue({
+      paymentRequired: event.checked
+    });
+    this.slidePaymentRequired = event.checked;
+    if(this.slidePaymentRequired === false){
+      this.sportCenterForm.controls['minimunAmount'].reset();
+    }
   }
   updateSchedule(){
     this.hiddenScheduleModal = true;
@@ -180,6 +213,7 @@ export class SportCenterComponent implements OnInit {
     this.hiddenScheduleModal = false;
   }
   updateImages(sportCenterID){
+    this.loaderService.openLineLoader();
     this.uploadFileService.uploadImage(this.images,'sportCenter',sportCenterID)
                     .then((resp: any) =>{
                       this.loaderService.closeLineLoader();
@@ -257,5 +291,11 @@ export class SportCenterComponent implements OnInit {
       latitude: event.coords.lat,
       longitude: event.coords.lng
     })
+  }
+  showAccessToken(){
+    this.accessTokenIsVisible = !this.accessTokenIsVisible;
+  }
+  showPublicKey(){
+    this.publicKeyIsVisible = !this.publicKeyIsVisible;
   }
 }

@@ -62,6 +62,10 @@ export class AdminAppointmentsComponent implements OnInit {
   inProgressPage = 1;
   completedTotalPages = null;
   completedPage = 1;
+
+  hiddenPaymentModal = false;
+  appointmentSelected = null;
+
   constructor(private appointmentService: AppointmentService,
               private errorService: ErrorsService,
               private userService: UserService,
@@ -304,5 +308,15 @@ export class AdminAppointmentsComponent implements OnInit {
         this.getCompletedAppointments();
       break;
     }
+  }
+  openPaymentModal(appointment){
+    this.appointmentSelected = appointment;
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(boolean){
+    if(boolean){
+      this.getAppointments();
+    }
+    this.hiddenPaymentModal = false;
   }
 }

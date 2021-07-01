@@ -2,93 +2,106 @@
     <h1 class="card-title"><strong>{{userLogged.sportCenter.name}}</strong></h1>
 </div>
 <hr>
-<div class="row">
-    <div class="col-md-12">
-        <h4 class="card-title">Turnos por comenzar:</h4>
-        <ngb-carousel class="text-center" *ngIf="appointments.length > 0" [showNavigationIndicators]="false" [showNavigationArrows]="appointments.length>1">
-            <ng-template *ngFor="let appointment of appointments" ngbSlide class="text-center">
-              <div class="picsum-img-wrapper">
-                <div class="card border-dark mb-3  mx-auto" style="max-width: 18rem;">
-                    <div class="card-header carousel-appointment"><h4 class="text-white">{{appointment.field.name}}</h4></div>
-                    <div class="card-body text-dark">
-                      <h5 class="card-title">Usuario: {{appointment.owner.name}}</h5>
-                      <p class="card-text">Tel: {{appointment.owner.phone}}</p>
-                    </div>
-                    <div class="card-footer carousel-appointment">PAGADO-NOPAGADO</div>
-                  </div>
-              </div>
-              <div class="carousel-caption">
-                <!-- <h3>First slide label</h3> -->
-                <!-- <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> -->
-              </div>
-            </ng-template>
-          </ngb-carousel>
-          <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="appointments.length === 0"> 
-            <i class="fas fa-times"></i> El centro deportivo no tiene  <strong>Turnos por comenzar</strong>.
+<div class="card-group">
+    <div class="card col-md-6">
+        <div class="card-img card-inverse bg-app text-center">
+            <h2 class="card-title m-2">Turnos</h2>
         </div>
-        
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-6">
-        <h4 class="card-title">Clima</h4>
-        <div class="card-body">
-            <select class="custom-select pull-right">
-                <option selected="">Hoy</option>
-                <option value="1">Semana</option>
-            </select>
-            <div class="d-flex align-items-center flex-row m-t-30">
-                <div class="p-2 display-5 text-info"><i class="wi wi-day-showers"></i> <span>73<sup>°</sup></span></div>
-                <div class="p-2">
-                    <h3 class="m-b-0">Sábado</h3><small>Rosario, Santa Fe, Argentina</small></div>
-            </div>
-            <table class="table no-border">
-                <tbody>
-                    <tr>
-                        <td>Viento</td>
-                        <td class="font-medium">ESE 6 km/h</td>
-                    </tr>
-                    <tr>
-                        <td>Humedad</td>
-                        <td class="font-medium">83%</td>
-                    </tr>
-                    <tr>
-                        <td>Presión</td>
-                        <td class="font-medium">28.56 in</td>
-                    </tr>
-                    <tr>
-                        <td>Porcentaje nublado</td>
-                        <td class="font-medium">78%</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card-body bg-white p-0 ">
+            <h4 class="card-title mt-2">Por comenzar:</h4>
+                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'"></app-carousel-appointment>
+                <hr>
+            <h4 class="card-title">Reservados:</h4>
+                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'"></app-carousel-appointment>
             <hr>
-            <ul class="list-unstyled row text-center city-weather-days">
-                <li class="col"><i class="wi wi-day-sunny"></i><span>09:30</span>
-                    <h3>25<sup>°</sup></h3></li>
-                <li class="col"><i class="wi wi-day-cloudy"></i><span>11:30</span>
-                    <h3>19<sup>°</sup></h3></li>
-                <li class="col"><i class="wi wi-day-hail"></i><span>13:30</span>
-                    <h3>21<sup>°</sup></h3></li>
-                <li class="col"><i class="wi wi-day-sprinkle"></i><span>15:30</span>
-                    <h3>24<sup>°</sup></h3></li>
+            <button class="btn btn-success btn-block" [routerLink]="['/admin/appointment']"><strong>Nuevo turno</strong></button>
+        </div>
+    </div>
+    <div class="card col-md-6 text-center">
+        <div class="card-img card-inverse bg-app">
+            <h2 class="card-title m-2">Clima</h2>
+        </div>
+        <div class="card-body p-0 mt-1" *ngIf="todayWeatherON && perHourWeatherON">
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <div class="display-6">
+                        <i class="wi wi-day-sunny" *ngIf="(todayWeather.weather[0].id === 800) && (today.getHours() < 20 && today.getHours() > 7)"></i>
+                        <i class="wi wi-night-clear" *ngIf="(todayWeather.weather[0].id === 800) && (today.getHours() >= 20 || today.getHours() <= 7)"></i>
+                        <i class="wi wi-thunderstorm" *ngIf="todayWeather.weather[0].id >= 200 && todayWeather.weather[0].id < 300"></i>
+                        <i class="wi wi-day-cloudy" *ngIf="(todayWeather.weather[0].id === 801 || todayWeather.weather[0].id ===802) && (today.getHours() < 20 && today.getHours() > 7)"></i>
+                        <i class="wi wi-night-alt-cloudy" *ngIf="(todayWeather.weather[0].id === 801 && todayWeather.weather[0].id ===802) && (today.getHours() > 20 || today.getHours() <= 7)"></i>
+                        <i class="wi wi-cloud" *ngIf="todayWeather.weather[0].id >= 803 && todayWeather.weather[0].id <=804"></i>
+                        <i class="wi wi-showers" *ngIf="todayWeather.weather[0].id >= 300 && todayWeather.weather[0].id <= 400"></i>
+                        <i class="wi wi-rain" *ngIf="todayWeather.weather[0].id >=500  && todayWeather.weather[0].id <= 501"></i>
+                        <i class="wi wi-thunderstorm" *ngIf="todayWeather.weather[0].id >=502 && todayWeather.weather[0].id <= 531"></i>
+                        <i class="wi wi-snow" *ngIf="todayWeather.weather[0].id >=600 && todayWeather.weather[0].id <= 700"></i>
+                        <br>
+                        <span>{{todayWeather.main.temp | number:'1.0-0'}}<sup>°</sup></span>
+                    </div>
+                </div>
+                <div class="col-md-8 col-sm-12 font-medium" style="display: flex; align-items:center;">
+                    <h3 class="m-b-0">{{days[today.getDay()-1]}} <br> <small>Rosario, Santa Fe, Argentina</small></h3>
+                </div>
+            </div>
+            <hr class="m-1">
+                <table class="table no-border">
+                    <tbody>
+                        <tr>
+                            <td class="p-1">Mínima</td>
+                            <td class="font-medium p-1">{{todayWeather.main.temp_min | number:'1.0-0'}}<sup>°</sup></td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">Máxima</td>
+                            <td class="font-medium p-1">{{todayWeather.main.temp_max | number:'1.0-0'}}<sup>°</sup></td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">Humedad</td>
+                            <td class="font-medium p-1">{{todayWeather.main.humidity}}%</td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">Cielo nublado</td>
+                            <td class="font-medium p-1">{{todayWeather.clouds.all}}%</td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">Viento</td>
+                            <td class="font-medium p-1">{{todayWeather.wind.speed * 3.6 | number:'1.0-0'}} km/h</td>
+                        </tr>
+            </tbody>
+        </table>
+        <hr class="m-1">
+        <ul class="list-unstyled row text-center city-weather-days">
+            <li class="col" *ngFor="let item of perHourWeather">
+                <i class="wi wi-day-sunny" *ngIf="(item.weather[0].id === 800) && (formatDate(item.dt_txt).getHours() < 20 && formatDate(item.dt_txt).getHours() > 7)"></i>
+                <i class="wi wi-night-clear" *ngIf="(item.weather[0].id === 800) && (formatDate(item.dt_txt).getHours() >= 20 || formatDate(item.dt_txt).getHours() <= 7)"></i>
+                <i class="wi wi-thunderstorm" *ngIf="item.weather[0].id >= 200 && item.weather[0].id < 300"></i>
+                <i class="wi wi-day-cloudy" *ngIf="(item.weather[0].id === 801 || item.weather[0].id ===802) && (formatDate(item.dt_txt).getHours() < 20 && formatDate(item.dt_txt).getHours() > 7)"></i>
+                <i class="wi wi-night-alt-cloudy" *ngIf="(item.weather[0].id === 801 || item.weather[0].id ===802) && (formatDate(item.dt_txt).getHours() > 20 || formatDate(item.dt_txt).getHours() < 7)"></i>
+                <i class="wi wi-cloud" *ngIf="item.weather[0].id >= 803 && item.weather[0].id <=804"></i>
+                <i class="wi wi-showers" *ngIf="item.weather[0].id >= 300 && item.weather[0].id <= 400"></i>
+                <i class="wi wi-rain" *ngIf="item.weather[0].id >=500  && item.weather[0].id <= 501"></i>
+                <i class="wi wi-thunderstorm" *ngIf="item.weather[0].id >=502 && item.weather[0].id <= 531"></i>
+                <i class="wi wi-snow" *ngIf="item.weather[0].id >=600 && item.weather[0].id <= 700"></i>
+                <span>{{formatDate(item.dt_txt) |date:'HH:mm':'-3'}}</span>
+                <h3>{{item.main.temp | number:'1.0-0'}}<sup>°</sup></h3>
+            </li>
             </ul>
         </div>
-    </div>
-    <div class="col-md-6">
-            <div class="col-md-12">
-                <div style="text-align:center;padding:1em 0;"> 
-                    <h2>
-                        <a style="text-decoration:none;">
-                            <span style="color:gray;">Hora actual en</span><br />Rosario, Argentina</a></h2> 
-                            <iframe src="https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=es&size=large&timezone=America%2FArgentina%2FCordoba" width="100%" height="140" frameborder="0" seamless></iframe> 
-                        </div>
+        <div class="card-body p-0 mt-1  justify-content-center align-items-center" *ngIf="!todayWeatherON && !perHourWeatherON && !weatherError">
+            <div class="loader__spinner">
+                <mat-progress-spinner color="accent" mode="indeterminate"></mat-progress-spinner>
             </div>
-            <div class="col-md-12">
-                
-                ESTADO ACTUAL DE LAS CANCHAS -->> SI OCUPADA O NO CAROUSEL
+            <div class="loader__messages">
+                <p>Cargando Datos del clima</p>
             </div>
+        </div>
+        <div class="card-body p-0 mt-1" *ngIf="!todayWeatherON && !perHourWeatherON && weatherError">
+            <div class="alert alert-danger animated fadeIn text-left" role="alert"> 
+                <i class="fas fa-times"></i> No se encontraron datos del <strong>Clima</strong>.<br>
+                Por favor, comuníquese con soporte.
+              </div>
+        </div>
     </div>
 </div>
 
+<app-line-loader></app-line-loader>
 <app-sport-center-modal *ngIf="hiddenSportCenterModal" [hiddenSportCenterModal]="!hiddenSportCenterModal" (closeModalOutput)="closeSportCenterModal($event)"></app-sport-center-modal>

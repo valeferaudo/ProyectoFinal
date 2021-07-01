@@ -53,16 +53,4 @@ router.put('/services/:id',[validateJWT,
             validateUserID,
             validateCSAandOwner],sportCenterCtrl.updateService);
 
-// router.post('/:id/service/',[validateJWT,
-//             validateUserID,
-//             check('service','Service field is required').not().isEmpty(),
-//             validateFields],sportCenterCtrl.addService);
-// router.put('/:id/service/:service',[validateJWT,
-//             validateUserID],sportCenterCtrl.updateService);
-// router.delete('/:id/service/:service',[validateJWT,
-//             validateUserID],sportCenterCtrl.deleteService);
-
-// router.put('/activate/:id',[validateJWT],sportCenterCtrl.activateUser);
-
-
 module.exports = router;

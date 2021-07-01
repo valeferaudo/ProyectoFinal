@@ -1,10 +1,9 @@
 const express = require ('express');
 require('dotenv').config();
-const {dbConnection} = require ('./database/config');
-const {fillDayCollection} = require ('./seeders/daySeeder');
+const { dbConnection } = require ('./database/config');
+const { fillDayCollection } = require ('./seeders/daySeeder');
 const { fillSuperAdmin } = require ('./seeders/adminSeeder');
 const cors = require ('cors')
-
 
 //Create server
 const app = express();
@@ -40,6 +39,7 @@ app.use('/api/fields',require('./routes/field.routes'));
 app.use('/api/appointments',require('./routes/appointment.routes'));
 app.use('/api/uploads',require('./routes/upload.routes'));
 
+app.use('/api/payments',require('./routes/payment.routes'));
 
 //start server
 app.listen(app.get('Port'),()=>{

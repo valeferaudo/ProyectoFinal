@@ -28,6 +28,7 @@ import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-reque
 import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
 import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports.component';
+import { AdminPaymentsComponent } from './admin-pages/admin-payments/admin-payments.component';
 
 
 @NgModule({
@@ -48,6 +49,7 @@ import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports
      RequestDoComponent,
      AdminUsersComponent,
      AdminReportsComponent,
+     AdminPaymentsComponent,
   ],
   imports: [
     CommonModule,

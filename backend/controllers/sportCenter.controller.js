@@ -4,6 +4,7 @@ const User = require ('../models/user.model');
 const Day = require ('../models/day.model')
 const Sport = require ('../models/sport.model')
 const Field = require ('../models/field.model')
+const Cryptr = require('cryptr');
 const {request, response} = require('express');
 const sportCenterCtrl ={};
 var moment = require('moment');
@@ -12,10 +13,13 @@ moment().format();
 sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
     sportCenterID = req.params.id;
     try {
-        const sportCenter = await SportCenter.findById(sportCenterID).populate('schedules')
+        let sportCenter = await SportCenter.findById(sportCenterID).populate('schedules')
         if (!sportCenter) {
             return unknownIDResponse(res);
         }
+        const cryptr = new Cryptr(process.env.CRYTPR);
+        sportCenter.credentials.accessToken = cryptr.decrypt(sportCenter.credentials.accessToken)
+        console.log(sportCenter.credentials.accessToken)
         // const fields = await Field.find({sportCenter:sportCenterID})
         //faltan obtener deportes, caracterisitcas y servicios para mostrar.
         res.json({
@@ -162,6 +166,7 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
         days.forEach(day => {
             daysID.push(day.idDia)
         });
+        const cryptr = new Cryptr(process.env.CRYTPR);
         sportCenter = new SportCenter({
             name: sportCenterBody.name,
             address: sportCenterBody.address,
@@ -170,9 +175,15 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
                 longitude: sportCenterBody.longitude
             },
             phone: sportCenterBody.phone,
-            aditionalElectricityHour: sportCenterBody.aditionalElectricityHour,
+            aditionalElectricityHour: sportCenterBody.aditionalElectricity ? sportCenterBody.aditionalElectricityHour : null,
             aditionalElectricity: sportCenterBody.aditionalElectricity,
             mercadoPago: sportCenterBody.mercadoPago,
+            credentials:{
+                accessToken: sportCenterBody.mercadoPago ? cryptr.encrypt(sportCenterBody.accessToken) : null,
+                publicKey: sportCenterBody.mercadoPago ? sportCenterBody.publicKey : null,
+            },
+            paymentRequired: sportCenterBody.paymentRequired,
+            minimunAmount: sportCenterBody.minimunAmount,
             schedules:[]
         });
         await sportCenter.save();
@@ -257,7 +268,28 @@ sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
             latitude: req.body.latitude,
             longitude: req.body.longitude
         }
+        changes.aditionalElectricityHour = req.body.aditionalElectricity ? req.body.aditionalElectricityHour : null;
+        const cryptr = new Cryptr(process.env.CRYTPR);
+        if(cryptr.decrypt(sportCenterDB.credentials.accessToken) !== req.body.accessToken){
+            changes.credentials = {
+                accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
+                publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+            }
+        }
+        else{
+            delete changes.accessToken
+        }
+        if(sportCenterDB.credentials.publicKey !== req.body.publicKey){
+            changes.credentials = {
+                accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
+                publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+            }
+        }
+        else{
+            delete changes.publicKey
+        }
         sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,changes,{new:true})
+        sportCenter.credentials.accessToken = cryptr.decrypt(sportCenter.credentials.accessToken)
         res.json({
             ok:true,
             msg:'Updated Sport Center',

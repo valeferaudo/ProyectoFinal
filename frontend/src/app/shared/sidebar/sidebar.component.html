@@ -94,6 +94,13 @@
                             <span class="hide-menu"> Características</span>
                         </a>
                     </li>
+                    <!-- PAGOS -->
+                    <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' || userLogged.role === 'CENTER-ADMIN'"> 
+                        <a class="waves-effect waves-dark" [routerLink]="['/admin','payments']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span class="hide-menu"> Pagos</span>
+                        </a>
+                    </li>
             </ul>
         </nav>
     </div>

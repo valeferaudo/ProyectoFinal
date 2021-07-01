@@ -172,10 +172,20 @@ appointmentCtrl.createAppointment = async (req = request, res = response) =>{
             user: body.user,
             field: body.field,
         })
-        await appointment.save()
+        let newAppointment = await appointment.save()
+        newAppointment = await Appointment.findById(newAppointment.id).populate({ 
+                                                                        path: 'field',
+                                                                        model: 'Field',
+                                                                        populate: {
+                                                                            path: 'sportCenter',
+                                                                            model: 'SportCenter'
+                                                                        }})
         res.json({
             ok:true,
             msg:'Created Appointment',
+            param:{
+                appointment: newAppointment
+            }
         })
     } catch (error) {
         console.log(error);
@@ -231,7 +241,8 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
                                                                             path: "field",
                                                                             match: {
                                                                                 sportCenter: sportCenterID,
-                                                                            }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                                            }})
+                                                                            .populate({path:"field",populate:{path:"sportCenter"}}).skip(registerPerPage*(page -1)).limit(registerPerPage),
                                                     Appointment.find(query).populate('user','name')
                                                                             .populate({
                                                                             path: "field",
@@ -438,6 +449,26 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
             param: {
                 userPhone
             }
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error ocurred'
+        })
+    }
+}
+appointmentCtrl.deleteAppointmentForPayment = async (req = request, res = response) =>{
+    const id = req.params.id;
+    try {
+        const appointmentDB = await Appointment.findById(id).populate('user').populate('field');
+        if (!appointmentDB) {
+            return unknownIDResponse(res)
+        }
+        await Appointment.findByIdAndDelete(id);
+        res.json({
+            ok:true,
+            msg:'Deleted Appointment'
         })
     } catch (error) {
         console.log(error);

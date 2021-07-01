@@ -54,4 +54,7 @@ export class AppointmentService {
   deleteAppointment(id: string){
       return this.http.delete(`${baseUrl}/appointments/${id}`);
   }
+  deleteAppointmentForPayment(id: string){
+    return this.http.delete(`${baseUrl}/appointments/payment/${id}`);
+}
 }

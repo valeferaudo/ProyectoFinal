@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Appointment } from 'src/app/models/appointment.model';
 import { User } from 'src/app/models/user.model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
@@ -21,9 +22,11 @@ export class TableDoAppointmentComponent implements OnInit {
   @Input() page;
   @Input() registerPerPage;
   @Input() searchON;
-  @Input() fieldID;
+  @Input() field;
   userLogged: User;
   appointment: any = {};
+  appointmentCreated: Appointment = null;
+  hiddenPaymentModal: boolean = false;
 
   //Weather
   warm: boolean = false;
@@ -61,7 +64,7 @@ export class TableDoAppointmentComponent implements OnInit {
   }
   createUserAppointment(appointmentDate){
     this.loaderService.openLineLoader()
-    this.fieldService.checkRoofed(this.fieldID)
+    this.fieldService.checkRoofed(this.field.id)
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
@@ -207,7 +210,7 @@ export class TableDoAppointmentComponent implements OnInit {
     this.appointment = {
       date: appointmentDate,
       user: this.userService.user.uid,
-      field: this.fieldID,
+      field: this.field.id,
       owner: {
         name: this.userService.user.name,
         oid: this.userService.user.uid,
@@ -254,7 +257,7 @@ export class TableDoAppointmentComponent implements OnInit {
       this.appointment = {
         date: appointmentDate,
         user: this.userLogged.uid,
-        field: this.fieldID,
+        field: this.field.id,
         owner: {
           name,
           oid,
@@ -270,12 +273,43 @@ export class TableDoAppointmentComponent implements OnInit {
                     .subscribe((resp: any) => {
                       this.loaderService.closeLineLoader();
                       if (resp.ok){
-                        this.sweetAlertService.showSwalResponse({
-                          title: 'Turno Reservado',
-                          text: `¡Que te diviertas!`,
-                          icon: 'success',
-                        })
-                        this.goAppointments();
+                        if (this.userLogged.role === 'USER'){
+                          if(this.field.sportCenter.mercadoPago){
+                            if(this.field.sportCenter.paymentRequired){
+                              this.goPaymentRequired(resp.param.appointment);
+                            }
+                            else{
+                              this.goPaymentOptional(resp.param.appointment);
+                            }
+                          }
+                          else{
+                            this.sweetAlertService.showSwalResponse({
+                              title: 'Turno Reservado',
+                              text: `¡Que te diviertas!`,
+                              icon: 'success',
+                            })
+                            this.goAppointments();
+                          }
+                        }
+                        if (this.userLogged.role === 'CENTER-ADMIN' || this.userLogged.role === 'CENTER-SUPER-ADMIN'){
+                          if(this.field.sportCenter.mercadoPago){
+                            if(this.field.sportCenter.paymentRequired){
+                              this.sweetAlertService.showSwalResponse({
+                                title: 'Turno Reservado',
+                                text: `¡Recordarle al usuario el pago de la seña!`,
+                                icon: 'success',
+                              })
+                            }
+                          }
+                          else{
+                            this.sweetAlertService.showSwalResponse({
+                              title: 'Turno Reservado',
+                              text: ``,
+                              icon: 'success',
+                            })
+                            this.goAppointments();
+                          }
+                        }
                       }
                     }, (err) => {
                       console.log(err);
@@ -290,6 +324,58 @@ export class TableDoAppointmentComponent implements OnInit {
     }
     if (this.userLogged.role === 'CENTER-ADMIN' || this.userLogged.role === 'CENTER-SUPER-ADMIN'){
       this.router.navigate(['/admin/appointments']);
+    }
+  }
+  goPaymentRequired(newAppointment){
+    this.sweetAlertService.showSwalConfirmation({
+      title: 'Es obligatorio el pago anticipado',
+      text: `¿Continuar al pago?`,
+      icon: 'question',
+    }).then((result) => {
+      if (result.value) {
+        this.openPaymentModal(newAppointment)
+      }
+      else{
+        this.cancelAppointment(newAppointment)
+      }
+    });
+  }
+  goPaymentOptional(newAppointment){
+    this.sweetAlertService.showSwalConfirmation({
+      title: '¿Desea realizar un pago anticipado?',
+      text: ``,
+      icon: 'question',
+    }).then((result) => {
+      if (result.value) {
+        this.openPaymentModal(newAppointment)
+      }
+      else{
+        this.sweetAlertService.showSwalResponse({
+          title: 'Turno Reservado',
+          text: `¡Que te diviertas!`,
+          icon: 'success',
+        })
+        this.goAppointments();
+      }
+    });
+  }
+  cancelAppointment(newAppointment){
+    this.appointmentsService.deleteAppointmentForPayment(newAppointment.id)
+                            .subscribe();
+  }
+  openPaymentModal(appointment){
+    this.appointmentCreated = appointment
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(){
+    this.hiddenPaymentModal = false;
+    if(this.field.sportCenter.mercadoPago){
+      if(this.field.sportCenter.paymentRequired){
+        this.goPaymentRequired(this.appointmentCreated);
+      }
+      else{
+        this.goPaymentOptional(this.appointmentCreated);
+      }
     }
   }
 }

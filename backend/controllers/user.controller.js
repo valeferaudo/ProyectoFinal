@@ -363,8 +363,8 @@ userCtrl.getFavorites = async (req = request, res = response) => {
             return userBlockedResponse(res);
         }
         if(type === 'field'){
-            [favorites,total] = await Promise.all([Field.find({ _id : { $in : userDB.favorites } }).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                Field.find({ _id : { $in : userDB.favorites } }).countDocuments()
+            [favorites,total] = await Promise.all([Field.find({ _id : { $in : userDB.favorites } }).populate('sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Field.find({ _id : { $in : userDB.favorites } }).populate('sports.sport').countDocuments()
                                                ])
         }else if(type === 'sportCenter'){
             [favorites,total] = await Promise.all([SportCenter.find({ _id : { $in : userDB.favorites } }).skip(registerPerPage*(page -1)).limit(registerPerPage),

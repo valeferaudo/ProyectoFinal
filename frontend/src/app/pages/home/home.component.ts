@@ -18,6 +18,8 @@ import { WeatherService } from 'src/app/services/weather.service';
 export class HomeComponent implements OnInit {
   
   hiddenGPSModal: boolean = false;
+  hiddenPaymentModal: boolean = false;
+
   appointmentSelected: Appointment;
 
   userLogged: User;
@@ -62,8 +64,8 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.userLogged = this.userService.user;
     this.getAppointments();
-    // this.getCurrentWeather();
-    // this.getPerHourWeather();
+    //this.getCurrentWeather();
+    //this.getPerHourWeather();
   }
   getAppointments(){
     this.getReservedAppointments();
@@ -100,34 +102,25 @@ export class HomeComponent implements OnInit {
                                       });
   }
   getCurrentWeather(){
-    this.loaderService.openFullScreenLoader();
     this.weatherService.getCurrentWeather()
             .subscribe((resp: any)=>{
               this.todayWeather = resp;
               this.todayWeatherON = true;
-              console.log(resp)
-              // this.loaderService.closeFullScreenLoader();
             },(err) =>{
               console.log(err)
               // this.errorService.showServerError()
               this.weatherError = true;
-              this.loaderService.closeLineLoader();
             });
   }
   getPerHourWeather(){
-    this.loaderService.openLineLoader();
     this.weatherService.getPerHour()
               .subscribe((resp: any)=>{
                 this.perHourWeather = resp.list;
                 this.perHourWeatherON = true;
-                console.log(resp)
-
-                this.loaderService.closeLineLoader();
               },(err) =>{
                 console.log(err)
                 // this.errorService.showServerError()
                 this.weatherError = true;
-                this.loaderService.closeLineLoader();
               });
   }
   formatDate(date){
@@ -139,5 +132,12 @@ export class HomeComponent implements OnInit {
   }
   closeGPSModal(){
     this.hiddenGPSModal = false;
+  }
+  openPaymentModal(appointment){
+    this.appointmentSelected = appointment
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(){
+    this.hiddenPaymentModal = false;
   }
 }

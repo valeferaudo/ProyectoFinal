@@ -18,8 +18,12 @@ export class SportCenterModalComponent implements OnInit {
   @Input() hiddenSportCenterModal: boolean;
   sportCenterForm: FormGroup;
   @Output() closeModalOutput: EventEmitter<boolean>;
-  slideElectricity;
-  slideMercadoPago;
+  accessTokenIsVisible: boolean;
+  publicKeyIsVisible: boolean;
+  slideElectricity:boolean = false;
+  slideMercadoPago: boolean = false;
+  slidePaymentRequired:boolean = false;
+
   //Mapa
   zoom: number = 13;
   initialLat: number = -32.9611202;
@@ -50,7 +54,11 @@ export class SportCenterModalComponent implements OnInit {
       phone:['',[Validators.required],],
       aditionalElectricityHour:[null,],
       aditionalElectricity:['',],
-      mercadoPago:[false,[Validators.required],]
+      mercadoPago:[false,[Validators.required],],
+      paymentRequired: [''],
+      minimunAmount: [''],
+      accessToken: [''],
+      publicKey: ['']
     })
   }
 
@@ -97,8 +105,8 @@ export class SportCenterModalComponent implements OnInit {
                                icon: "success"
                              })
                             this.router.navigateByUrl('/admin');
-                            // this.hiddenSportCenterModal= false;
-                            // this.closeModalOutput.emit(this.hiddenSportCenterModal)
+                            this.hiddenSportCenterModal= false;
+                            this.closeModalOutput.emit(this.hiddenSportCenterModal)
                         }, (err) => {
                           console.log(err)
                           this.errorService.showServerError()
@@ -113,17 +121,29 @@ export class SportCenterModalComponent implements OnInit {
  }
   electricitySlideChange(event: MatSlideToggle){
     this.slideElectricity = event.checked;
-    if(this.slideElectricity === false){
-      this.sportCenterForm.patchValue({
-        aditionalElectricity:''
-      });
-    }
+      if(this.slideElectricity === false){
+        this.sportCenterForm.controls['aditionalElectricity'].reset();
+        this.sportCenterForm.controls['aditionalElectricityHour'].reset();
+      }
   }
   mercadoPagoSlideChange(event: MatSlideToggle){
     this.sportCenterForm.patchValue({
       mercadoPago: event.checked
     });
     this.slideMercadoPago = event.checked;
+    if(this.slideMercadoPago === false){
+      this.sportCenterForm.controls['accessToken'].reset();
+      this.sportCenterForm.controls['publicKey'].reset();
+    }
+  }
+  paymentRequiredSlideChange(event: MatSlideToggle){
+    this.sportCenterForm.patchValue({
+      paymentRequired: event.checked
+    });
+    this.slidePaymentRequired = event.checked;
+    if(this.slidePaymentRequired === false){
+      this.sportCenterForm.controls['minimunAmount'].reset();
+    }
   }
   changeLocation(event){
     this.sportCenterForm.patchValue({
@@ -132,5 +152,11 @@ export class SportCenterModalComponent implements OnInit {
     })
     this.isMarked = true;
     console.log(this.sportCenterForm.value)
+  }
+  showAccessToken(){
+    this.accessTokenIsVisible = !this.accessTokenIsVisible;
+  }
+  showPublicKey(){
+    this.publicKeyIsVisible = !this.publicKeyIsVisible;
   }
 }

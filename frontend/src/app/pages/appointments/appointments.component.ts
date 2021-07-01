@@ -62,6 +62,10 @@ export class AppointmentsComponent {
   inProgressPage = 1;
   completedTotalPages = null;
   completedPage = 1;
+
+  hiddenPaymentModal = false;
+  appointmentSelected = null;
+  
   constructor(private appointmenService: AppointmentService,
               private errorService: ErrorsService,
               private userService: UserService,
@@ -294,5 +298,13 @@ export class AppointmentsComponent {
         this.getCompletedAppointments();
       break;
     }
+  }
+  openPaymentModal(appointment){
+    this.appointmentSelected = appointment;
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(boolean){
+    this.getAppointments();    
+    this.hiddenPaymentModal = false;
   }
 }

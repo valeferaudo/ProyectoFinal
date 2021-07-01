@@ -19,7 +19,9 @@ export class SearchComponent implements OnInit {
   fields: Field [] = [];
   sportCenters: SportCenter [] = [];
   userLogged : User;
-
+  //PAGINATOR
+  totalPages = null;
+  page = 1;
   constructor(private loaderService: LoaderService,
               private searchService: SearchService,
               private router: Router,
@@ -43,12 +45,14 @@ export class SearchComponent implements OnInit {
   search(){
     this.filterON = true;
     this.loaderService.openLineLoader();
-    this.searchService.getServices(this.searchText)
+    this.searchService.getServices(this.searchText,this.page)
                   .subscribe((resp: any) => {
                     this.loaderService.closeLineLoader();
                     if(resp.ok){
                       this.sportCenters = resp.param.sportCenters;
                       this.fields = resp.param.fields;
+                      this.page = resp.param.paginator.page;
+                      this.totalPages = resp.param.paginator.totalPages;
                       this.filterON = false;
                     }
                   },(err)=>{

@@ -1,0 +1,79 @@
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="card-title"><strong>Listado de pagos</strong></h2>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 10;">
+                <i class="fas fa-arrow-alt-circle-left"></i> Atrás
+            </button>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="table-responsive animated fadeIn" *ngIf="payments.length!==0">
+    <table id="myTable" class="table table-sm table-hover color-table inverse-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Medio Pago</th>
+                <th class="text-center">Estado</th>
+                <th>Fecha Pago</th>
+                <th>Monto</th>
+                <th>Cancha</th>
+                <th>Turno</th>
+                <th class="text-center">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of payments; let i = index">
+                <td>{{((page -1) * 15) + i+1}}</td>
+                <td>
+                    <span class="badge badge-info" *ngIf="item.type === 'MERCADO-PAGO'">Mercado Pago</span>
+                    <span class="badge badge-success" *ngIf="item.type === 'CASH'">Efectivo</span>
+                    <span class="badge badge-secondary" *ngIf="item.type === 'OTHER'">Otro</span>
+                </td>
+                <td class="text-center">
+                    <i *ngIf="item.state === 'APPROVED'" class="fas fa-check-circle text-success"></i>
+                    <i *ngIf="item.state === 'PENDING'" class="fas fa-history text-warning"></i>
+                </td>
+                <td>{{item.date |date:"dd-MM-yyyy":'-3'}} {{item.date |date:'HH:mm':'-3'}}hs.</td>
+                <td>{{item.amountPayment}}</td>
+                <td>{{item.appointment.field.name}}</td>
+                <td>{{item.appointment.date | date:"dd-MM-yyyy":'-3'}} {{item.appointment.date |date:'HH:mm':'-3'}}hs.</td>
+                <td class="text-center" *ngIf="item.state === 'PENDING'">
+                    <button class="btn btn-sm btn-success m-1 content-tooltip" (click)="acceptPayment(item.id)">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="tooltip-box">Aceptar</span>
+                    </button>
+                    <button class="btn btn-sm btn-danger m-1 content-tooltip" (click)="cancelPayment(item.id)">
+                        <i class="fas fa-times-circle"></i>
+                        <span class="tooltip-box">Eliminar</span>
+                    </button>
+                </td>
+                <td *ngIf="item.state === 'APPROVE'"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="payments.length === 0"> 
+    <i class="ti-equs"></i> No se realizaron <strong>Pagos</strong>
+</div>
+<div class="row" *ngIf="payments.length!==0 && totalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                <li class="page-item" [class.active]="page === page">
+                <a class="page-link">{{page}}</a>
+                </li>
+                <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                <li class="page-item" *ngIf="page !== totalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
+<app-line-loader></app-line-loader>

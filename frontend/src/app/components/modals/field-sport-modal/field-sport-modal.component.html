@@ -17,7 +17,7 @@
                     <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportFields.length === 0" > 
                       <i class="fas fa-times"></i>No hay <strong>Cancha-Deporte</strong> registrados.
                     </div>
-                    <div class="table-responsive">
+                    <div style="overflow-x: auto;">
                         <table id="myTable" class="table table-bordered table-sm">
                             <thead class="thead-dark" *ngIf="sportFields.length > 0">
                                 <th scope="col">Deporte</th>

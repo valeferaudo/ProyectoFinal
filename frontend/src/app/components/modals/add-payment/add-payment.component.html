@@ -1,0 +1,45 @@
+<div class="background-modal" [class.hidden]="hiddenModal" >
+    <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="display: block;overflow-y: auto;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-dollar-sign"></i><strong> Agregar Pago</strong></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <strong>Cancha: </strong>{{appointment.field.name}}
+                <br>
+                <strong>Día: </strong>{{appointment.date | date:"dd-MM-yyyy":'+0'}}
+                <br>
+                <strong>Hora: </strong>{{appointment.date | date:'HH:mm':'+0'}} hs.
+                <br>
+                <strong>Usuario: </strong> <span>{{appointment.owner.name}}</span>
+                <br>
+                <strong>Costo del turno: </strong>{{appointment.totalAmount}}$
+                <br>
+                <span *ngIf="appointment.totalPaid > 0 "><strong>Pagado: </strong>{{appointment.totalPaid}}<br></span>
+                <hr>
+                <strong>Pagar: </strong><span *ngIf="toPaid !== null">{{toPaid}}$ <br></span>
+                <div class="text-center">
+                    <button *ngIf="appointment.totalPaid === 0" (click)="setToPaid('safe')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': amount === 'safe'}">Seña ({{appointment.field.sportCenter.minimunAmount}}%)</button>
+                    <button *ngIf="appointment.totalPaid === 0" (click)="setToPaid('total')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': amount === 'total'}">Total (100%)</button>
+                    <br *ngIf="appointment.totalPaid === 0">
+                    <button (click)="setType('CASH')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': type === 'CASH'}">Efectivo</button>
+                    <button (click)="setType('OTHER')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': type === 'OTHER'}">Otro</button>
+                    <br>
+                </div>
+                <input type="text" class="form-control" placeholder="Descripción" [(ngModel)]="description">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" (click)="addPayment()" *ngIf="toPaid !== null && type !== null">Confirmar</button>
+                <button type="button" class="btn btn-danger" (click)="closedModal()">Cancelar</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<app-line-loader></app-line-loader>

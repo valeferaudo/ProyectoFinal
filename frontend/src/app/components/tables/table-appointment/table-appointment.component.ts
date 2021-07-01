@@ -20,6 +20,8 @@ export class TableAppointmentComponent implements OnInit {
   @Input() appointments: Appointment[];
   @Input() page: any;
   @Output() getAppointments = new EventEmitter<string>();
+  @Output() openPaymentModal = new EventEmitter<Appointment>();
+
   userLogged: User;
 
   constructor(private userService: UserService,
@@ -36,7 +38,7 @@ export class TableAppointmentComponent implements OnInit {
   deleteAppointment(appointment: Appointment){
     this.sweetAlertService.showSwalConfirmation({
       title: '¿Cancelar el turno?',
-      text: ``,
+      text: appointment.totalPaid > 0 ? '¡Existen pagos registrados!' : '',
       icon: 'question',
     }).then((result) => {
       if (result.value) {
@@ -80,5 +82,8 @@ export class TableAppointmentComponent implements OnInit {
       })
       this.getAppointments.emit();
     }
+  }
+  addPayment(appointment){
+    this.openPaymentModal.emit(appointment)
   }
 }

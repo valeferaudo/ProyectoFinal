@@ -31,6 +31,8 @@ router.post('/',[validateJWT,
 router.delete('/:id',[validateJWT,
             validateUserID,
             validateMaxTime],appointmentCtrl.deleteAppointment);
+router.delete('/payment/:id',[validateJWT,
+            validateUserID],appointmentCtrl.deleteAppointmentForPayment);
 
 
 module.exports = router;

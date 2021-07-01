@@ -3,7 +3,7 @@ agm-map {
 }
 .tooltip-box{
     display: none;
-    position: relative;
+    position: absolute;
     background-color: lightgray;
     line-height: 20px;
     z-index: 500;
@@ -14,7 +14,11 @@ agm-map {
     border-radius: 5px;
     left: 3%;
     bottom: 100%;
+    width: 300px;
   }
 .map-disable{
     pointer-events: none
+}
+.content-tooltip:hover .tooltip-box{
+  display: inline-block;
 }

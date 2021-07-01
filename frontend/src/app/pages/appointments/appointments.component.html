@@ -189,4 +189,6 @@
             </ul>
     </div>
 </div>
+
+<app-approve-payment *ngIf="hiddenPaymentModal" [appointment]="appointmentSelected" [type]="'old'" [hiddenPaymentModal]="!hiddenPaymentModal" (closeModal)="closePaymentModal($event)"></app-approve-payment>
 <app-line-loader></app-line-loader>

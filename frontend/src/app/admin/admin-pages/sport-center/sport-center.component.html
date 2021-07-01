@@ -7,17 +7,17 @@
     <h1 class="card-title"> <strong>{{sportCenter.name}}</strong>
     </h1>
     <!-- <h4 class="card-subtitle"><strong>subititulo</strong></h4> -->
-    <div class="row text-right justify-content-md-center action-headers" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'">
-        <div class="col text-center">
+    <div class="row" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'">
+        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><p class="mb-0">Editar</p></a>
         </div>
-        <div class="col text-center">
+        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="openServiceModal()" class=" text-info"><i class="fas fa-certificate"></i><br><p class="mb-0">Servicios</p></a>
         </div>
-        <div class="col text-center">
+        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="updateSchedule()" class="text-info"><i class="far fa-clock"></i><br><p class="mb-0">Horarios</p></a>
         </div>
-        <div class="col text-center">
+        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="openSpecialScheduleInfoModal()" class="text-info"><i class="far fa-calendar-plus"></i><br><p class="mb-0">Fecha Especial</p></a>
         </div>
     </div>
@@ -48,17 +48,17 @@
                         <div class="form-control-feedback" *ngIf="getFieldValid('phone')">*Ingrese el teléfono (Máx. 13 caracteres)</div> 
                 </div>
                 <div class="form-group col-md-12 m-t-5 m-b-5">
-                    <label for="aditionalElectricity" class="col-form-label mr-2"><strong>Cobro adicional luz</strong></label> <br>
+                    <label for="aditionalElectricity" class="col-form-label mr-2"><strong>Cobro adicional luz</strong></label><br>
                     <mat-slide-toggle  color="primary" (change)="electricitySlideChange($event)" [checked]="slideElectricity" [disabled]="!editMode">
                       {{slideElectricity? 'SI': 'NO'}}
                     </mat-slide-toggle>
                     <div class="row">
                         <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideElectricity">
-                            <label for="aditionalElectricity" class="col-form-label"><strong>Monto adicional</strong></label>
+                            <label for="aditionalElectricity" class="col-form-label">Monto adicional</label>
                             <input type="number" class="form-control" formControlName="aditionalElectricity">
                         </div>
                         <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideElectricity">
-                            <label for="aditionalElectricityHour" class="col-form-label"><strong>Hora desde</strong></label>
+                            <label for="aditionalElectricityHour" class="col-form-label">Hora desde</label>
                             <input type="time" class="form-control"  formControlName="aditionalElectricityHour">
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                     <label for="">
                         <strong>Dirección </strong>
                         <i class="fas fa-question-circle content-tooltip">
-                            <span class="tooltip-box">Indique la dirección y luego márquela en el mapa</span>
+                            <span class="tooltip-box">Indique la dirección y luego márquela en el mapa.</span>
                         </i>
                     </label>
                     <input type="text" 
@@ -96,13 +96,66 @@
                 
             </div>
         </div>
-        <div class="form-group col-md-12 m-t-5 m-b-5">
-            <label for="mercadoPago" class="col-form-label mr-2"><strong>Cobro electrónico</strong></label> <br>
-            <mat-slide-toggle color="primary" (change)="mercadoPagoSlideChange($event)" [checked]="slideMercadoPago" [disabled]="!editMode">
-              {{this.slideMercadoPago? 'SI': 'NO'}}
-            </mat-slide-toggle>
-          </div> 
-        
+        <div class="col-md-6 col-lg-6">
+            <div class="row">
+                <div class="form-group col-md-12 m-t-5 m-b-5">
+                    <label for="mercadoPago" class="col-form-label mr-2">
+                        <strong>Cobro electrónico 
+                            <i class="fas fa-question-circle content-tooltip">
+                                <span class="tooltip-box">Sólo se aceptarán mediante MercadoPago.</span>
+                            </i>
+                        </strong>
+                        
+                    </label> 
+                    <mat-slide-toggle color="primary" (change)="mercadoPagoSlideChange($event)" [checked]="slideMercadoPago" [disabled]="!editMode">
+                        {{this.slideMercadoPago? 'SI': 'NO'}}
+                    </mat-slide-toggle>
+                    <br>
+                    <small><a href="" *ngIf="slideMercadoPago && editMode">Obtener claves de Mercado Pago</a></small>
+                </div>
+                <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideMercadoPago">
+                    <label for="aditionalElectricity" class="col-form-label">Access Token</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" formControlName="accessToken" [type]="accessTokenIsVisible ? 'text' : 'password'">
+                        <div class="input-group-addon pointer" (click)="showAccessToken()" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' && editMode">
+                            <i [ngClass]="(accessTokenIsVisible) ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                        </div> 
+                    </div>
+                </div>
+                <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideMercadoPago">
+                    <label for="aditionalElectricityHour" class="col-form-label">Public Key</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control"  formControlName="publicKey" [type]="publicKeyIsVisible ? 'text' : 'password'">
+                        <div class="input-group-addon pointer" (click)="showPublicKey()" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' && editMode">
+                            <i [ngClass]="(publicKeyIsVisible) ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6" *ngIf="slideMercadoPago">
+            <div class="row">
+                <div class="form-group col-md-12 m-t-5 m-b-5">
+                    <label for="paymentRequired" class="col-form-label mr-2">
+                        <strong>Pago obligatorio</strong>
+                    </label> 
+                    <mat-slide-toggle color="primary" (change)="paymentRequiredSlideChange($event)" [checked]="slidePaymentRequired" [disabled]="!editMode">
+                        {{this.slidePaymentRequired? 'SI': 'NO'}}
+                    </mat-slide-toggle>
+                    <br>
+                    <small><a href="" *ngIf="slidePaymentRequired && editMode">¿Qué significa?</a></small>
+                </div>
+                <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slidePaymentRequired">
+                    <label for="minimunAmount" class="col-form-label">Porcentaje mínimo</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" formControlName="minimunAmount">
+                        <div class="input-group-addon">
+                            %
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <div class="form-group col-md-12 m-t-5 m-b-5" >
             <label for="description" class="col-form-label"><strong>Imágenes:</strong> ({{sportCenter.images.length}})</label>

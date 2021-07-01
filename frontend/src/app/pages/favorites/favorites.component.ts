@@ -25,6 +25,12 @@ export class FavoritesComponent implements OnInit {
   fieldPage = 1;
   sportCenterTotalPages = null;
   sportCenterPage = 1;
+  //modals
+  hiddenSportCenterModal: boolean = false;
+  fieldSelected: any;
+  sportCenterSelected: SportCenter;
+  hiddenScheduleModal:boolean = false;
+  hiddenOnePointMap:boolean = false;
 
   constructor(private userService: UserService,
               private loaderService: LoaderService,
@@ -100,5 +106,27 @@ export class FavoritesComponent implements OnInit {
         this.getSportCenterFavorites();
         break;
     }
+  }
+  openSportCenterModal(field){
+    console.log(field)
+    this.fieldSelected = field;
+    this.hiddenSportCenterModal = true;
+  }
+  closeSportCenterModal(){
+    this.hiddenSportCenterModal = false;
+  }
+  openScheduleModal(field){
+    this.fieldSelected = field;
+    this.hiddenScheduleModal = true;
+  }
+  closeScheduleModal(){
+    this.hiddenScheduleModal = false;
+  }
+  openMap(sportCenter){
+    this.sportCenterSelected = sportCenter;
+    this.hiddenOnePointMap = true;
+  }
+  closeMap(){
+    this.hiddenOnePointMap = false;
   }
 }

@@ -7,6 +7,7 @@ const AppointmentSchema = new Schema({
     date:{type:Date, required: true},
     state:{type:String,enum:['Reserved','AboutToStart','InProgress','Completed'],default:'Reserved', required: true},
     totalAmount:{type:Number, required:true},
+    totalPaid:{type:Number, required:true,default:0},
     lightTime: {type: Boolean, default: false},
     owner:{
         oid:{type:String, required:true},
@@ -15,6 +16,7 @@ const AppointmentSchema = new Schema({
     },
     user:{type:Schema.Types.ObjectId,ref:'User',required:true},
     field:{type:Schema.Types.ObjectId,ref:'Field',required:true},
+    payments:[{type:Schema.Types.ObjectId,ref:'Payment'}],
 },{collection:'appointments'})
 
 AppointmentSchema.index({ date: 1, field: 1 }, { unique: true});

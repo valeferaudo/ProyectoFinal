@@ -43,6 +43,8 @@ import { SpecialScheduleInfoModalComponent } from './modals/special-schedule-inf
 import { SpecialScheduleCreateModalComponent } from './modals/special-schedule-create-modal/special-schedule-create-modal.component';
 import { OnePointMapComponent } from './maps/one-point-map/one-point-map.component';
 import { GpsMapComponent } from './maps/gps-map/gps-map.component';
+import { ApprovePaymentComponent } from './modals/approve-payment/approve-payment.component';
+import { AddPaymentComponent } from './modals/add-payment/add-payment.component';
 
 
 @NgModule({
@@ -79,6 +81,8 @@ import { GpsMapComponent } from './maps/gps-map/gps-map.component';
     SpecialScheduleCreateModalComponent,
     OnePointMapComponent,
     GpsMapComponent,
+    ApprovePaymentComponent,
+    AddPaymentComponent,
 
   ],
   imports: [
@@ -126,7 +130,9 @@ import { GpsMapComponent } from './maps/gps-map/gps-map.component';
     SpecialScheduleCreateModalComponent,
     SpecialScheduleInfoModalComponent,
     OnePointMapComponent,
-    GpsMapComponent
+    GpsMapComponent,
+    ApprovePaymentComponent,
+    AddPaymentComponent
   ]
 })
 export class ComponentsModule { }

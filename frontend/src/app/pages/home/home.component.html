@@ -6,11 +6,11 @@
         <div class="card-body bg-white p-0 ">
             <h4 class="card-title mt-2">Por comenzar:</h4>
                 <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'" 
-                                    (getAppointments)="getAboutToStartAppointments()" (goGPSModal)="openGPSModal($event)"></app-carousel-appointment>
+                                (goPaymentModal)="openPaymentModal($event)" (getAppointments)="getAboutToStartAppointments()" (goGPSModal)="openGPSModal($event)"></app-carousel-appointment>
             <hr>
             <h4 class="card-title">Reservados:</h4>
                 <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'" 
-                                (getAppointments)="getReservedAppointments()" (goGPSModal)="openGPSModal($event)"></app-carousel-appointment>
+                                (goPaymentModal)="openPaymentModal($event)" (getAppointments)="getReservedAppointments()" (goGPSModal)="openGPSModal($event)"></app-carousel-appointment>
             <hr>
             <button class="btn btn-success btn-block" [routerLink]="['/user/fields']"><strong>Reservar cancha</strong></button>
         </div>
@@ -84,6 +84,14 @@
             </li>
             </ul>
         </div>
+        <div class="card-body p-0 mt-1  justify-content-center align-items-center" *ngIf="!todayWeatherON && !perHourWeatherON && !weatherError">
+            <div class="loader__spinner">
+                <mat-progress-spinner color="accent" mode="indeterminate"></mat-progress-spinner>
+            </div>
+            <div class="loader__messages">
+                <p>Cargando Datos del clima</p>
+            </div>
+        </div>
         <div class="card-body p-0 mt-1" *ngIf="!todayWeatherON && !perHourWeatherON && weatherError">
             <div class="alert alert-danger animated fadeIn text-left" role="alert"> 
                 <i class="fas fa-times"></i> No se encontraron datos del <strong>Clima</strong>.<br>
@@ -95,3 +103,4 @@
 <!-- <google-map></google-map> -->
 <app-line-loader></app-line-loader>
 <app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [appointment]="appointmentSelected" (closeModal)="closeGPSModal()"></app-gps-map>
+<app-approve-payment *ngIf="hiddenPaymentModal" [hiddenPaymentModal]="!hiddenPaymentModal" [appointment]="appointmentSelected" [type]="'old'" (closeModal)="closePaymentModal()"></app-approve-payment>

@@ -49,7 +49,7 @@ import { SearchComponent } from './search/search.component';
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4'
     }),
-    GoogleMapsModule
+    GoogleMapsModule,
   ],
   exports:[
     PagesComponent,

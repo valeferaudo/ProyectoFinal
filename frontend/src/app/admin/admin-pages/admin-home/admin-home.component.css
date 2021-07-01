@@ -1,18 +1,13 @@
-::ng-deep .carousel-control-next{
-    width: 2.513rem;
-    height: 5.68rem;
-    background-color: black;
-    margin: 0 0 0 0;
-    top: calc(50% - 2.84rem)
-  }
-  ::ng-deep .carousel-control-prev {
-    width: 2.513rem;
-    height: 5.68rem;
-    background-color: black;
-    margin: 0 0 0 0;
-    top: calc(50% - 2.84rem)
-  }
-  .carousel-appointment{
-    background-color: #2a3e52;
-    color: white;
-  }
+.loader__spinner {
+  left: calc(50% - (100px / 2));
+  position: relative;
+  opacity: 0.8;
+  top: calc(50% - 100px);
+}
+
+.loader__messages {
+  position: relative;
+  font-weight: bold;
+  color: black;
+  opacity: 0.8;
+}

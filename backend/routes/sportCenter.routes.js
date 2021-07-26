@@ -46,9 +46,7 @@ router.put('/activateBlock/:id',[validateJWT,
             validateSuperAdminRole],sportCenterCtrl.activateBlockSportCenter);
 router.put('/schedule/:id',[validateJWT,
             validateUserID,
-            validateCSAandOwner,
-            check('schedules','Schedules fields are required').not().isEmpty(),
-            validateFields],sportCenterCtrl.updateSchedule);
+            validateCSAandOwner],sportCenterCtrl.updateSchedule);
 router.put('/services/:id',[validateJWT,
             validateUserID,
             validateCSAandOwner],sportCenterCtrl.updateService);

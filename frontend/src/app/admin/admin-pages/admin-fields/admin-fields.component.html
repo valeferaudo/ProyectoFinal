@@ -60,7 +60,7 @@
         </article>
     </div>
 </div>
-<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="table-responsive animated fadeIn" *ngIf="fields.length!==0">
     <table id="myTable" class="table table-hover color-table inverse-table">
         <thead>
@@ -77,38 +77,33 @@
                 <td>{{((page -1) * 6) + i+1}}</td>
                 <td>{{field.name}}</td>
                 <td>{{field.description | ifNull}}</td>
-                <td>{{field.state? 'Activo' : 'Agregar Deporte'}}</td>
+                <td *ngIf="field.state">Activo</td>
+                <td *ngIf="!field.state"><small class="text-danger">Completar Horarios y/o Deportes</small></td>
                 <td class="text-center">
-                    <button (click)="activateBlockField(field, 'active')" *ngIf="field.deletedDate !== null" class="btn btn-success badge m-1 content-tooltip" >
+                    <button (click)="activateBlockField(field, 'active')" *ngIf="field.deletedDate !== null && field.sportCenter.deletedDate === null && userLogged.role ==='CENTER-SUPER-ADMIN'" class="btn btn-success badge m-1" data-toggle="tooltip" data-placement="top" title="Activar" >
                         <i class="fas fa-check"></i>
-                        <span class="tooltip-box">Activar</span>
                     </button>
-                    <button (click)="activateBlockField(field, 'block')" *ngIf="field.deletedDate === null" class="btn btn-danger badge m-1 content-tooltip" >
+                    <button (click)="activateBlockField(field, 'block')" *ngIf="field.deletedDate === null && field.sportCenter.deletedDate === null && userLogged.role ==='CENTER-SUPER-ADMIN'" class="btn btn-danger badge m-1" data-toggle="tooltip" data-placement="top" title="Bloquear" >
                         <i class="fas fa-times"></i>
-                        <span class="tooltip-box">Bloquear</span>
                     </button>
-                    <button (click)="updateFieldModal(field)"  class="btn btn-info badge m-1 content-tooltip text-center">
+                    <button (click)="updateFieldModal(field)" *ngIf="userLogged.role ==='CENTER-SUPER-ADMIN'" class="btn btn-info badge m-1 text-center" data-toggle="tooltip" data-placement="top" title="Editar">
                         <i class="fas fa-pencil-alt"></i>
-                        <span class="tooltip-box">Editar</span>
                     </button>
-                    <button (click)="updateFieldSport(field)"  class="btn btn-info badge m-1 content-tooltip text-center">
+                    <button (click)="updateFieldSport(field)" *ngIf="userLogged.role ==='CENTER-SUPER-ADMIN'" class="btn btn-info badge m-1 text-center" data-toggle="tooltip" data-placement="top" title="Deportes">
                         <i class="fas fa-running"></i>
-                        <span class="tooltip-box">Deportes</span>
                     </button>
-                    <button (click)="openPriceHistorial(field)"  class="btn btn-info badge m-1 content-tooltip text-center">
+                    <button (click)="openPriceHistorial(field)"  class="btn btn-info badge m-1 text-center" data-toggle="tooltip" data-placement="top" title="Precios">
                         <i class="fas fa-dollar-sign"></i>
-                        <span class="tooltip-box">Precios</span>
                     </button>
-                    <button [routerLink]="['/','admin','appointment',field.id]" class="btn btn-info badge m-1 content-tooltip text-center">
+                    <button [routerLink]="['/','admin','appointment',field.id]" class="btn btn-info badge m-1 text-center" data-toggle="tooltip" data-placement="top" title="+ Turno">
                         <i class="fas fa-clipboard-check text-center"></i>
-                        <span class="tooltip-box">+ Turno</span>
                     </button>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
-<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0"> 
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0 && !filterON"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Canchas</strong>
 </div>
 <div class="row" *ngIf="fields.length!==0 && totalPages > 1">
@@ -134,7 +129,7 @@
 </app-field-modal>
 
 <app-field-sport-modal *ngIf="hiddenSportModal" [hiddenModal]="!hiddenSportModal" 
-                                        [mode]="modalMode" [fieldSelected]="this.fieldSelected" [sportCenterID]="userLogged.sportCenter.id"
+                                        [mode]="modalMode" [fieldSelected]="newField" [sportCenterID]="userLogged.sportCenter.id"
                                     (closeModal)="closeFieldSportModal()" (getFields)="getFields()">
 </app-field-sport-modal>
 
@@ -144,3 +139,9 @@
 </app-price-historial-modal>
 
 <app-line-loader></app-line-loader>
+
+<script>
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>

@@ -22,3 +22,6 @@ agm-map {
 .content-tooltip:hover .tooltip-box{
   display: inline-block;
 }
+.a:hover{
+  text-decoration: underline;
+}

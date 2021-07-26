@@ -52,6 +52,16 @@ paymentCtrl.createPreference = async (req = request , res = response) => {
 paymentCtrl.createMercadoPagoPayment = async (req = request , res = response) => {
     const paymentBody = req.body;
     try {
+        const appointmentDB = await Appointment.findById(paymentBody.appointmentID).populate({ 
+            path: 'field',
+            model: 'Field',
+            populate: {
+                path: 'sportCenter',
+                model: 'SportCenter'
+            }})
+        if(!appointmentDB){
+        return canceledAppointmentResponse(res);
+        }
         let mercadoPagoPayment = new Payment({
             preferenceID: paymentBody.preferenceID,
             mercadoPagoPaymentID: null,
@@ -61,6 +71,9 @@ paymentCtrl.createMercadoPagoPayment = async (req = request , res = response) =>
             state: 'PENDING',
             type: 'MERCADO-PAGO',
             appointment: paymentBody.appointmentID,
+            appointmentDate: moment(appointmentDB.date).add(3,'h'),
+            appointmentField: appointmentDB.field.name,
+            appointmentSportCenter: appointmentDB.field.sportCenter.name,
         })
         await mercadoPagoPayment.save();
         res.json({
@@ -139,7 +152,7 @@ paymentCtrl.getUserPayments = async (req = request , res = response) => {
     page = parseInt(req.query.page);
     registerPerPage = parseInt(req.query.registerPerPage);
     try {
-        [payments,total] = await Promise.all([Payment.find({},'date appointment amountPayment preferenceID').populate('appointment')
+        [payments,total] = await Promise.all([Payment.find({},'date appointment amountPayment preferenceID type').populate('appointment')
                                                                             .populate({path:'appointment',populate:{path: 'field', populate:{path:'sportCenter'}}})
                                                                             .populate({path:'appointment.user',match:{'id': userID}})
                                                                             .sort({date: -1}).skip(registerPerPage*(page -1)).limit(registerPerPage),
@@ -232,6 +245,16 @@ paymentCtrl.createSportCenterPayment = async (req = request , res = response) =>
     const sportCenterID = req.params.sportCenterID
     const paymentBody = req.body;
     try {
+        const appointmentDB = await Appointment.findById(paymentBody.appointmentID).populate({ 
+                                                                                                path: 'field',
+                                                                                                model: 'Field',
+                                                                                                populate: {
+                                                                                                    path: 'sportCenter',
+                                                                                                    model: 'SportCenter'
+                                                                                                }})
+        if(!appointmentDB){
+        return canceledAppointmentResponse(res);
+        }
         let mercadoPagoPayment = new Payment({
             description: paymentBody.description,
             amountPayment: paymentBody.amountPayment,
@@ -239,12 +262,11 @@ paymentCtrl.createSportCenterPayment = async (req = request , res = response) =>
             state: 'APPROVED',
             type: paymentBody.type,
             appointment: paymentBody.appointmentID,
+            appointmentDate: moment(appointmentDB.date).add(3,'h'),
+            appointmentField: appointmentDB.field.name,
+            appointmentSportCenter: appointmentDB.field.sportCenter.name,
         })
         const newPayment = await mercadoPagoPayment.save();
-        let appointmentDB = await Appointment.findById(newPayment.appointment);
-        if(!appointmentDB){
-            return canceledAppointmentResponse(res);
-        }
         appointmentDB.totalPaid = appointmentDB.totalPaid + newPayment.amountPayment;
         appointmentDB.payments.push(newPayment._id)
         await Appointment.findByIdAndUpdate(appointmentDB._id,appointmentDB)

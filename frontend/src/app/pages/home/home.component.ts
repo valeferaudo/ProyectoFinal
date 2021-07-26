@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
   weatherError = false;
   //PAGINATOR
   page = 1;
-
+  sportCenter: any;
   constructor(private userService: UserService,
               private appointmentService: AppointmentService,
               private loaderService: LoaderService,
@@ -64,8 +64,8 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.userLogged = this.userService.user;
     this.getAppointments();
-    //this.getCurrentWeather();
-    //this.getPerHourWeather();
+    this.getCurrentWeather();
+    this.getPerHourWeather();
   }
   getAppointments(){
     this.getReservedAppointments();
@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -97,7 +97,7 @@ export class HomeComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -108,7 +108,7 @@ export class HomeComponent implements OnInit {
               this.todayWeatherON = true;
             },(err) =>{
               console.log(err)
-              // this.errorService.showServerError()
+              this.errorService.showErrors(96,'');
               this.weatherError = true;
             });
   }
@@ -119,7 +119,7 @@ export class HomeComponent implements OnInit {
                 this.perHourWeatherON = true;
               },(err) =>{
                 console.log(err)
-                // this.errorService.showServerError()
+                this.errorService.showErrors(96,'');
                 this.weatherError = true;
               });
   }
@@ -127,7 +127,7 @@ export class HomeComponent implements OnInit {
     return new Date(date)
   }
   openGPSModal(appointment){
-    this.appointmentSelected = appointment
+    this.sportCenter = appointment.field.sportCenter
     this.hiddenGPSModal = true;
   }
   closeGPSModal(){

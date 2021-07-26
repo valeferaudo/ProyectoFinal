@@ -33,8 +33,8 @@ export class PriceHistorialModalComponent implements OnInit {
                   }
                 },(err) => {
                   console.log(err);
-                      this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                  this.loaderService.closeLineLoader();
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 })
   }
   closedModal(){

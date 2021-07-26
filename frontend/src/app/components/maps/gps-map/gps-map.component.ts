@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Appointment } from 'src/app/models/appointment.model';
+import { SportCenter } from 'src/app/models/sportCenter.model';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
@@ -13,7 +14,7 @@ import { UserService } from 'src/app/services/user.service';
 export class GpsMapComponent implements OnInit {
 
   @Input() hiddenModal: boolean;
-  @Input() appointment: Appointment;
+  @Input() sportCenter: SportCenter;
   @Output() closeModal = new EventEmitter<string>();
 
   locationISActive: boolean = false;
@@ -71,15 +72,15 @@ export class GpsMapComponent implements OnInit {
   private calculateRoute() {
     this.directionsService.route({
       origin: this.origin,
-      destination: {lat:this.appointment.field.sportCenter.coords.latitude, lng:this.appointment.field.sportCenter.coords.longitude},
+      destination: {lat:this.sportCenter.coords.latitude, lng:this.sportCenter.coords.longitude},
       travelMode: this.trasnportMode
     }, (response, status)  => {
       if (status === google.maps.DirectionsStatus.OK) {
         this.directionsDisplay.setDirections(response);
       } else {
         //PONER SWEET ALERTT
-        alert('Could not display directions due to: ' + status);
-        this.errorService.showServerError();
+        alert('No se pudo calcular la ruta. Error: ' + status);
+        this.errorService.showErrors(95,'');
       }
     });
   }

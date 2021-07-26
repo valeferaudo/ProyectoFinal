@@ -129,6 +129,10 @@ export class SportCenterScheduleModalComponent implements OnInit {
       })
       return;
     }
+    let x = 0;
+    this.openSlide.forEach(element => {
+      !element ? x = x + 1 : x; 
+    });
     this.sweetAlertService.showSwalConfirmation({
       title:'¿Editar horarios?',
       icon:'question',
@@ -137,7 +141,7 @@ export class SportCenterScheduleModalComponent implements OnInit {
     .then((result) => {
       if (result.value) {
         this.loaderService.openLineLoader();
-        this.sportCenterService.updateSchedule(this.sportCenter.id,this.scheduleForm.value)
+        this.sportCenterService.updateSchedule(this.sportCenter.id,x === 7 ? [] : this.scheduleForm.value)
                       .subscribe((resp:any)=>{
                         if(resp.ok){
                           this.loaderService.closeLineLoader();
@@ -151,8 +155,8 @@ export class SportCenterScheduleModalComponent implements OnInit {
                         this.closeModal.emit()
                       }, (err) =>{
                         console.log(err)
-                          this.errorService.showServerError()
-                          this.loaderService.closeLineLoader();
+                        this.errorService.showErrors(err.error.code,err.error.msg);
+                        this.loaderService.closeLineLoader();
                       })
       }
     })

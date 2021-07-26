@@ -33,6 +33,7 @@ export class AdminFieldsComponent implements OnInit {
     features:[],
     sports: [],
     days: [],
+    available:false
   }
   selectedFilters: string [] = [];
   fieldStates = ['Activo', 'Bloqueado']
@@ -41,6 +42,7 @@ export class AdminFieldsComponent implements OnInit {
   page = 1;
   doNotCloseMenu = (event) => event.stopPropagation();
   fieldStateSelected: '' | 'Activo' | 'Bloqueado' = '';
+  newField: any;
 
   constructor(private fieldService: FieldService,
               private loaderService: LoaderService,
@@ -54,6 +56,7 @@ export class AdminFieldsComponent implements OnInit {
     this.getFields();
   }
   getFields(){
+    this.filterON = true;
     this.loaderService.openLineLoader();
     this.fieldService.getFields(this.filters, this.page)
                     .subscribe((resp:any)=>{
@@ -63,11 +66,12 @@ export class AdminFieldsComponent implements OnInit {
                         this.selectedFilters = resp.param.selectedFilters;
                         this.page = resp.param.paginator.page;
                         this.totalPages = resp.param.paginator.totalPages;
+                        this.filterON = false;
                       }
                     }, (err) => {
                       console.log(err)
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada')
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
   }
   searchFields(text: string){
@@ -106,6 +110,7 @@ export class AdminFieldsComponent implements OnInit {
       features:[],
       sports: [],
       days: [],
+      available:false
     }
   }
   activateBlockField(field, action: 'active' | 'block'){
@@ -147,7 +152,7 @@ export class AdminFieldsComponent implements OnInit {
                            }
                          }, (err) => {
                            console.log(err)
-                           this.errorService.showServerError()
+                           this.errorService.showErrors(err.error.code,err.error.msg);
                            this.loaderService.closeLineLoader();
                          })
       }
@@ -166,13 +171,9 @@ export class AdminFieldsComponent implements OnInit {
     this.hiddenFieldModal = false;
     this.fieldSelected = null;
   }
-  createFieldSportModal(){
-    this.modalMode = 'create';
-    console.log(this.fieldSelected)
-    this.hiddenSportModal = true;
-  }
   updateFieldSport(field){
-    this.fieldSelected = field
+    this.fieldSelected = field;
+    this.newField = field;
     this.modalMode = 'update';
     this.hiddenSportModal = true;
   }
@@ -180,9 +181,9 @@ export class AdminFieldsComponent implements OnInit {
     this.hiddenSportModal = false;
   }
   setNewField(field){
-    //falta pasar bien el fieldSelected, porque llega null
-      // this.fieldSelected = field;
-      // this.createFieldSportModal();
+    this.newField = field;
+    this.modalMode = 'create';
+    this.hiddenSportModal = true;
   }
   openPriceHistorial(field){
     this.fieldSelected = field;

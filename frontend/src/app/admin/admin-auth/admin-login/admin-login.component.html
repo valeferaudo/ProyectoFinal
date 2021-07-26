@@ -47,8 +47,8 @@
                         </a>
                     </div>
                 </div>
-                <div class="form-group mt-5 mb-1">
-                    <div class="col p-o" style="display: flex;vertical-align: middle;" >
+                <div class="form-group mt-5">
+                    <div class="col" style="display: flex;align-items: center;" >
                         <div class="checkbox checkbox-primary pull-left mb-0">
                             <input id="checkbox-signup" 
                             type="checkbox" 
@@ -56,7 +56,7 @@
                             formControlName="remember"> 
                             <label for="checkbox-signup">Recordar email</label>
                         </div>
-                        <div class="col text-right">
+                        <div class="col pull-right p-0">
                             <button class="btn btn-md btn-rounded btn-info ml-4" type="submit">Ingresar</button>
                         </div>
                     </div>
@@ -83,3 +83,4 @@
 </section>
 <app-forget-password-modal *ngIf="hiddenEmailModal" [hiddenEmailModal]="!hiddenEmailModal" (closeModalOutput)="closeRecoverPasswordModal($event)"></app-forget-password-modal>
 <app-sport-center-modal *ngIf="hiddenSportCenterModal" [hiddenSportCenterModal]="!hiddenSportCenterModal" (closeModalOutput)="closeSportCenterModal($event)"></app-sport-center-modal>
+<app-line-loader></app-line-loader>

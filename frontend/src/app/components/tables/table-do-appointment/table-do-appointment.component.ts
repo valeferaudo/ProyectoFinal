@@ -45,6 +45,7 @@ export class TableDoAppointmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.userLogged = this.userService.user;
+    console.log(this.field)
   }
   async reserveAppointment(appointmentDate: Date){
     this.sweetAlertService.showSwalConfirmation({
@@ -80,7 +81,7 @@ export class TableDoAppointmentComponent implements OnInit {
                     }, (err) => {
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors('mejorar',99)
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     });
   }
   checkDay(appointmentDate){
@@ -117,9 +118,10 @@ export class TableDoAppointmentComponent implements OnInit {
               }
               this.confirmWeather(appointmentDate);
             },(err) =>{
-              console.log(err)
-              this.errorService.showServerError()
-              this.loaderService.closeLineLoader();
+              // console.log(err)
+              // this.errorService.showErrors(99,'');
+              // this.loaderService.closeLineLoader();
+              this.confirmWeather(appointmentDate);
             });
   }
   getPerHourWeather(appointmentDate,hourDiff){
@@ -140,9 +142,10 @@ export class TableDoAppointmentComponent implements OnInit {
                   }
                   this.confirmWeather(appointmentDate);
                 },(err) =>{
-                  console.log(err)
-                  this.errorService.showServerError()
-                  this.loaderService.closeLineLoader();
+                  // console.log(err)
+                  // this.errorService.showErrors(96,'');
+                  // this.loaderService.closeLineLoader();
+                  this.confirmWeather(appointmentDate);
                 });
   }
   getForecastWeather(appointmentDate,dayDiff){
@@ -163,9 +166,10 @@ export class TableDoAppointmentComponent implements OnInit {
                 }
                 this.confirmWeather(appointmentDate);
               },(err) =>{
-                console.log(err)
-                this.errorService.showServerError()
-                this.loaderService.closeLineLoader();
+                // console.log(err)
+                // this.errorService.showErrors(96,'');
+                // this.loaderService.closeLineLoader();
+                this.confirmWeather(appointmentDate);
               });
   }
   getHourIndex(hourDiff){
@@ -307,15 +311,14 @@ export class TableDoAppointmentComponent implements OnInit {
                               text: ``,
                               icon: 'success',
                             })
-                            this.goAppointments();
                           }
+                          this.goAppointments();
                         }
                       }
                     }, (err) => {
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors('mejorar',99)
-                      // Swal.fire('Error al reservar', 'Ingrese correctamente los datos solicitados', 'error');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     });
   }
   goAppointments(){

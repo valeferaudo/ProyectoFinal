@@ -89,7 +89,7 @@ export class DoAppointmentComponent  implements OnInit{
                 }, (err) => {
                   console.log(err)
                   this.loaderService.closeLineLoader();
-                  this.errorService.showErrors(99,'nada')
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 });
   }
   createScheduleForm(){
@@ -108,7 +108,7 @@ export class DoAppointmentComponent  implements OnInit{
                   }
                 }, (err)=>{
                   console.log(err);
-                  this.errorService.showServerError()
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 })
   }
   get schedules(){
@@ -175,18 +175,19 @@ export class DoAppointmentComponent  implements OnInit{
   }
   resetDates(){
     this.searchON = false;
+    this.isFilter = false;
     this.dateRangeForm.reset();
     this.sinceDateSelected = new Date();
     this.untilDateSelected = new Date();
-    this.sinceDate = '';
-    this.untilDate = '';
-    this.setFilterObject();
+    this.formatDates();
+    this.availableAppointments = [];
   }
   resetHour(){
     this.searchON = false;
+    this.isFilter = false;
     this.sinceHourSelected = 0;
     this.untilHourSelected = 23;
-    this.setFilterObject();
+    this.filterHour();
   }
   filterDates(){
     if (this.dateRangeForm.invalid){
@@ -231,11 +232,12 @@ export class DoAppointmentComponent  implements OnInit{
                     this.loaderService.closeLineLoader();
                     if(resp.ok){
                       this.setInitPaginate(resp)
+                      this.scroll();
                     }
                   }, (err) => {
                   console.log(err)
                   this.loaderService.closeLineLoader();
-                  this.errorService.showErrors(99,'nada')
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 });
   }
   setInitPaginate(resp){
@@ -248,5 +250,8 @@ export class DoAppointmentComponent  implements OnInit{
     page  * this.registerPerPage > this.availableAppointments.length ? limit = this.availableAppointments.length : limit = page * this.registerPerPage;
     this.page = page;
     this.showAvailableAppointments = this.availableAppointments.slice((this.page - 1) * this.registerPerPage,limit)
+  }
+  scroll(){
+    document.getElementById("appointments").scrollIntoView();
   }
 }

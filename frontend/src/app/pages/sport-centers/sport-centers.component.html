@@ -88,11 +88,11 @@
                     <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
-                        <div class="filters__items-container__item__menu__options-container__option" *ngFor="let day of daysCombo; let i = index">
-                            <mat-checkbox  (change)="changeDaysSelected($event,day)" #myCheckBoxCategory [checked]="daysSelected.includes(day.id)">
-                            <span>{{day.text}}</span>
-                            </mat-checkbox>
-                        </div>
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"  [(ngModel)]="daysSelected[0]">
+                                <mat-radio-button class="example-radio-button" *ngFor="let day of daysCombo" [value]="day.id" (change)="changeDaysSelected($event,day)">
+                                        {{day.text}}
+                                </mat-radio-button>
+                            </mat-radio-group>
                         </div>
                     </div>
                                     <!-- ACTIONS -->
@@ -164,17 +164,16 @@
                         </div>
                     </div>
                                     <!-- ACTIONS -->
-                    <div class="filters__items-container__item__actions-container">
-                        <!-- <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetSports()">Limpiar</button> -->
-                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterSports()">Aplicar</button>
-                    </div>
+                    <!-- <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetSportCenter()">Limpiar</button>
+                    </div> -->
                     </mat-menu>
                 </div>
             </div>
         </article>
     </div>
 </div>
-<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="card-group">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
         <app-card-sport-center [sportCenter]="sportCenter" 
@@ -206,7 +205,7 @@
 </div>
 <app-line-loader></app-line-loader>
 <app-sport-center-info-modal *ngIf="hiddenSportCenterModal" [hiddenModal]="!hiddenSportCenterModal" [sportCenterSelectedID]="sportCenterSelected.id"
-                                (closeModal)="closeSportCenterModal()">
+                               [type]="'USER'" (closeModal)="closeSportCenterModal()">
 
 </app-sport-center-info-modal>
 <app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
@@ -214,4 +213,5 @@
                                 (closeModal)="closeScheduleModal()">
 </app-sport-center-schedule-modal>
 
-<app-one-point-map *ngIf="hiddenOnePointMap" [hiddenOnePointMap]="!hiddenOnePointMap" [sportCenter]="sportCenterSelected" (closeModal)="closeMap()"></app-one-point-map>
+<app-one-point-map *ngIf="hiddenOnePointMap" [hiddenOnePointMap]="!hiddenOnePointMap" [sportCenter]="sportCenterSelected" (goGPSModal)="openGPSModal($event)" (closeModal)="closeMap()"></app-one-point-map>
+<app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [sportCenter]="sportCenterSelected" (closeModal)="closeGPSModal()"></app-gps-map>

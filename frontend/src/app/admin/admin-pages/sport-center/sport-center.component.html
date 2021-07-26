@@ -1,12 +1,7 @@
 <div class="text-center">
-    <div class="col">
-        <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 10;" [routerLink]="['/admin/']" >
-            <i class="fas fa-arrow-alt-circle-left"></i> Atrás
-        </button>
-    </div>
     <h1 class="card-title"> <strong>{{sportCenter.name}}</strong>
     </h1>
-    <!-- <h4 class="card-subtitle"><strong>subititulo</strong></h4> -->
+    <h4 class="card-subtitle text-danger" *ngIf="sportCenter.deletedDate !== null"> <small>Dado de baja<i class="fas fa-exclamation-circle"></i></small></h4>
     <div class="row" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'">
         <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
             <a href="javascript:void(0)" *ngIf="!editMode" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><p class="mb-0">Editar</p></a>
@@ -55,11 +50,17 @@
                     <div class="row">
                         <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideElectricity">
                             <label for="aditionalElectricity" class="col-form-label">Monto adicional</label>
-                            <input type="number" class="form-control" formControlName="aditionalElectricity">
+                            <input type="number" class="form-control" formControlName="aditionalElectricity" [class.is-invalid]="getFieldValid('aditionalElectricity')">
+                            <small *ngIf="getFieldValid('aditionalElectricity')" class="text-danger">
+                                *Ingrese un <strong>monto</strong>.
+                            </small>
                         </div>
                         <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideElectricity">
                             <label for="aditionalElectricityHour" class="col-form-label">Hora desde</label>
-                            <input type="time" class="form-control"  formControlName="aditionalElectricityHour">
+                            <input type="time" class="form-control"  formControlName="aditionalElectricityHour" [class.is-invalid]="getFieldValid('aditionalElectricityHour')">
+                            <small *ngIf="getFieldValid('aditionalElectricityHour')" class="text-danger">
+                                *Ingrese un <strong>horario</strong>.
+                            </small>
                         </div>
                     </div>
                 </div> 
@@ -111,24 +112,30 @@
                         {{this.slideMercadoPago? 'SI': 'NO'}}
                     </mat-slide-toggle>
                     <br>
-                    <small><a href="" *ngIf="slideMercadoPago && editMode">Obtener claves de Mercado Pago</a></small>
+                    <small><a href="../../../../assets/document/mercadopagoKey.pdf" *ngIf="slideMercadoPago && editMode" download="clavesMercadoPago">Obtener claves de Mercado Pago</a></small>
                 </div>
                 <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideMercadoPago">
                     <label for="aditionalElectricity" class="col-form-label">Access Token</label>
                     <div class="input-group">
-                        <input type="password" class="form-control" formControlName="accessToken" [type]="accessTokenIsVisible ? 'text' : 'password'">
+                        <input type="password" class="form-control" formControlName="accessToken" [type]="accessTokenIsVisible ? 'text' : 'password'" [class.is-invalid]="getFieldValid('accessToken')">
                         <div class="input-group-addon pointer" (click)="showAccessToken()" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' && editMode">
                             <i [ngClass]="(accessTokenIsVisible) ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
-                        </div> 
+                        </div>
+                        <small *ngIf="getFieldValid('accessToken')" class="text-danger">
+                            *Ingrese un <strong>Access Token</strong>.
+                        </small>
                     </div>
                 </div>
                 <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideMercadoPago">
                     <label for="aditionalElectricityHour" class="col-form-label">Public Key</label>
                     <div class="input-group">
-                        <input type="password" class="form-control"  formControlName="publicKey" [type]="publicKeyIsVisible ? 'text' : 'password'">
+                        <input type="password" class="form-control"  formControlName="publicKey" [type]="publicKeyIsVisible ? 'text' : 'password'" [class.is-invalid]="getFieldValid('publicKey')">
                         <div class="input-group-addon pointer" (click)="showPublicKey()" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' && editMode">
                             <i [ngClass]="(publicKeyIsVisible) ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
-                        </div> 
+                        </div>
+                        <small *ngIf="getFieldValid('publicKey')" class="text-danger">
+                            *Ingrese un <strong>Public Key</strong>.
+                        </small>
                     </div>
                 </div>
             </div>
@@ -143,15 +150,18 @@
                         {{this.slidePaymentRequired? 'SI': 'NO'}}
                     </mat-slide-toggle>
                     <br>
-                    <small><a href="" *ngIf="slidePaymentRequired && editMode">¿Qué significa?</a></small>
+                    <small class="a pointer" (click)="openPaymentRequiredModal()" style="color: #007bff;" *ngIf="slidePaymentRequired && editMode" data-toggle="tooltip" title="Al momento de realizar la reserva del turno, el usuario deberá pagar el % indicado.">¿Qué significa?</small>
                 </div>
                 <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slidePaymentRequired">
                     <label for="minimunAmount" class="col-form-label">Porcentaje mínimo</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" formControlName="minimunAmount">
+                    <div class="input-group" [class.has-danger]="getFieldValid('minimunAmount')">
+                        <input type="number" class="form-control" formControlName="minimunAmount" [class.is-invalid]="getFieldValid('minimunAmount')">
                         <div class="input-group-addon">
                             %
                         </div> 
+                        <small *ngIf="getFieldValid('minimunAmount')" class="text-danger">
+                            *Ingrese un <strong>Porcentaje Mínimo</strong>. (0-100)
+                        </small>                    
                     </div>
                 </div>
             </div>
@@ -185,3 +195,4 @@
 <app-special-schedule-create-modal *ngIf="hiddenSpecialScheduleCreateModal" [hiddenModal]="!hiddenSpecialScheduleCreateModal" 
                                     (closeModal)="closeSpecialScheduleCreateModal()">
 </app-special-schedule-create-modal>
+<app-payment-required-info *ngIf="hiddenPaymentRequiredModal" [hiddenModal]="!hiddenPaymentRequiredModal"(closeModal)="closePaymentRequiredModal()"></app-payment-required-info>

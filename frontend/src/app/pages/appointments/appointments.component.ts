@@ -93,7 +93,7 @@ export class AppointmentsComponent {
                                       }, (err) =>{
                                         console.log(err);
                                         this.filterReservedON = true;
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -111,7 +111,7 @@ export class AppointmentsComponent {
                                       }, (err) =>{
                                         console.log(err);
                                         this.filterAboutToStartON = true;
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -129,7 +129,7 @@ export class AppointmentsComponent {
                                       }, (err) =>{
                                         console.log(err);
                                         this.filterInProgressON = true;
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -147,7 +147,7 @@ export class AppointmentsComponent {
                                       }, (err) =>{
                                         console.log(err);
                                         this.filterCompletedON = true;
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -255,28 +255,32 @@ export class AppointmentsComponent {
       this.getReservedAppointments();
     }else{
       this.filterReservedON = false;
-      this.reservedAppointments = []
+      this.reservedPage = 1;
+      this.reservedAppointments = [];
     }
     if(this.statesSelected.includes('Por comenzar')){
       this.filterObject.state= 'AboutToStart';
       this.getAboutToStartAppointments()
     }else{
       this.filterAboutToStartON = false;
-      this.aboutToStartAppointments = []
+      this.aboutToStartPage = 1;
+      this.aboutToStartAppointments = [];
     }
     if(this.statesSelected.includes('En progreso')){
       this.filterObject.state= 'InProgress';
       this.getInProgressAppointments();
     }else{
       this.filterInProgressON = false;
-      this.inProgressAppointments = []
+      this.inProgressPage = 1;
+      this.inProgressAppointments = [];
     }
     if(this.statesSelected.includes('Completado')){
       this.filterObject.state= 'Completed';
       this.getCompletedAppointments();
     }else{
       this.filterCompletedON = false;
-      this.completedAppointments = []
+      this.completedPage = 1;
+      this.completedAppointments = [];
     }
   }
   paginate(page, type : 'reserved' | 'aboutToStart' | 'inProgress' | 'completed'){

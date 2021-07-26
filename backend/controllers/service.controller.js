@@ -1,4 +1,5 @@
 const Service = require ('../models/service.model');
+const SportCenter = require ('../models/sportCenter.model');
 const { request, response} = require ('express');
 const serviceCtrl = {};
 
@@ -25,11 +26,11 @@ serviceCtrl.getServices = async (req = request,res = response)=>{
         };
         if(searchText !== ''){
             query['$and'].push({ name: new RegExp(searchText, 'i')});
-            selectedFilters.push('Texto: ',searchText);
+            selectedFilters.push(`"${searchText}"`)
         }
         if(state !== ''){
             query['$and'].push({state:booleanState});
-            selectedFilters.push('Estado: ',state);
+            selectedFilters.push(state);
         }
         if(query['$and'].length > 0){
             [services,total] = await Promise.all([Service.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
@@ -134,6 +135,9 @@ serviceCtrl.activateBlockService = async (req= request, res= response) => {
         }
         await Service.findByIdAndUpdate(serviceID,serviceDB,{new:true});
         if (action === 'block'){
+            //ELIMINAR DE LOS CENTROS
+            await SportCenter.updateMany({}, {$pull:{services:{service:serviceDB.id}}})
+
             res.json({
                 ok:true,
                 msg:'Blocked Service'

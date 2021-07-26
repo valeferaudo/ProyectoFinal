@@ -34,9 +34,8 @@
                                     <span>{{specialSchedule.untilHour | date:'HH:mm':'+0'}}</span>
                                 </td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm bg-danger content-tooltip" (click)="deleteSpecialSchedule(specialSchedule)">
+                                    <button class="btn btn-sm bg-danger" (click)="deleteSpecialSchedule(specialSchedule)" data-toggle="tooltip" data-placement="top" title="Eliminar">
                                         <i class="fas fa-times-circle text-white pointer"></i>
-                                        <span class="tooltip-box">Eliminar</span>
                                     </button>
                                 </td>                   
                         </tbody>

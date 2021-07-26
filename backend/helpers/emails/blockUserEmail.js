@@ -9,10 +9,13 @@ const sendBlockUser = async (user) =>{
         }
       });
       var mailOptions = {
-          from: 'sporturno.new.user@gmail.com',
+          from: 'sporturno@gmail.com',
           to: user.email,
           subject: 'Aviso - Baja de usuario',
-          html: '<h1>Usuario bloqueado</h1><p>+user.email+</p>'
+          html: `Estimado Usuario, su cuenta ha sido bloqueada para publicar canchas en la plataforma. 
+          Toda la información y canchas relacionadas a su centro deportivo permanecerá inactivo. 
+          En caso de ser un error, comuníquese con soporte.
+          Saludos`
         }
     await transporter.sendMail(mailOptions, function(error, info){
         if (error) {

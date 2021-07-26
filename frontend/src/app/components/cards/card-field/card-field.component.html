@@ -1,12 +1,10 @@
 <div class="card card-rounded bg-dark mb-1">
         <div class="card-block">
-                <h2 class="card-title text-light text-center text-uppercase mb-0">
-                        {{field.name}} 
-                        <i class="far fa-star fa-size text-warning pointer pull-right content-tooltip mt-1" (click)="addFavorite(field.id)" *ngIf="userLogged.favorites === null || !userLogged.favorites.includes(field.id)">
-                                <span class="tooltip-box" style="font-size:14px;font-style: normal;font-variant: normal;">Agregar Favorito</span>
+                <h2 class="card-title text-light text-center text-uppercase mb-0 long-text" >
+                        {{field.name}}
+                        <i class="far fa-star fa-size text-warning pointer pull-right mt-1" data-toggle="tooltip" data-placement="top" title="Agregar favorito" (click)="addFavorite(field.id)" *ngIf="userLogged.favorites === null || !userLogged.favorites.includes(field.id)">
                         </i>
-                        <i class="fas fa-star fa-size text-warning pointer pull-right content-tooltip mt-1" (click)="deleteFavorite(field.id)" *ngIf="userLogged.favorites !== null && userLogged.favorites.includes(field.id)">
-                                <span class="tooltip-box" style="font-size:14px;font-style: normal;">Quitar Favorito</span>
+                        <i class="fas fa-star fa-size text-warning pointer pull-right mt-1" data-toggle="tooltip" data-placement="top" title="Quitar favorito" (click)="deleteFavorite(field.id)" *ngIf="userLogged.favorites !== null && userLogged.favorites.includes(field.id)">
                         </i>
                 </h2>
                 <app-carousel-images [images]="field.images" [type]="'field'" [mode]="'get'"></app-carousel-images>
@@ -20,12 +18,12 @@
                         </div>
                         <div class="col-12">
                                 <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Deportes - Cant. Jugadores</span> <br>
-                                        <span *ngFor="let sport of field.sports">{{sport.sport.name}} - {{sport.cantPlayers}}</span>
+                                        <span *ngFor="let sport of field.sports">{{sport.sport.name}} - {{sport.cantPlayers}} <br></span>
                                 </p>
                         </div>
                         <div class="col-6">
-                                <p class="card-text m-1 text-light"><span class="font-bold" style="text-decoration: underline;">Características</span> <br>
-                                        <span *ngFor="let feature of field.features">{{feature.name}} 
+                                <p class="card-text m-1 text-light long-text"><span class="font-bold" style="text-decoration: underline;">Características</span> <br>
+                                        <span *ngFor="let feature of field.features">{{feature.name}} <br>
                                                                                         <!-- <span *ngIf="field.features.length = 0">Sin Datos</span> -->
                                         </span>
                                 </p>
@@ -39,22 +37,23 @@
                 </div>
                 <hr class="bg-white m-0">
                 <div class="text-center">
-                        <button class="btn btn-success m-1 content-tooltip" 
+                        <button class="btn btn-success m-1" data-toggle="tooltip" data-placement="top" title="Reservar"
                                 (click)="goAppointment(field.id)"><i class="far fa-calendar-check"></i>
-                                <span class="tooltip-box">Reservar</span>
                         </button>
-                        <button class="btn btn-info m-1 content-tooltip"
+                        <button class="btn btn-info m-1" data-toggle="tooltip" data-placement="top" title="Información Centro Deportivo"
                                 (click)="goSportCenter()"><i class="fas fa-info-circle"></i>
-                                <span class="tooltip-box">Información Centro Deportivo</span>
                         </button>
-                        <button class="btn btn-info m-1 content-tooltip"
+                        <button class="btn btn-info m-1" data-toggle="tooltip" data-placement="top" title="Horarios"
                             (click)="openScheduleModal()"><i class="fas fa-clock"></i>
-                            <span class="tooltip-box">Horarios</span>
                         </button>
-                        <button class="btn btn-info m-1 content-tooltip"
+                        <button class="btn btn-info m-1" data-toggle="tooltip" data-placement="top" title="Mapa"
                             (click)="openMap()"><i class="fas fa-map-marker-alt"></i>
-                            <span class="tooltip-box">Mapa</span>
                         </button>
                 </div>
     </div>
   </div>
+  <script>
+          $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+  </script>

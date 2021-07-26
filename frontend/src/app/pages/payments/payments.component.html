@@ -4,11 +4,6 @@
             <h2 class="card-title" *ngIf="!refreshMode"><strong>Listado de pagos</strong></h2>
             <h2 class="card-title" *ngIf="refreshMode"><strong></strong></h2>
         </div>
-        <div class="col-md-6">
-            <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 10;">
-                <i class="fas fa-arrow-alt-circle-left"></i> Atrás
-            </button>
-        </div>
     </div>
 </div>
 <hr>
@@ -22,24 +17,22 @@
                 <th>Monto</th>
                 <th>Centro Deportivo</th>
                 <th>Cancha</th>
-                <th>Estado Turno</th>
+                <th>Fecha Turno</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let item of payments; let i = index">
                 <td>{{((page -1) * 15) + i+1}}</td>
-                <td style="width: 30%;"> <span style="text-overflow: ellipsis;">{{item.preferenceID}}</span></td>
+                <td style="width: 30%;" *ngIf="item.type === 'MERCADO-PAGO'"> <span style="text-overflow: ellipsis;">{{item.preferenceID}}</span></td>
+                <td style="width: 30%;" *ngIf="item.type !== 'MERCADO-PAGO'"> <span class="badge bg-success">Efectivo/Otro</span></td>
                 <td>{{item.date |date:"dd-MM-yyyy":'-3'}} {{item.date |date:'HH:mm':'-3'}}hs.</td>
                 <td>{{item.amountPayment}}</td>
-                <td>{{item.appointment.field.sportCenter.name}}</td>
-                <td>{{item.appointment.field.name}}</td>
-                <td>
-                    <span class="badge badge-primary" *ngIf="item.appointment.state==='Reserved'">Reservado</span>
-                    <span class="badge badge-warning" *ngIf="item.appointment.state==='AboutToStart'">Por comenzar</span>
-                    <span class="badge badge-success" *ngIf="item.appointment.state==='InProgress'">En progreso</span>
-                    <span class="badge badge-secondary" *ngIf="item.appointment.state==='Completed'">Completado</span>
-
-                </td>
+                <td>{{item.appointmentSportCenter}}</td>
+                <td>{{item.appointmentField}}</td>
+                <td>{{item.appointmentDate |date:"dd-MM-yyyy":'-3'}} {{item.appointmentDate |date:'HH:mm':'-3'}}hs.
+                    <br *ngIf="item.appointment === null">
+                    <span *ngIf="item.appointment === null" class="badge bg-danger">Turno Cancelado</span>
+                </td> 
             </tr>
         </tbody>
     </table>
@@ -64,3 +57,4 @@
             </ul>
     </div>
 </div>
+<app-line-loader></app-line-loader>

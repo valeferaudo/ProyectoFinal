@@ -16,6 +16,7 @@ export class AdminPaymentsComponent implements OnInit {
   payments : [] = [];
   totalPages = null;
   page = 1;
+  filterON: boolean = false;
 
   constructor(private paymentService: PaymentService,
               private loaderService: LoaderService,
@@ -28,6 +29,7 @@ export class AdminPaymentsComponent implements OnInit {
     this.getPayments();
   }
   getPayments(){
+    this.filterON = true;
     this.loaderService.openLineLoader();
     this.paymentService.getSportCenterPayments(this.userLogged.sportCenter._id,this.page)
                     .subscribe((resp: any)=>{
@@ -36,10 +38,11 @@ export class AdminPaymentsComponent implements OnInit {
                         this.payments = resp.param.payments;
                         this.page = resp.param.paginator.page;
                         this.totalPages = resp.param.paginator.totalPages;
+                        this.filterON = false;
                       }
                     },(err)=>{
                       this.loaderService.closeLineLoader();
-                      this.errorService.showServerError();
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                       console.log(err)
                     })
   }
@@ -65,7 +68,7 @@ export class AdminPaymentsComponent implements OnInit {
                             }
                           },(err)=>{
                             this.loaderService.closeLineLoader();
-                            this.errorService.showServerError();
+                            this.errorService.showErrors(err.error.code,err.error.msg);
                             console.log(err)
                           })
         }
@@ -93,7 +96,7 @@ export class AdminPaymentsComponent implements OnInit {
                             }
                           },(err)=>{
                             this.loaderService.closeLineLoader();
-                            this.errorService.showServerError();
+                            this.errorService.showErrors(err.error.code,err.error.msg);
                             console.log(err)
                           })
         }

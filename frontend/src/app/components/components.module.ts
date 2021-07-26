@@ -15,10 +15,6 @@ import { UserSettingComponent } from './user-setting/user-setting.component';
 import { CardFieldComponent } from './cards/card-field/card-field.component';
 import { TableAppointmentComponent } from './tables/table-appointment/table-appointment.component';
 import { TableDoAppointmentComponent } from './tables/table-do-appointment/table-do-appointment.component';
-import { ChartBarComponent } from './charts/chart-bar/chart-bar.component'
-import { ChartLineComponent } from './charts/chart-line/chart-line.component'
-import { ChartDoughnutComponent } from './charts/chart-doughnut/chart-doughnut.component'
-import { ChartRadarComponent } from './charts/chart-radar/chart-radar.component';
 import { ForgetPasswordModalComponent } from './modals/forget-password-modal/forget-password-modal.component';
 import { ChangePasswordModalComponent } from './modals/change-password-modal/change-password-modal.component';
 import { FullScreenLoaderComponent } from './loaders/full-screen-loader/full-screen-loader.component';
@@ -45,6 +41,7 @@ import { OnePointMapComponent } from './maps/one-point-map/one-point-map.compone
 import { GpsMapComponent } from './maps/gps-map/gps-map.component';
 import { ApprovePaymentComponent } from './modals/approve-payment/approve-payment.component';
 import { AddPaymentComponent } from './modals/add-payment/add-payment.component';
+import { PaymentRequiredInfoComponent } from './modals/payment-required-info/payment-required-info.component';
 
 
 @NgModule({
@@ -53,10 +50,6 @@ import { AddPaymentComponent } from './modals/add-payment/add-payment.component'
     CardFieldComponent,
     TableAppointmentComponent,
     TableDoAppointmentComponent,
-    ChartBarComponent,
-    ChartLineComponent,
-    ChartDoughnutComponent,
-    ChartRadarComponent,
     ForgetPasswordModalComponent,
     ChangePasswordModalComponent,
     FullScreenLoaderComponent,
@@ -83,6 +76,7 @@ import { AddPaymentComponent } from './modals/add-payment/add-payment.component'
     GpsMapComponent,
     ApprovePaymentComponent,
     AddPaymentComponent,
+    PaymentRequiredInfoComponent,
 
   ],
   imports: [
@@ -103,10 +97,6 @@ import { AddPaymentComponent } from './modals/add-payment/add-payment.component'
     CardFieldComponent,
     TableAppointmentComponent,
     TableDoAppointmentComponent,
-    ChartBarComponent,
-    ChartLineComponent,
-    ChartDoughnutComponent,
-    ChartRadarComponent,
     ForgetPasswordModalComponent,
     ChangePasswordModalComponent,
     FullScreenLoaderComponent,
@@ -132,7 +122,8 @@ import { AddPaymentComponent } from './modals/add-payment/add-payment.component'
     OnePointMapComponent,
     GpsMapComponent,
     ApprovePaymentComponent,
-    AddPaymentComponent
+    AddPaymentComponent,
+    PaymentRequiredInfoComponent
   ]
 })
 export class ComponentsModule { }

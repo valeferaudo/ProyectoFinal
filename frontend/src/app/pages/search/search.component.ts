@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FieldFilter } from 'src/app/interfaces/filters/fieldFilter.interface';
+import { SportCenterFilter } from 'src/app/interfaces/filters/sportCenter.interface';
 import { Field } from 'src/app/models/field.model';
 import { SportCenter } from 'src/app/models/sportCenter.model';
 import { User } from 'src/app/models/user.model';
 import { ErrorsService } from 'src/app/services/errors.service';
+import { FieldService } from 'src/app/services/field.service';
 import { LoaderService } from 'src/app/services/loader.service';
-import { SearchService } from 'src/app/services/search.service';
+import { SportCenterService } from 'src/app/services/sport-center.service';
 
 @Component({
   selector: 'app-search',
@@ -20,11 +23,17 @@ export class SearchComponent implements OnInit {
   sportCenters: SportCenter [] = [];
   userLogged : User;
   //PAGINATOR
-  totalPages = null;
-  page = 1;
+  fieldTotalPages = null;
+  sportCenterTotalPages = null;
+  fieldPage = 1;
+  sportCenterPage = 1;
+  fieldFilters: FieldFilter;
+  sportCenterFilters: SportCenterFilter;
+
   constructor(private loaderService: LoaderService,
-              private searchService: SearchService,
               private router: Router,
+              private fieldService: FieldService,
+              private sportCenterService: SportCenterService,
               private activatedRoute: ActivatedRoute,
               private errorService: ErrorsService,) { }
 
@@ -43,23 +52,8 @@ export class SearchComponent implements OnInit {
     });
   }
   search(){
-    this.filterON = true;
-    this.loaderService.openLineLoader();
-    this.searchService.getServices(this.searchText,this.page)
-                  .subscribe((resp: any) => {
-                    this.loaderService.closeLineLoader();
-                    if(resp.ok){
-                      this.sportCenters = resp.param.sportCenters;
-                      this.fields = resp.param.fields;
-                      this.page = resp.param.paginator.page;
-                      this.totalPages = resp.param.paginator.totalPages;
-                      this.filterON = false;
-                    }
-                  },(err)=>{
-                    console.log(err);
-                    this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada');
-                  })
+    this.getFields();
+    this.getSportCenters();
   }
   removeFavoriteFromArray(item){
     for (let j = 0; j < this.fields.length; j++) {
@@ -71,6 +65,80 @@ export class SearchComponent implements OnInit {
       if(this.sportCenters[i].id === item){
         this.sportCenters.splice(i,1)
       }
+    }
+  }
+  getFields(){
+    this.filterON = true;
+    this.loaderService.openLineLoader();
+    this.fieldService.getFields(this.getFieldFilters(),this.fieldPage)
+              .subscribe((resp: any) => {
+                this.loaderService.closeLineLoader();
+                if(resp.ok){
+                  this.fields = resp.param.fields;
+                  this.fieldPage = resp.param.paginator.page;
+                  this.fieldTotalPages = resp.param.paginator.totalPages;
+                  this.filterON = false;
+                }
+              },(err)=>{
+                console.log(err);
+                this.loaderService.closeLineLoader();
+                this.errorService.showErrors(err.error.code,err.error.msg);
+              })
+  }
+  getSportCenters(){
+    this.filterON = true;
+    this.loaderService.openLineLoader();
+    this.sportCenterService.getSportCenters(this.getSportCenterFilter(),this.sportCenterPage)
+              .subscribe((resp: any) => {
+                this.loaderService.closeLineLoader();
+                if(resp.ok){
+                  this.sportCenters = resp.param.sportCenters;
+                  this.sportCenterPage = resp.param.paginator.page;
+                  this.sportCenterTotalPages = resp.param.paginator.totalPages;
+                  this.filterON = false;
+                }
+              },(err)=>{
+                console.log(err);
+                this.loaderService.closeLineLoader();
+                this.errorService.showErrors(err.error.code,err.error.msg);
+              })
+  }
+  getFieldFilters(){
+    this.fieldFilters = {
+      sportCenterID: '',
+      text: this.searchText,
+      state: '',
+      features: [],
+      sports: [],
+      days: [],
+      sinceHour: 0,
+      untilHour: 23,
+      available: true,
+    }
+    return  this.fieldFilters;
+  }
+  getSportCenterFilter(){
+    this.sportCenterFilters = {
+      text: this.searchText,
+      state: '',
+      services: [],
+      sports: [],
+      days: [],
+      sinceHour: 0,
+      untilHour: 23,
+    }
+    return this.sportCenterFilters;
+  }
+  paginate(page, type : 'field' | 'sportCenter'){
+    switch (type) {
+      case 'field':
+        this.fieldPage = page;
+        this.getFields();
+        break;
+      case 'sportCenter':
+        this.sportCenterPage = page;
+        this.getSportCenters();
+        break;
     }
   }
 }

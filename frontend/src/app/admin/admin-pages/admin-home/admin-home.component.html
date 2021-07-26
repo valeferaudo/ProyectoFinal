@@ -9,10 +9,10 @@
         </div>
         <div class="card-body bg-white p-0 ">
             <h4 class="card-title mt-2">Por comenzar:</h4>
-                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'"></app-carousel-appointment>
+                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'" (getAppointments)="getAboutToStartAppointments()"></app-carousel-appointment>
                 <hr>
             <h4 class="card-title">Reservados:</h4>
-                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'"></app-carousel-appointment>
+                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'" (getAppointments)="getReservedAppointments()"></app-carousel-appointment>
             <hr>
             <button class="btn btn-success btn-block" [routerLink]="['/admin/appointment']"><strong>Nuevo turno</strong></button>
         </div>
@@ -88,7 +88,7 @@
         </div>
         <div class="card-body p-0 mt-1  justify-content-center align-items-center" *ngIf="!todayWeatherON && !perHourWeatherON && !weatherError">
             <div class="loader__spinner">
-                <mat-progress-spinner color="accent" mode="indeterminate"></mat-progress-spinner>
+                <mat-progress-spinner color="primary" mode="indeterminate"></mat-progress-spinner>
             </div>
             <div class="loader__messages">
                 <p>Cargando Datos del clima</p>

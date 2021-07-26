@@ -77,7 +77,7 @@ export class TableUserComponent implements OnInit {
                           }
                         }, (err) => {
                           console.log(err)
-                          this.errorService.showServerError()
+                          this.errorService.showErrors(err.error.code,err.error.msg);
                           this.loaderService.closeLineLoader();
                         })
                   }
@@ -107,7 +107,7 @@ export class TableUserComponent implements OnInit {
                         }, (err) => {
                           console.log(err);
                           this.loaderService.closeLineLoader();
-                          this.errorService.showErrors('nada',99)
+                          this.errorService.showErrors(err.error.code,err.error.msg);
                         });
       }
     })

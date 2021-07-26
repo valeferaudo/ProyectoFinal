@@ -69,7 +69,7 @@ export class AddPaymentComponent implements OnInit {
                             }
                           },(err)=>{
                             this.loaderService.closeLineLoader();
-                            this.errorService.showServerError();
+                            this.errorService.showErrors(err.error.code,err.error.msg);
                             console.log(err)
                           })
         }

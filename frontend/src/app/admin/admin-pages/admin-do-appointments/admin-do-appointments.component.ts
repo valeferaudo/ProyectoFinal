@@ -21,7 +21,7 @@ import { UserService } from 'src/app/services/user.service';
 export class AdminDoAppointmentsComponent implements OnInit {
 
   fieldInParam: boolean = false;
-  field: Field = new Field('','');
+  field: Field = new Field();
   fieldID: string;
   fieldsCombo: Combo[] = [];
   userLogged : User;
@@ -89,7 +89,7 @@ export class AdminDoAppointmentsComponent implements OnInit {
                   }, (err) => {
                     console.log(err)
                     this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada')
+                    this.errorService.showErrors(err.error.code,err.error.msg)
                   });
   }
   getFieldInParam(fieldID){
@@ -105,7 +105,7 @@ export class AdminDoAppointmentsComponent implements OnInit {
                 }, (err) => {
                   console.log(err)
                   this.loaderService.closeLineLoader();
-                  this.errorService.showErrors(99,'nada')
+                  this.errorService.showErrors(err.error.code,err.error.msg)
                 });
   }
   resetFields(){
@@ -119,15 +119,14 @@ export class AdminDoAppointmentsComponent implements OnInit {
     this.dateRangeForm.reset();
     this.sinceDateSelected = new Date();
     this.untilDateSelected = new Date();
-    this.sinceDate = '';
-    this.untilDate = '';
-    this.setFilterObject();
+    this.formatDates();
+    this.availableAppointments = [];
   }
   resetHour(){
     this.searchON = false;
     this.sinceHourSelected = 0;
     this.untilHourSelected = 23;
-    this.setFilterObject();
+    this.filterHour();
   }
   filterDates(){
     if (this.dateRangeForm.invalid){
@@ -179,16 +178,32 @@ export class AdminDoAppointmentsComponent implements OnInit {
                   .subscribe((resp:any) => {
                     this.loaderService.closeLineLoader();
                     if(resp.ok){
-                      this.setInitPaginate(resp)
+                      this.setInitPaginate(resp);
+                      this.scroll();
                     }
                   }, (err) => {
                   console.log(err)
                   this.loaderService.closeLineLoader();
-                  this.errorService.showErrors(99,'nada')
+                  this.errorService.showErrors(err.error.code,err.error.msg)
                 });
   }
   setFieldID(){
-    this.fieldID = this.fieldSelected.id
+    this.fieldID = this.fieldSelected.id;
+    this.getFieldInCombo(this.fieldSelected.id)
+  }
+  getFieldInCombo(fieldID){
+    this.loaderService.openLineLoader();
+    this.fieldService.getField(fieldID)
+            .subscribe((resp: any) => {
+              this.loaderService.closeLineLoader();
+              if(resp.ok){
+                this.field = resp.param.field;
+              }
+            }, (err) => {
+              console.log(err)
+              this.loaderService.closeLineLoader();
+              this.errorService.showErrors(err.error.code,err.error.msg)
+            });
   }
   setInitPaginate(resp){
     this.availableAppointments = resp.param.appointments
@@ -200,5 +215,8 @@ export class AdminDoAppointmentsComponent implements OnInit {
     page  * this.registerPerPage > this.availableAppointments.length ? limit = this.availableAppointments.length : limit = page * this.registerPerPage;
     this.page = page;
     this.showAvailableAppointments = this.availableAppointments.slice((this.page - 1) * this.registerPerPage,limit)
+  }
+  scroll(){
+    document.getElementById("appointments").scrollIntoView();
   }
 }

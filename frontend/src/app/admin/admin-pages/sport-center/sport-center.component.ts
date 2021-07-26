@@ -32,7 +32,7 @@ export class SportCenterComponent implements OnInit {
   hiddenSpecialScheduleCreateModal: boolean = false;
   accessTokenIsVisible: boolean;
   publicKeyIsVisible: boolean;
-
+  hiddenPaymentRequiredModal: boolean = false;
   //Mapa
   zoom: number = 15;
   mapTypeId: string = 'roadmap'
@@ -53,14 +53,17 @@ export class SportCenterComponent implements OnInit {
     this.setSlide();
   }
   getSportCenter(){
+    this.loaderService.openLineLoader();
     this.sportCenterService.getSportCenter(this.userLogged.sportCenter.id)
                 .subscribe((resp:any) => {
+                  this.loaderService.closeLineLoader();
                   if(resp.ok){
                     this.sportCenter=resp.param.sportCenter
                   }
                 }, (err) => {
-                  console.log(err)
-                  this.errorService.showErrors('nada',99)
+                  console.log(err);
+                  this.loaderService.closeLineLoader();
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 });
   }
   createForm(){
@@ -74,7 +77,7 @@ export class SportCenterComponent implements OnInit {
       aditionalElectricityHour: [{value: this.sportCenter.aditionalElectricityHour, disabled: true}],
       mercadoPago: [{value: this.sportCenter.mercadoPago, disabled: true}, [Validators.required]],
       paymentRequired: [{value: this.sportCenter.paymentRequired, disabled: true}, ],
-      minimunAmount: [{value: this.sportCenter.minimunAmount, disabled: true},],
+      minimunAmount: [{value: this.sportCenter.minimunAmount, disabled: true},[Validators.min(0),Validators.max(100)]],
       accessToken: [{value: this.sportCenter.credentials.accessToken, disabled: true}],
       publicKey: [{value: this.sportCenter.credentials.publicKey, disabled: true}]
     });
@@ -138,10 +141,54 @@ export class SportCenterComponent implements OnInit {
   }
   updateSportCenter(){
       if (this.sportCenterForm.invalid){
-        Object.values(this.sportCenterForm.controls).forEach(control => {
-          control.markAsTouched();
-        });
+        this.markAsTouched();
         return;
+      }
+      if(this.slideElectricity === true){
+        if( this.sportCenterForm.controls['aditionalElectricity'].value === null){
+          this.sportCenterForm.controls['aditionalElectricity'].setErrors({'incorrect': true});
+          this.markAsTouched();
+          return;
+        }
+        else{
+          this.sportCenterForm.controls['aditionalElectricity'].setErrors(null);
+        }
+        if(this.sportCenterForm.controls['aditionalElectricityHour'].value === null){
+          this.sportCenterForm.controls['aditionalElectricityHour'].setErrors({'incorrect': true});
+          this.markAsTouched();
+          return;
+        }
+        else{
+          this.sportCenterForm.controls['aditionalElectricityHour'].setErrors(null);
+        }
+      }
+      if(this.slideMercadoPago === true){
+        if( this.sportCenterForm.controls['accessToken'].value === null){
+          this.sportCenterForm.controls['accessToken'].setErrors({'incorrect': true});
+          this.markAsTouched();
+          return;
+        }
+        else{
+          this.sportCenterForm.controls['accessToken'].setErrors(null);
+        }
+        if(this.sportCenterForm.controls['publicKey'].value === null){
+          this.sportCenterForm.controls['publicKey'].setErrors({'incorrect': true});
+          this.markAsTouched();
+          return;
+        }
+        else{
+          this.sportCenterForm.controls['publicKey'].setErrors(null);
+        }
+      }
+      if(this.slidePaymentRequired === true){
+        if( this.sportCenterForm.controls['minimunAmount'].value === null){
+          this.sportCenterForm.controls['minimunAmount'].setErrors({'incorrect': true});
+          this.markAsTouched();
+          return;
+        }
+        else{
+          this.sportCenterForm.controls['minimunAmount'].setErrors(null);
+        }
       }
       this.sweetAlertService.showSwalConfirmation({
         title: '¿Editar centro deportivo?',
@@ -175,10 +222,15 @@ export class SportCenterComponent implements OnInit {
                           }, (err) => {
                             console.log(err)
                             this.loaderService.closeLineLoader();
-                            this.errorService.showErrors('nada',99)
+                            this.errorService.showErrors(err.error.code,err.error.msg);
                           });
         }
       })
+  }
+  markAsTouched(){
+    Object.values(this.sportCenterForm.controls).forEach(control=>{
+      control.markAsTouched();
+    })
   }
   electricitySlideChange(event: MatSlideToggle){
       this.slideElectricity = event.checked;
@@ -229,9 +281,8 @@ export class SportCenterComponent implements OnInit {
                       }
                     },(err)=>{
                       console.log(err);
-                      //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ //ponerlo en el servicio de upñload
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
   }
   setImages(images){
@@ -259,7 +310,7 @@ export class SportCenterComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
       }
     })
@@ -297,5 +348,11 @@ export class SportCenterComponent implements OnInit {
   }
   showPublicKey(){
     this.publicKeyIsVisible = !this.publicKeyIsVisible;
+  }
+  openPaymentRequiredModal(){
+    this.hiddenPaymentRequiredModal = true;
+  }
+  closePaymentRequiredModal(){
+    this.hiddenPaymentRequiredModal = false;
   }
 }

@@ -1,4 +1,5 @@
 const Feature = require ('../models/feature.model');
+const Field = require ('../models/field.model');
 const { request, response} = require ('express');
 const featureCtrl = {};
 
@@ -25,11 +26,11 @@ featureCtrl.getFeatures = async (req = request,res = response)=>{
         };
         if(searchText !== ''){
             query['$and'].push({ name: new RegExp(searchText, 'i')});
-            selectedFilters.push('Texto: ',searchText);
+            selectedFilters.push(`"${searchText}"`)
         }
         if(state !== ''){
             query['$and'].push({state:booleanState});
-            selectedFilters.push('Estado: ',state);
+            selectedFilters.push(state);
         }
         if(query['$and'].length > 0){
             [features,total] = await Promise.all([Feature.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
@@ -99,7 +100,6 @@ featureCtrl.createFeature = async (req = request, res = response) =>{
         errorResponse(res);
     }
 }
-
 featureCtrl.updateFeature = async (req = request, res = response) =>{
     const featureID = req.params.id
     const name = req.body.name
@@ -154,6 +154,8 @@ featureCtrl.activateBlockFeature = async (req= request, res= response) => {
         }
         await Feature.findByIdAndUpdate(featureID,featureDB,{new:true});
         if (action === 'block'){
+            await Field.updateMany({features:{$in:[featureDB.id]}}, {$pull:{features:{$in:[featureDB.id]}}})
+            console.log(x)
             res.json({
                 ok:true,
                 msg:'Blocked Feature'

@@ -5,7 +5,7 @@
         </div>
     </div>
 </div>
-<p >Buscando por: <span>{{searchText}}</span></p>
+<p>Buscando por: <span class="badge bg-secondary m-1"> "{{searchText}}" </span></p>
 <hr>
 
 <h6 class="card-title"><strong>Canchas </strong></h6>
@@ -14,17 +14,51 @@
         <app-card-field [field]="field" (removeFavorite)="removeFavoriteFromArray($event)"></app-card-field>
     </div>
 </div>
-<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0"> 
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0 && !filterON"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Canchas</strong>.
+</div>
+<div class="row" *ngIf="fields.length!==0 && fieldTotalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="fieldPage !== 1" [disabled]="fieldPage === 1" (click)="paginate(1,'field')"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="fieldPage !== 1" (click)="paginate(fieldPage - 1,'field')"><a class="page-link pointer">{{fieldPage - 1 }}</a></li>
+                <li class="page-item" [class.active]="fieldPage === fieldPage">
+                <a class="page-link">{{fieldPage}}</a>
+                </li>
+                <li class="page-item" *ngIf="fieldTotalPages >= 2 && fieldPage !== fieldTotalPages" (click)="paginate(fieldPage + 1,'field')"><a class="page-link pointer">{{fieldPage + 1}}</a></li>
+                <li class="page-item" *ngIf="fieldPage !== fieldTotalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="fieldPage === fieldTotalPages" (click)="paginate(fieldTotalPages,'field')"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
 </div>
 <hr>
 <h6 class="card-title"><strong>Centros Deportivos </strong></h6>
 <div class="card-group" *ngIf="sportCenters.length > 0">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
         <app-card-sport-center [sportCenter]="sportCenter" (removeFavorite)="removeFavoriteFromArray($event)"></app-card-sport-center>
-
     </div>
 </div> 
-<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0"> 
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0 && !filterON"> 
     <i class="fas fa-times"></i> No se encontraron <strong>Centros Deportivos</strong>.
 </div>
+<div class="row" *ngIf="sportCenters.length!==0 && sportCenterTotalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="sportCenterPage !== 1" [disabled]="sportCenterPage === 1" (click)="paginate(1,'sportCenter')"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="sportCenterPage !== 1" (click)="paginate(sportCenterPage - 1,'sportCenter')"><a class="page-link pointer">{{sportCenterPage - 1 }}</a></li>
+                <li class="page-item" [class.active]="sportCenterPage === sportCenterPage">
+                <a class="page-link">{{sportCenterPage}}</a>
+                </li>
+                <li class="page-item" *ngIf="sportCenterTotalPages >= 2 && sportCenterPage !== sportCenterTotalPages" (click)="paginate(sportCenterPage + 1,'sportCenter')"><a class="page-link pointer">{{sportCenterPage + 1}}</a></li>
+                <li class="page-item" *ngIf="sportCenterPage !== sportCenterTotalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="sportCenterPage === sportCenterTotalPages" (click)="paginate(sportCenterTotalPages, 'sportCenter')"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
+<app-line-loader></app-line-loader>

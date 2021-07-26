@@ -11,6 +11,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class NavbarComponent implements OnInit{
   userLogged : User;
+  searchText = '';
+  
   constructor(private router: Router,
     private userService: UserService,
     private activatedRoute: ActivatedRoute,
@@ -19,10 +21,11 @@ export class NavbarComponent implements OnInit{
     
   ngOnInit(){
   this.userLogged = this.userService.user;
+  this.cleanInput();
   } 
-  searchField(text: string){
-    if(text !== ''){
-      this.router.navigate(['/user/search'], {queryParams: {search: text},
+  searchField(){
+    if(this.searchText !== ''){
+      this.router.navigate(['/user/search'], {queryParams: {search: this.searchText},
                               replaceUrl: true,
                               queryParamsHandling: 'merge'});
     }
@@ -40,12 +43,17 @@ export class NavbarComponent implements OnInit{
           text:'',
         icon: 'warning',
         })
-        this.userService.logOut();
-        this.router.navigateByUrl('/login');
+        setTimeout(() => {
+          this.userService.logOut();
+        }, 1000);
       }
     });
   }
-goProfile(){
-
-}
+  cleanInput(){
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.search === undefined){
+        this.searchText= '';
+      }
+    })
+  }
 }

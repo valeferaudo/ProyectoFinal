@@ -16,6 +16,7 @@ const { validateSuperAdminRole } = require('../middlewares/roleValidators/valida
 const { validateUserRole } = require('../middlewares/roleValidators/validateUserRole');
 
 
+router.put('/forgetPassword',userCtrl.forgetPassword);
 router.get('/',[validateJWT,
                 validateUserID,
                 validateSuperRole],userCtrl.getUsers);

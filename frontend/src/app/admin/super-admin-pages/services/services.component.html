@@ -60,7 +60,7 @@
         </article>
     </div>
 </div>
-<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters">{{item}}</span></p>
 <div class="table-responsive animated fadeIn" *ngIf="services.length!==0">
     <table id="myTable" class="table table-hover color-table inverse-table">
         <thead>
@@ -77,17 +77,14 @@
                 <td>{{service.name}}</td>
                 <td>{{service.description}}</td>
                 <td class="text-center">
-                    <button (click)="activateBlockService(service, 'active')" *ngIf="service.state === false" class="btn btn-success badge m-1 content-tooltip" >
+                    <button (click)="activateBlockService(service, 'active')" *ngIf="service.state === false" class="btn btn-success badge m-1" data-toggle="tooltip" data-placement="top" title="Activar">
                         <i class="fas fa-check"></i>
-                        <span class="tooltip-box">Activar</span>
                     </button>
-                    <button (click)="activateBlockService(service, 'block')" *ngIf="service.state === true" class="btn btn-danger badge m-1 content-tooltip" >
+                    <button (click)="activateBlockService(service, 'block')" *ngIf="service.state === true" class="btn btn-danger badge m-1" data-toggle="tooltip" data-placement="top" title="Bloquear">
                         <i class="fas fa-times"></i>
-                        <span class="tooltip-box">Bloquear</span>
                     </button>
-                    <button (click)="updateServiceModal(service)"  class="btn btn-info badge m-1 content-tooltip text-center">
+                    <button (click)="updateServiceModal(service)"  class="btn btn-info badge m-1 text-center" data-toggle="tooltip" data-placement="top" title="Editar">
                         <i class="fas fa-pencil-alt"></i>
-                        <span class="tooltip-box">Editar</span>
                     </button>
                 </td>
             </tr>

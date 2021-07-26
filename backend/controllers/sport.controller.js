@@ -1,5 +1,5 @@
 const Sport = require ('../models/sport.model');
-
+const Field = require ('../models/field.model');
 const { request, response} = require ('express');
 const sportCtrl = {};
 
@@ -24,11 +24,11 @@ sportCtrl.getSports = async (req = request , res = response) => {
         };
         if(searchText !== ''){
             query['$and'].push({ name: new RegExp(searchText, 'i')});
-            selectedFilters.push('Texto: ',searchText);
+            selectedFilters.push(`"${searchText}"`);
         }
         if(state !== ''){
             booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null})
-            selectedFilters.push('Estado: ',state);
+            selectedFilters.push(state);
         }
         if(query['$and'].length > 0){
             [sports,total] = await Promise.all([Sport.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
@@ -124,7 +124,6 @@ sportCtrl.activateBlockSport = async (req = request, res = response) =>{
             }
             else{
                 sportDB.deletedDate = new Date();
-                //ACA FALTA DAR DE BAJA TODAS LA CANCHAS DE ESTE DEPORTE
             }
         }
         else if (action === 'active'){
@@ -137,6 +136,8 @@ sportCtrl.activateBlockSport = async (req = request, res = response) =>{
         }
         await Sport.findByIdAndUpdate(sportID,sportDB,{new:true});
         if (action === 'block'){
+            await Field.updateMany({}, {$pull:{sports:{sport:sportDB.id}}})
+            await Field.updateMany({sports:{$exists:true,$eq:[]}},{state:false})
             res.json({
                 ok:true,
                 msg:'Blocked Sport'

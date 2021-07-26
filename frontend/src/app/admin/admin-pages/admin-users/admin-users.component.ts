@@ -39,6 +39,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   getUsers(){
+    this.filterON = true;
     this.loaderService.openLineLoader();
     this.userService.getUsers(this.filters,this.page)
                     .subscribe((resp:any)=>{
@@ -48,11 +49,12 @@ export class AdminUsersComponent implements OnInit {
                         this.selectedFilters = resp.param.selectedFilters;
                         this.page = resp.param.paginator.page;
                         this.totalPages = resp.param.paginator.totalPages;
+                        this.filterON = false;
                       }
                     }, (err) => {
                       console.log(err)
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada')
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
   }
   searchUsers(text: string){

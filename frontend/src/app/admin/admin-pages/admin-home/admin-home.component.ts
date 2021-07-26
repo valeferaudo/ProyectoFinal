@@ -59,8 +59,8 @@ export class AdminHomeComponent implements OnInit {
     this.setConfig();
     this.getUserLogged();
     this.getAppointments();
-    // this.getCurrentWeather();
-    // this.getPerHourWeather();
+    this.getCurrentWeather();
+    this.getPerHourWeather();
   }
   getUserLogged(){
     this.userLogged = this.userService.user;
@@ -91,7 +91,7 @@ export class AdminHomeComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -106,7 +106,7 @@ export class AdminHomeComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg);
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -121,7 +121,7 @@ export class AdminHomeComponent implements OnInit {
               this.todayWeatherON = true;
             },(err) =>{
               console.log(err)
-              // this.errorService.showServerError()
+              this.errorService.showErrors(96,'');
               this.weatherError = true;
             });
   }
@@ -132,7 +132,7 @@ export class AdminHomeComponent implements OnInit {
                 this.perHourWeatherON = true;
               },(err) =>{
                 console.log(err)
-                // this.errorService.showServerError()
+                this.errorService.showErrors(96,'');
                 this.weatherError = true;
               });
   }

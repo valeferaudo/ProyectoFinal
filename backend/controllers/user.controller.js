@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs');
 const { sendNewUserEmail } = require ('../helpers/emails/newUserEmail');
 const { sendAcceptUser } = require ('../helpers/emails/acceptUserEmail');
 const { sendBlockUser } = require ('../helpers/emails/blockUserEmail');
-
+const { sendNewPasswordEmail } = require ('../helpers/emails/newPasswordEmail');
 
 
 userCtrl.getUser = async (req = request,res = response)=>{
@@ -40,7 +40,7 @@ userCtrl.getUsers = async (req = request,res = response)=>{
     try {
         let users;
         let booleanState;
-        let selectedFilters;
+        let selectedFilters = [];
         const userDB = await User.findById(userLoggedID)
         if(state === 'Activo'){
             booleanState = true;
@@ -80,17 +80,11 @@ userCtrl.getUsers = async (req = request,res = response)=>{
         else if (userType === 'CENTER-SUPER-ADMIN'){
             query['$and'].push({sportCenter: userDB.sportCenter})
         }
-        if(searchText === '' && state === '' ){
-            selectedFilters = []
+        if(searchText !== ''){
+            selectedFilters.push(`"${searchText}"`)
         }
-        else if(searchText !== '' && state === ''){
-            selectedFilters = ['Texto: ', searchText];
-        }
-        else if (searchText === '' && state !== ''){
-            selectedFilters = ['Estado: ',state];
-        }
-        else if (searchText !== '' && state !== ''){
-            selectedFilters = ['Texto: ', searchText,' - ','Estado: ',state];
+        if (state !== ''){
+            selectedFilters.push(state);
         }
         if(query['$and'].length > 0){
             [users,total] = await Promise.all([User.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
@@ -256,7 +250,19 @@ userCtrl.activateBlockUser = async (req = request, res = response) =>{
         await User.findByIdAndUpdate(uid,userDB,{new:true});
         if(userDB.role === 'CENTER-SUPER-ADMIN'){
             if (action === 'block'){
-                sendBlockUser(userDB)
+                sendBlockUser(userDB);
+                users = await User.find({$and:[{sportCenter:userDB.sportCenter},{state:true},{deletedDate: null}]})
+                if(users.length === 0){
+                    await SportCenter.findByIdAndUpdate(userDB.sportCenter,{deletedDate: new Date()})
+                    await Field.updateMany({sportCenter: userDB.sportCenter},{deletedDate: new Date()})
+                    fieldIDs = await Field.find({sportCenter: userDB.sportCenter},'id')
+                    let ids=[];
+                    fieldIDs.forEach(element => {
+                        ids.push((element._id).toString())
+                    });
+                    ids.push((userDB.sportCenter).toString());
+                    await User.updateMany({},{$pull:{favorites:{$in:ids}}})
+                }
                 res.json({
                     ok:true,
                     msg:'Blocked CENTER-SUPER-ADMIN User'
@@ -264,6 +270,10 @@ userCtrl.activateBlockUser = async (req = request, res = response) =>{
             }
             else if(action === 'active'){
                 sendAcceptUser(userDB)
+                users = await User.find({$and:[{sportCenter:userDB.sportCenter},{state:true},{deletedDate: null}]})
+                if(users.length === 1){
+                    await SportCenter.findByIdAndUpdate(userDB.sportCenter,{deletedDate: null})
+                }
                 res.json({
                     ok:true,
                     msg:'Activated CENTER-SUPER-ADMIN User'
@@ -363,8 +373,8 @@ userCtrl.getFavorites = async (req = request, res = response) => {
             return userBlockedResponse(res);
         }
         if(type === 'field'){
-            [favorites,total] = await Promise.all([Field.find({ _id : { $in : userDB.favorites } }).populate('sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                Field.find({ _id : { $in : userDB.favorites } }).populate('sports.sport').countDocuments()
+            [favorites,total] = await Promise.all([Field.find({ _id : { $in : userDB.favorites } }).populate('sportCenter').populate('sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Field.find({ _id : { $in : userDB.favorites } }).populate('sportCenter').populate('sports.sport').countDocuments()
                                                ])
         }else if(type === 'sportCenter'){
             [favorites,total] = await Promise.all([SportCenter.find({ _id : { $in : userDB.favorites } }).skip(registerPerPage*(page -1)).limit(registerPerPage),
@@ -415,6 +425,33 @@ userCtrl.changePassword = async (req = request, res = response) =>{
         errorResponse(res);
     }
 }
+userCtrl.forgetPassword = async (req = request, res = response) =>{
+    const email = req.body.email;
+    try {
+        const userDB = await User.find({email: email})
+        if (!userDB) {
+            return unknownEmailResponse(res);
+        }
+        const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let password = '';
+        for ( let i = 1; i <= 8 ; i++ ) {
+            password += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        const salt = bcrypt.genSaltSync();
+        const newPassword = bcrypt.hashSync(password,salt);
+        console.log(userDB)
+        await User.findByIdAndUpdate(userDB[0]._id,{ $set:{password:newPassword}},{new:true})
+        sendNewPasswordEmail(email,password)
+        res.json({
+            ok:true,
+            msg: 'Updated User Password',
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
 function errorResponse(res){
     res.status(500).json({
         ok:false,
@@ -427,6 +464,13 @@ function unknownIDResponse(res){
         ok:false,
         code: 3,
         msg:'Unknown ID. Please insert a correct ID'
+    })
+}
+function unknownEmailResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 23,
+        msg:'Unknown Email. Please insert a correct Email'
     })
 }
 function existsEmailResponse(res){
@@ -471,7 +515,6 @@ function wrongNewPasswordResponse(res){
         msg:'New Password doesen´t match'
     })
 }
-
 // no se usan creo
 userCtrl.deleteUser = async (req = request, res = response) =>{
     const uid = req.params.id;

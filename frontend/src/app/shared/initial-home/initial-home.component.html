@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="navbar-brand">
-      <img src="../../../assets/img/icons/favicon.png" width="30" height="30" class="d-inline-block align-middle" alt="" loading="lazy">
+      <img src="../../../assets/img/icons/favicon.png" width="30" height="30" class="d-inline-block align-middle" alt="" loading="lazy" (click)="goScroll('initial')">
     </div>
     <!-- BUTTON TOGGLE aparece en responsive -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,148 +29,132 @@
         </ul>
         <ul class="navbar-nav mr-auto mr-sm-2">
         <li class="nav-item pointer" routerLinkActive="active" >
-          <a class="nav-link font-weight-bold" href="#sports">Deportes</a>
+          <a class="nav-link font-weight-bold" (click)="goScroll('sports')">Deportes</a>
         </li>
         <li class="nav-item pointer" routerLinkActive="active" >
-          <a class="nav-link font-weight-bold" href="#fields">Canchas</a>
+          <a class="nav-link font-weight-bold" (click)="goScroll('fields')">Canchas</a>
         </li>
         <li class="nav-item pointer" routerLinkActive="active" >
-          <a class="nav-link font-weight-bold" href="#services">Servicios</a>
+          <a class="nav-link font-weight-bold" (click)="goScroll('services')">Servicios</a>
         </li>
         <li class="nav-item pointer" routerLinkActive="active" >
-          <a class="nav-link font-weight-bold" href="#about">Contacto</a>
+          <a class="nav-link font-weight-bold" (click)="goScroll('about')">Contacto</a>
         </li>
         </ul>
       </div>
 </nav>
-    <ngb-carousel>
-      <ng-template ngbSlide>
-        <div class="picsum-img-wrapper">
-          <img src="../../../assets/img/carousel/futbol.jpg" class="img-carousel" alt="Random first slide">
-        </div>
-        <div class="carousel-caption">
-          <h3 class="font-bold text-white bg-blur">SporTurno</h3>
-          <p class="bg-blur">La mejor plataforma para reservar tu cancha preferida.</p>
-        </div>
-      </ng-template>
-      <ng-template ngbSlide>
-        <div class="picsum-img-wrapper">
-          <img src="../../../assets/img/carousel/basket.jpg" class="img-carousel" alt="Random second slide">
-        </div>
-        <div class="carousel-caption">
-          <h3 class="font-bold text-white bg-blur">Deportes</h3>
-          <p class="bg-blur">Encontrá una gran variedad de deportes.</p>
-        </div>
-      </ng-template>
-      <ng-template ngbSlide>
-        <div class="picsum-img-wrapper">
-          <img src="../../../assets/img/carousel/tenis.jpg" class="img-carousel" alt="Random third slide">
-        </div>
-        <div class="carousel-caption">
-          <h3 class="font-bold text-white bg-blur">Canchas</h3>
-          <p class="bg-blur">Más de 75 canchas distintas.</p>
-        </div>
-      </ng-template>
-      <ng-template ngbSlide>
-        <div class="picsum-img-wrapper">
-          <img src="../../../assets/img/carousel/asador.jpg" class="img-carousel" alt="Random third slide">
-        </div>
-        <div class="carousel-caption">
-          <h3 class="font-bold text-white bg-blur">Servicios</h3>
-          <p class="bg-blur">Conozca los distintos servicios que ofrecen los centros deportivos.</p>
-        </div>
-      </ng-template>
-    </ngb-carousel>
-
-    <div style="background-color: gainsboro; height: 100%" id="sports">
-      <div class="container animated fadeIn" style="top: 20%; position: relative;">
-        <h1 class="font-bold">Deportes</h1>
-        <h3 class="ml-3">Contamos con los deportes más populares.</h3>
-        <div class="row mt-5 ml-5">
-          <div class="col ml-3">
-            <i class="fas fa-futbol fa-2x"></i> <span style="font-size: x-large;"> Fútbol</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-football-ball fa-2x"></i> <span style="font-size: x-large;"> Rugby</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-baseball-ball fa-2x"></i> <span style="font-size: x-large;"> Tenis</span>
-          </div>
-        </div>
-        <div class="row mt-5 ml-5">
-          <div class="col ml-3">
-            <i class="fas fa-basketball-ball fa-2x"></i> <span style="font-size: x-large;"> Básquet</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-volleyball-ball fa-2x"></i> <span style="font-size: x-large;"> Voley</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-table-tennis fa-2x"></i> <span style="font-size: x-large;"> Paddle</span>
-          </div>
-        </div>
+<div style="background-image: url(../../../assets/img/carousel/tenis.jpg); height: 100%" class="bg" id="initial">
+  <div class="container animated fadeIn bg-blur"  style="top: 20%; position: relative;">
+    <h1 class="font-bold text-dark">SPORTURNO</h1>
+    <h3 class="text-dark font-bold">Una nueva forma de reservar</h3>
+        <h5 class="mt-2">
+          <span class="text-dark font-bold" style="color: black;">
+            SporTurno es una solución innovadora y simple para que en pocos pasos puedas reservar turnos de canchas de distintos deportes y centros deportivos buscando por tus preferencias.
+          </span>
+        </h5>
+        <br>
+        <h5 class="mt-2">
+          <span class="text-dark font-bold" style="color: black;">
+            Con SporTurno asegurá tus turnos sin perder tiempo en mensajes ni en llamadas. 
+          </span>
+        </h5>
+        <br>
+        <h5 class="mt-2 mb-2">
+          <span class="text-dark font-bold" style="color: black;">
+            Es fácil, rápido y gratis!.
+          </span>
+        </h5>
+  </div>
+</div>
+<div style="background-image: url(../../../assets/img/carousel/futbol.jpg); height: 100%" class="bg" id="sports">
+  <div class="container animated fadeIn bg-blur"  style="top: 20%; position: relative;">
+    <h1 class="font-bold text-dark">Deportes</h1>
+    <h4 class="text-dark">Contamos con los deportes más populares.</h4>
+    <div class="row mt-5 text-center">
+      <div class="col ml-3">
+        <i class="fas fa-futbol fa-2x"></i> <span style="font-size: x-large;"><br>Fútbol</span>
+      </div>
+      <div class="col ml-3">
+        <i class="fas fa-football-ball fa-2x"></i> <span style="font-size: x-large;"><br>Rugby</span>
+      </div>
+      <div class="col ml-3">
+        <i class="fas fa-baseball-ball fa-2x"></i> <span style="font-size: x-large;"><br>Tenis</span>
       </div>
     </div>
-    <div style="background-color: silver; height: 100%" id="fields">
-      <div class="container" style="top: 20%; position: relative;">
-        <h1 class="font-bold">Canchas</h1>
-        <h3 class="ml-3">Conozca las distintas características disponibles de las distintas canchas.</h3>
-        <div class="row mt-5 ml-5">
-          <div class="col ml-3">
-            <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Césped sintético</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Piso madera</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Techada</span>
-          </div>
-        </div>
-        <div class="row mt-5 ml-5">
-          <div class="col ml-3">
-            <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Aire libre</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Iluminación</span>
-          </div>
-          <div class="col ml-3">
-            <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Acrílico</span>
-          </div>
-        </div>
+    <div class="row mt-5 text-center">
+      <div class="col ml-3">
+        <i class="fas fa-basketball-ball fa-2x"></i> <span style="font-size: x-large;"><br>Básquet</span>
+      </div>
+      <div class="col ml-3">
+        <i class="fas fa-volleyball-ball fa-2x"></i> <span style="font-size: x-large;"><br>Voley</span>
+      </div>
+      <div class="col ml-3">
+        <i class="fas fa-table-tennis fa-2x"></i> <span style="font-size: x-large;"><br>Paddle</span>
       </div>
     </div>
-<div style="background-color: gainsboro; height: 100%" id="services">
-  <div class="container" style="top: 20%; position: relative;">
-    <h1 class="font-bold">Servicios</h1>
-    <h3 class="ml-3">Conozca los distintos servicios que los centros deportivos tiene para usted</h3>
-    <div class="row mt-5 ml-5">
-      <div class="col ml-3">
-        <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Parrilleros</span>
+  </div>
+</div>
+<div style="background-image: url(../../../assets/img/carousel/basket.jpg); height: 100%" class="bg" id="fields">
+  <div class="container animated fadeIn bg-blur" style="top: 20%; position: relative;">
+    <h1 class="font-bold text-dark">Canchas</h1>
+    <h3 class="text-dark">Conozca las distintas características disponibles de las distintas canchas.</h3>
+    <div class="row mt-5 text-center">
+      <div class="col">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Césped sintético</span>
       </div>
-      <div class="col ml-3">
-        <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Estacionamientos</span>
+      <div class="col">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Piso madera</span>
       </div>
-      <div class="col ml-3">
-        <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Vestuarios</span>
+      <div class="col">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Techada</span>
       </div>
     </div>
-    <div class="row mt-5 ml-5">
-      <div class="col ml-3">
-        <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Bar</span>
+    <div class="row mt-5 text-center">
+      <div class="col">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Aire libre</span>
       </div>
-      <div class="col ml-3">
-        <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Cumpleaños</span>
+      <div class="col">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Iluminación</span>
       </div>
-      <div class="col ml-3">
-        <i class="fas fa-circle"></i> <span style="font-size: x-large;"> Academia</span>
+      <div class="col">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Acrílico</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="background-image:url(../../../assets/img/carousel/asador.jpg); height: 100%" class="bg" id="services">
+  <div class="container animated fadeIn bg-blur" style="top: 20%; position: relative;">
+    <h1 class="font-bold text-dark">Servicios</h1>
+    <h3 class="text-dark">Conozca los distintos servicios que los centros deportivos tiene para usted</h3>
+    <div class="row mt-5 text-center">
+      <div class="col-sm-12 col-md-4 col-xl-4">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Parrilleros</span>
+      </div>
+      <div class="col-sm-12 col-md-4 col-xl-4">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Estacionamientos</span>
+      </div>
+      <div class="col-sm-12 col-md-4 col-xl-4">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Vestuarios</span>
+      </div>
+    </div>
+    <div class="row mt-5 text-center">
+      <div class="col-sm-12 col-md-4 col-xl-4">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Bar</span>
+      </div>
+      <div class="col-sm-12 col-md-4 col-xl-4">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Cumpleaños</span>
+      </div>
+      <div class="col-sm-12 col-md-4 col-xl-4">
+        <i class="fas fa-circle pointout"></i> <span style="font-size: x-large;"> Academia</span>
       </div>
     </div>
   </div>
 </div>
 <div style="height: 100%; background-color: silver;" id="about">
-  <div class="container" style="top: 20%; position: relative;">
+  <div class="container animated fadeIn" style="top: 20%; position: relative;">
     <h1 class="font-bold">Contacto</h1>
-    <h3 class="ml-3">Estamos para lo que necesites</h3>
-    <div class="row text-center mt-5">
+    <h3 class="">Estamos para lo que necesites</h3>
+    <div class="row text-center mt-5 contactout">
       <div class="col">
         <i class="fas fa-phone fa-4x"></i>
         <h1 class="mt-4">Teléfono</h1>
@@ -195,6 +179,29 @@
         <h4><i class="fab fa-twitter"></i> @sporturno</h4>
         <br>
         <h4><i class="fab fa-facebook"></i> @sporturno</h4>
+      </div>
+    </div>
+    <div class="row text-center mt-5 contactin">
+      <div class="col">
+        <i class="fas fa-phone"></i>
+        <h4 class="mt-1">Teléfono</h4>
+        <hr class="m-1">
+        <h6>(03492) 15659902</h6>
+        <h6>(03492) 470254</h6>
+      </div>
+      <div class="col">
+        <i class="fas fa-envelope"></i>
+        <h4 class="mt-1">Mail</h4>
+        <hr class="m-1">
+        <h6>sporturno@gmail.com</h6>
+      </div>
+      <div class="col">
+        <i class="fas fa-users"></i>
+        <h4 class="mt-1">Redes</h4>
+        <hr class="m-1">
+        <h6><i class="fab fa-twitter"></i> @sporturno</h6>
+        <br>
+        <h6><i class="fab fa-facebook"></i> @sporturno</h6>
       </div>
     </div>
   </div>

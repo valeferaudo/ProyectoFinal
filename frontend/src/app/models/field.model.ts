@@ -4,14 +4,15 @@ import { SportCenter } from "./sportCenter.model";
 
 export class Field{
     constructor(
-           public name: string,
-           public description: string,
+           public name?: string,
+           public description?: string,
            public sizes?: string,
            public duration?: number,
            public price?: number,
            public features?: Feature [],
            public images?: any[],
            public id?: string,
+           public _id?: string,
            public sportCenter?: SportCenter,
            public cantMaxPlayers?: number,
            public openingHour?: Date,

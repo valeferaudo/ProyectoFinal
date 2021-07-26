@@ -70,15 +70,13 @@ export class ChangePasswordModalComponent implements OnInit {
                                  }
                                  else if (resp.ok === false){
                                    this.loaderService.closeLineLoader();
-                                   console.log(resp)
-                                   this.errorService.showErrors(resp.responseCode,resp.descriptionCode);
                                    this.passwordForm.reset();
                                    this.passwordForm.controls['oldPassword'].markAsTouched()
                                  }
                              }, (err) => {
                                console.log(err)
-                              this.errorService.showServerError()
-                              this.loaderService.closeLineLoader();
+                               this.errorService.showErrors(err.error.code,err.error.msg);
+                               this.loaderService.closeLineLoader();
                             })
       }
     })

@@ -48,7 +48,7 @@ export class ForgetPasswordModalComponent implements OnInit {
     this.loaderService.openLineLoader();
     this.userService.recoverPassword(this.emailForm.value)
                     .subscribe((resp: any) => {
-                       if (resp.success === true){
+                       if (resp.ok === true){
                          this.loaderService.closeLineLoader();
                          this.sweetAlertService.showSwalResponse({
                            title: 'Mail enviado',
@@ -57,21 +57,9 @@ export class ForgetPasswordModalComponent implements OnInit {
                          })
                         this.closeModal();
                        }
-                       else if (resp.success === false){
-                         this.loaderService.closeLineLoader();
-                        //  if(resp.responseCode === 6){
-                          this.sweetAlertService.showSwalError({
-                            title:'Email no registrado',
-                            text:'Por favor, ingrese un email registrado',
-                            icon:'error'
-                          })
-                        //  }
-                        //  else{
-                          this.errorService.showErrors(resp.responseCode,resp.descriptionCode)
-                        //  }
-                       }
                     }, (err) => {
-                      this.errorService.showServerError()
+                      console.log(err)
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                       this.loaderService.closeLineLoader();
                     })
   }

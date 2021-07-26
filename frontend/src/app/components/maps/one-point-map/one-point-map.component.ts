@@ -12,6 +12,7 @@ export class OnePointMapComponent implements OnInit {
   @Input() sportCenter: SportCenter;
 
   @Output() closeModal = new EventEmitter<string>();
+  @Output() goGPSModal = new EventEmitter<any>();
 
   lat: number;
   lng: number;
@@ -30,5 +31,8 @@ export class OnePointMapComponent implements OnInit {
     this.lat = this.sportCenter.coords.latitude;
     this.lng = this.sportCenter.coords.longitude;
     this.loadON = true;
+  }
+  goGps(){
+    this.goGPSModal.emit(this.sportCenter)
   }
 }

@@ -28,8 +28,7 @@ export class LoginComponent implements OnInit {
   }
   createForm(){
     this.loginForm = this.fb.group({
-      // email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
-      email: [ 'sol.salin@gmail.com', [Validators.required, Validators.email]],
+      email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       remember: [true, , ]
     });
@@ -59,7 +58,7 @@ export class LoginComponent implements OnInit {
                       }, (err) => {
                         console.log(err);
                         this.loaderService.closeLineLoader();
-                        this.errorService.showErrors('MEJORAR ERRORES',99)
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       });
   }
   getFieldValid(field : string){

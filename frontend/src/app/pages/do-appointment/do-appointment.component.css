@@ -42,3 +42,8 @@
 background-color: #343A40;
 border-color: #343A40;
 color: white; }
+.long-text{
+    text-overflow: ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
+  }

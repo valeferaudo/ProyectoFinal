@@ -14,12 +14,14 @@ export class SportCenterInfoModalComponent implements OnInit {
 
   @Input() hiddenModal: boolean;
   @Input() sportCenterSelectedID: string;
+  @Input() type : 'USER' | 'SUPER-ADMIN';
   @Output() closeModal = new EventEmitter<string>();
 
   sportCenterForm: FormGroup;
   sportCenter: SportCenter;
   slideElectricity: boolean = false;
   slideMercadoPago:boolean = false;
+  slidePaymentRequired: boolean = false;
   deletedDate = null;
   constructor(private fb: FormBuilder,
               private sportCenterService: SportCenterService,
@@ -41,7 +43,8 @@ export class SportCenterInfoModalComponent implements OnInit {
       phone:[{value:'',disabled:true}],
       aditionalElectricityHour:[{value:'',disabled:true}],
       aditionalElectricity:[{value:null,disabled:true}],
-      mercadoPago:[{value:null,disabled:true}]
+      mercadoPago:[{value:null,disabled:true}],
+      minimunAmount: [{value: '', disabled:true}],
     })
   }
   setSlide(){
@@ -57,6 +60,12 @@ export class SportCenterInfoModalComponent implements OnInit {
     else{
       this.slideMercadoPago = false;
     }
+    if(this.sportCenter.paymentRequired === true){
+      this.slidePaymentRequired = true;
+    }
+    else{
+      this.slidePaymentRequired = false;
+    }
   }
   getSportCenter(){
     this.loaderService.openLineLoader();
@@ -69,8 +78,8 @@ export class SportCenterInfoModalComponent implements OnInit {
                     }
                   }, (err) => {
                     console.log(err)
-                      this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada')
+                    this.loaderService.closeLineLoader();
+                    this.errorService.showErrors(err.error.code,err.error.msg);
                   })
   }
   fillForm(){
@@ -80,7 +89,8 @@ export class SportCenterInfoModalComponent implements OnInit {
       phone: this.sportCenter.phone,
       aditionalElectricityHour: this.sportCenter.aditionalElectricityHour,
       aditionalElectricity: this.sportCenter.aditionalElectricity,
-      mercadoPago: this.sportCenter.mercadoPago
+      mercadoPago: this.sportCenter.mercadoPago,
+      minimunAmount: this.sportCenter.minimunAmount
     })
     this.deletedDate = this.sportCenter.deletedDate;
     this.setSlide();

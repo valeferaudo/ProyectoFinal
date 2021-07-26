@@ -8,23 +8,41 @@
     <div class="col-lg-8 col-xlg-8 col-md-7 col-sm-12">
         <div class="card" *ngIf="fieldInParam">
             <div class="card-img card-inverse bg-app text-center">
-                <h2 class="card-title m-2">Cancha <small>({{fieldInParam.name}})</small></h2>
+                <h2 class="card-title m-2">{{fieldInParam.sportCenter.name}} ({{fieldInParam.name}})</h2>
             </div>
             <div class="card-body p-1">
                 <div class="row">
                     <div class="col-md-4 col-sm-12">
-                            <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Centro Deportivo</span> <br> {{fieldInParam.sportCenter.name}}</p>
-                            <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Dirección</span> <br> {{fieldInParam.sportCenter.address}}</p>
-                            <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Precio</span> <br> {{fieldInParam.price}} $</p>
-                            <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Deportes - Cant. Jugadores</span> <br>
-                                    <span *ngFor="let sport of fieldInParam.sports">{{sport.sport.name}} - {{sport.cantPlayers}}</span>
-                            </p>
-                            <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Duración</span> <br> {{fieldInParam.duration}} Min.</p>
-                            <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Características</span> <br>
-                                    <span *ngFor="let feature of fieldInParam.features">{{feature.name}} 
-                                                                                    <!-- <span *ngIf="fieldInParam.features.length = 0">Sin Datos</span> -->
-                                    </span>
-                            </p>
+                        <div class="row text-center">
+                            <div class="col-md-12 col-sm-6 col-6 mb-2">
+                                <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Dirección</span> <br> {{fieldInParam.sportCenter.address}}</p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-6 mb-2">
+                                <p class="card-text long-text"><span class="font-bold" style="text-decoration: underline;">Pago Obligatorio</span>
+                                    <br>
+                                    <span class="badge bg-secondary m-1" *ngIf="fieldInParam.sportCenter.paymentRequired">{{fieldInParam.sportCenter.minimunAmount}}%</span>
+                                    <span class="badge bg-secondary m-1" *ngIf="!fieldInParam.sportCenter.paymentRequired">NO</span>
+                                </p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-6 mb-2">
+                                <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Precio</span> <br> {{fieldInParam.price}} $</p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-6 mb-2">
+                                <p class="card-text long-text"><span class="font-bold" style="text-decoration: underline;">Características</span> <br>
+                                        <span *ngFor="let feature of fieldInParam.features">{{feature.name}} 
+                                                                                        <!-- <span *ngIf="fieldInParam.features.length = 0">Sin Datos</span> -->
+                                        </span>
+                                </p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-6 mb-2">
+                                <p class="card-text long-text"><span class="font-bold" style="text-decoration: underline;">Deportes - Jugadores</span> <br>
+                                        <span *ngFor="let sport of fieldInParam.sports">{{sport.sport.name}} - {{sport.cantPlayers}}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-12 col-sm-6 col-6 mb-2">
+                                <p class="card-text"><span class="font-bold" style="text-decoration: underline;">Duración</span> <br> {{fieldInParam.duration}} Min.</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-8 col-sm-12">
                         <p class="card-text mb-2 text-center"><span class="font-bold" style="text-decoration: underline;">Horarios</span></p>
@@ -170,8 +188,8 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <div class="card">
-            <div class="card-img card-inverse bg-app text-center" *ngIf="searchON">
+        <div class="card" id="appointments">
+            <div class="card-img card-inverse bg-app text-center" *ngIf="searchON" >
                 <h2 class="card-title m-0">Turnos disponibles</h2>
             </div>
             <app-table-do-appointment *ngIf="searchON" [page]="page" [registerPerPage]="registerPerPage" [availableAppointments]="showAvailableAppointments" [field]="fieldInParam" [searchON]="searchON"></app-table-do-appointment>
@@ -195,4 +213,3 @@
         </div>
     </div>
 </div>
-

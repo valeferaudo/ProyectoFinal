@@ -10,7 +10,7 @@
 <h6 class="card-title"><strong>Canchas </strong></h6>
 <div class="card-group" *ngIf="fields.length > 0">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let field of fields">
-        <app-card-field [field]="field" (removeFavorite)="removeFavoriteFromArray($event)" (goSportCenterModal)="openSportCenterModal($event)" (goScheduleModal)="openScheduleModal($event)" (goOpenMap)="openMap($event)"></app-card-field>
+        <app-card-field [field]="field" (removeFavorite)="removeFavoriteFromArray($event)" (goSportCenterModal)="openSportCenterModal($event,'field')" (goScheduleModal)="openScheduleModal($event,'field')" (goOpenMap)="openMap($event)"></app-card-field>
     </div>
 </div>
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0 && !filterFieldON"> 
@@ -37,7 +37,7 @@
 <h6 class="card-title"><strong>Centros Deportivos </strong></h6>
 <div class="card-group" *ngIf="sportCenters.length > 0">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
-        <app-card-sport-center [sportCenter]="sportCenter" (removeFavorite)="removeFavoriteFromArray($event)" (goSportCenterModal)="openSportCenterModal($event)" (goScheduleModal)="openScheduleModal($event)" (goOpenMap)="openMap($event)"></app-card-sport-center>
+        <app-card-sport-center [sportCenter]="sportCenter" (removeFavorite)="removeFavoriteFromArray($event)" (goSportCenterModal)="openSportCenterModal($event,'sportCenter')" (goScheduleModal)="openScheduleModal($event,'sportCenter')" (goOpenMap)="openMap($event)"></app-card-sport-center>
 
     </div>
 </div> 
@@ -67,7 +67,7 @@
 
 </app-sport-center-info-modal>
 <app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
-                                [sportCenter]="fieldSelected.sportCenter" [sportCenterID]="fieldSelected.sportCenter.id"
+                                [sportCenter]="sportCenterSelected" [sportCenterID]="sportCenterID"
                                 (closeModal)="closeScheduleModal()">
 </app-sport-center-schedule-modal>
 

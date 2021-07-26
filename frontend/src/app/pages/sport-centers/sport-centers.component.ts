@@ -23,7 +23,8 @@ export class SportCentersComponent implements OnInit {
   sportCenterSelected: any;
   hiddenScheduleModal:boolean = false;
   hiddenOnePointMap:boolean = false;
-  
+  hiddenGPSModal:boolean = false;
+
   searchText: string = '';
   sportCenters: SportCenter[] = [];
   filterON: boolean = false;
@@ -35,6 +36,7 @@ export class SportCentersComponent implements OnInit {
     days: [],
     sinceHour: 0,
     untilHour: 23,
+    available:true
   }
   sportsCombo: Combo[];
   sportsSelected = [];
@@ -90,7 +92,7 @@ export class SportCentersComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
     }
     getSportCombo(){
@@ -104,7 +106,7 @@ export class SportCentersComponent implements OnInit {
                       },(err)=>{
                         console.log(err);
                         this.loaderService.closeLineLoader();
-                        this.errorService.showErrors(99,'nada');
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       })
     }
     getSportCenterCombo(){
@@ -118,7 +120,7 @@ export class SportCentersComponent implements OnInit {
                       },(err)=>{
                         console.log(err);
                         this.loaderService.closeLineLoader();
-                        this.errorService.showErrors(99,'nada');
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       })
     }
     getSportCenters(){
@@ -137,7 +139,7 @@ export class SportCentersComponent implements OnInit {
                 },(err)=>{
                   console.log(err);
                   this.loaderService.closeLineLoader();
-                  this.errorService.showErrors(99,'nada');
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 })
     }
     searchSportCenters(text: string){
@@ -203,15 +205,8 @@ export class SportCentersComponent implements OnInit {
       this.getSportCenters();
     }
     changeDaysSelected(event:MatCheckboxChange,day){
-      if(event.checked){
-        this.daysSelected.push(day.id)
-      }
-      else{
-        var i = this.daysSelected.indexOf( day.id );
-        if ( i !== -1 ) {
-            this.daysSelected.splice( i, 1 );
-        }
-      }
+      this.daysSelected.splice(0,1);
+      this.daysSelected.push(day.id);
     }
     resetDays(){
       this.daysSelected = [];
@@ -243,6 +238,7 @@ export class SportCentersComponent implements OnInit {
         services: this.servicesSelected,
         sinceHour: this.sinceHourSelected,
         untilHour: this.untilHourSelected,
+        available:true
       }
     }
     openSportCenterModal(sportCenter){
@@ -272,5 +268,12 @@ export class SportCentersComponent implements OnInit {
     paginate(page){
       this.page = page;
       this.getSportCenters();
+    }
+    openGPSModal(sportCenter){
+      this.sportCenterSelected = sportCenter;
+      this.hiddenGPSModal = true;
+    }
+    closeGPSModal(){
+      this.hiddenGPSModal = false;
     }
 }

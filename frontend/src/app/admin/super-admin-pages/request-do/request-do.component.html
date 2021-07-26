@@ -128,22 +128,19 @@
                 <td>{{item.description}}</td>
                 <td>{{item.creatorEmail}}</td>
                 <td class="text-center">
-                    <button *ngIf="item.state === null" class="btn content-tooltip" (click)="acceptBlockRequest(item,'active')">
+                    <button *ngIf="item.state === null" class="btn" (click)="acceptBlockRequest(item,'active')" data-toggle="tooltip" data-placement="top" title="Aceptar">
                         <i class="fas fa-check-circle text-success"></i>
-                        <span class="tooltip-box">Aceptar</span>
                     </button>
                     <i class="fas fa-check-circle text-success" *ngIf="item.state === true"></i>
-                    <button *ngIf="item.state === null" class="btn content-tooltip" (click)="acceptBlockRequest(item,'block')">
+                    <button *ngIf="item.state === null" class="btn" (click)="acceptBlockRequest(item,'block')" data-toggle="tooltip" data-placement="top" title="Rechazar">
                         <i class="fas fa-times-circle text-danger"></i>
-                        <span class="tooltip-box">Rechazar</span>
                     </button>
                     <i class="fas fa-times-circle text-danger" *ngIf="item.state === false"></i>
                 </td>
                 <td class="text-center">
                     <i class="fas fa-check-double text-info" *ngIf="item.seen === true"></i>
-                    <button *ngIf="item.seen === false" class="btn content-tooltip" (click)="markAsSeen(item)">
+                    <button *ngIf="item.seen === false" class="btn" (click)="markAsSeen(item)" data-toggle="tooltip" data-placement="top" title="Marcar Como Vista">
                         <i class="fas fa-check-double"></i>
-                        <span class="tooltip-box">Marcar como Vista</span>
                     </button>
                 </td>
             </tr>

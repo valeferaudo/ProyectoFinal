@@ -86,7 +86,7 @@
         </div>
         <div class="card-body p-0 mt-1  justify-content-center align-items-center" *ngIf="!todayWeatherON && !perHourWeatherON && !weatherError">
             <div class="loader__spinner">
-                <mat-progress-spinner color="accent" mode="indeterminate"></mat-progress-spinner>
+                <mat-progress-spinner color="primary" mode="indeterminate"></mat-progress-spinner>
             </div>
             <div class="loader__messages">
                 <p>Cargando Datos del clima</p>
@@ -102,5 +102,5 @@
 </div>
 <!-- <google-map></google-map> -->
 <app-line-loader></app-line-loader>
-<app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [appointment]="appointmentSelected" (closeModal)="closeGPSModal()"></app-gps-map>
+<app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [sportCenter]="sportCenter" (closeModal)="closeGPSModal()"></app-gps-map>
 <app-approve-payment *ngIf="hiddenPaymentModal" [hiddenPaymentModal]="!hiddenPaymentModal" [appointment]="appointmentSelected" [type]="'old'" (closeModal)="closePaymentModal()"></app-approve-payment>

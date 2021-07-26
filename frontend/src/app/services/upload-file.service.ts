@@ -47,8 +47,8 @@ export class UploadFileService {
       }
       else{
         //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ
-        console.log(data.msg)
-        this.errorService.showErrors(99,'nada');
+        console.log(data)
+        this.errorService.showErrors(data.code,data.msg);
         return false;
       }
     } catch (error) {

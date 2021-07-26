@@ -18,14 +18,16 @@ authCtrl.login = async(req = request,res = response)=>{
         if (!userDB){
             return res.status(404).json({
                 ok:false,
-                msg:"Wrong email or password"
+                msg:"Wrong email or password",
+                code:22
             })
         }
         const validatePassword = bycript.compareSync(password , userDB.password);
         if(!validatePassword){
             return res.status(404).json({
                 ok:false,
-                msg:"Wrong email or password"
+                msg:"Wrong email or password",
+                code: 22
             });
         }
         //SI SE LOGUEA UN USUARIO COMUN --> 'USER' ; SI SE LOGUEA OTRO --> 'CENTER'
@@ -33,7 +35,8 @@ authCtrl.login = async(req = request,res = response)=>{
             if(userDB.role !== 'CENTER-ADMIN' && userDB.role !== 'CENTER-SUPER-ADMIN' && userDB.role !== 'SUPER-ADMIN'){
                 return res.status(403).json({
                     ok:false,
-                    msg:'User does not have permission in this module'
+                    msg:'User does not have permission in this module',
+                    code: 5
                 });
             }
         }
@@ -41,14 +44,16 @@ authCtrl.login = async(req = request,res = response)=>{
             if(userDB.role !== 'USER'){
                 return res.status(403).json({
                     ok:false,
-                    msg:'User does not have permission in this module'
+                    msg:'User does not have permission in this module',
+                    code: 5
                 });
             }
         }
-        if(userDB.state === false){
+        if(userDB.state === false || userDB.deletedDate !== null){
             return res.status(403).json({
                 ok:false,
-                msg:'User is not allowed'
+                msg:'User is not allowed',
+                code: 5
             });
         }
         var needSportCenter = false;
@@ -100,7 +105,9 @@ authCtrl.renewToken = async (req,res)=>{
     }
     if(user.role === 'CENTER-SUPER-ADMIN'){
         const cryptr = new Cryptr(process.env.CRYTPR);
-        user.sportCenter.credentials.accessToken =  cryptr.decrypt(user.sportCenter.credentials.accessToken)
+        if(user.sportCenter.credentials.accessToken !== null){
+            user.sportCenter.credentials.accessToken =  cryptr.decrypt(user.sportCenter.credentials.accessToken)
+        }
     }
     res.json({
         ok:true,

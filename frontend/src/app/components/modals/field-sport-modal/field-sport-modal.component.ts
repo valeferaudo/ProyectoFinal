@@ -18,7 +18,7 @@ export class FieldSportModalComponent implements OnInit {
 
   @Input() hiddenModal: boolean;
   @Input() mode: 'create' | 'update';
-  @Input() fieldSelected: Field = null;
+  @Input() fieldSelected: Field;
   @Input() sportCenterID: string;
   @Output() closeModal = new EventEmitter<string>();
   @Output() getFields = new EventEmitter<string>();
@@ -50,7 +50,7 @@ export class FieldSportModalComponent implements OnInit {
                         }
                       },(err)=>{
                         console.log(err);
-                        this.errorService.showErrors(99,'nada');
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       })
   }
   getMode(){
@@ -70,7 +70,7 @@ export class FieldSportModalComponent implements OnInit {
                 },(err) => {
                   console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                 })
   }
   fillForm(){
@@ -124,7 +124,7 @@ export class FieldSportModalComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
       }
     })
@@ -155,7 +155,7 @@ export class FieldSportModalComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
       }
     })

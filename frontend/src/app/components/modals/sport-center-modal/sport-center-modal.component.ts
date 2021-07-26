@@ -53,12 +53,12 @@ export class SportCenterModalComponent implements OnInit {
       longitude: ['',[Validators.required]],
       phone:['',[Validators.required],],
       aditionalElectricityHour:[null,],
-      aditionalElectricity:['',],
+      aditionalElectricity:[null,],
       mercadoPago:[false,[Validators.required],],
       paymentRequired: [''],
-      minimunAmount: [''],
-      accessToken: [''],
-      publicKey: ['']
+      minimunAmount: [null,[Validators.min(0),Validators.max(100)]],
+      accessToken: [null],
+      publicKey: [null]
     })
   }
 
@@ -83,10 +83,54 @@ export class SportCenterModalComponent implements OnInit {
   }
   createSportCenter(){
     if (this.sportCenterForm.invalid){
-      Object.values(this.sportCenterForm.controls).forEach(control=>{
-        control.markAsTouched();
-      })
+      this.markAsTouched();
       return;
+    }
+    if(this.slideElectricity === true){
+      if( this.sportCenterForm.controls['aditionalElectricity'].value === null){
+        this.sportCenterForm.controls['aditionalElectricity'].setErrors({'incorrect': true});
+        this.markAsTouched();
+        return;
+      }
+      else{
+        this.sportCenterForm.controls['aditionalElectricity'].setErrors(null);
+      }
+      if(this.sportCenterForm.controls['aditionalElectricityHour'].value === null){
+        this.sportCenterForm.controls['aditionalElectricityHour'].setErrors({'incorrect': true});
+        this.markAsTouched();
+        return;
+      }
+      else{
+        this.sportCenterForm.controls['aditionalElectricityHour'].setErrors(null);
+      }
+    }
+    if(this.slideMercadoPago === true){
+      if( this.sportCenterForm.controls['accessToken'].value === null){
+        this.sportCenterForm.controls['accessToken'].setErrors({'incorrect': true});
+        this.markAsTouched();
+        return;
+      }
+      else{
+        this.sportCenterForm.controls['accessToken'].setErrors(null);
+      }
+      if(this.sportCenterForm.controls['publicKey'].value === null){
+        this.sportCenterForm.controls['publicKey'].setErrors({'incorrect': true});
+        this.markAsTouched();
+        return;
+      }
+      else{
+        this.sportCenterForm.controls['publicKey'].setErrors(null);
+      }
+    }
+    if(this.slidePaymentRequired === true){
+      if( this.sportCenterForm.controls['minimunAmount'].value === null){
+        this.sportCenterForm.controls['minimunAmount'].setErrors({'incorrect': true});
+        this.markAsTouched();
+        return;
+      }
+      else{
+        this.sportCenterForm.controls['minimunAmount'].setErrors(null);
+      }
     }
     this.sweetAlertService.showSwalConfirmation({
       title:'¿Crear centro deportivo?',
@@ -109,10 +153,15 @@ export class SportCenterModalComponent implements OnInit {
                             this.closeModalOutput.emit(this.hiddenSportCenterModal)
                         }, (err) => {
                           console.log(err)
-                          this.errorService.showServerError()
+                          this.errorService.showErrors(err.error.code,err.error.msg);
                           this.loaderService.closeLineLoader();
                         })
       }
+    })
+  }
+  markAsTouched(){
+    Object.values(this.sportCenterForm.controls).forEach(control=>{
+      control.markAsTouched();
     })
   }
   getFieldValid(field : string){
@@ -124,6 +173,10 @@ export class SportCenterModalComponent implements OnInit {
       if(this.slideElectricity === false){
         this.sportCenterForm.controls['aditionalElectricity'].reset();
         this.sportCenterForm.controls['aditionalElectricityHour'].reset();
+      }
+      else{
+        this.sportCenterForm.controls['aditionalElectricity'].setErrors(null);
+        this.sportCenterForm.controls['aditionalElectricityHour'].setErrors(null);
       }
   }
   mercadoPagoSlideChange(event: MatSlideToggle){
@@ -151,7 +204,6 @@ export class SportCenterModalComponent implements OnInit {
       longitude: event.coords.lng
     })
     this.isMarked = true;
-    console.log(this.sportCenterForm.value)
   }
   showAccessToken(){
     this.accessTokenIsVisible = !this.accessTokenIsVisible;

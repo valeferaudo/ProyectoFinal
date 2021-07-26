@@ -6,4 +6,5 @@ export interface SportCenterFilter{
     sports?: any[];
     sinceHour?: any;
     untilHour?: any;
+    available?: boolean;
 }

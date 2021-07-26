@@ -27,6 +27,7 @@ export class FieldsComponent implements OnInit {
   sportCenterSelected: SportCenter;
   hiddenScheduleModal:boolean = false;
   hiddenOnePointMap:boolean = false;
+  hiddenGPSModal:boolean = false;
 
   sportCenterInParam: string = '';
   searchText: string = '';
@@ -102,7 +103,7 @@ export class FieldsComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
     }
     getSportCombo(){
@@ -116,7 +117,7 @@ export class FieldsComponent implements OnInit {
                       },(err)=>{
                         console.log(err);
                         this.loaderService.closeLineLoader();
-                        this.errorService.showErrors(99,'nada');
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       })
     }
     getPrices(){
@@ -135,7 +136,7 @@ export class FieldsComponent implements OnInit {
                   },(err)=>{
                     console.log(err);
                     this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada');
+                    this.errorService.showErrors(err.error.code,err.error.msg);
                   })
     }
     getSportCenterCombo(){
@@ -149,7 +150,7 @@ export class FieldsComponent implements OnInit {
                       },(err)=>{
                         console.log(err);
                         this.loaderService.closeLineLoader();
-                        this.errorService.showErrors(99,'nada');
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       })
     }
     getSportCenterInParam(){
@@ -163,7 +164,7 @@ export class FieldsComponent implements OnInit {
                             }
                           },(err)=>{
                             console.log(err);
-                            this.errorService.showErrors(99,'nada');
+                            this.errorService.showErrors(err.error.code,err.error.msg);
                           });
         }
         else{
@@ -191,7 +192,7 @@ export class FieldsComponent implements OnInit {
                 },(err)=>{
                   console.log(err);
                   this.loaderService.closeLineLoader();
-                  this.errorService.showErrors(99,'nada');
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 })
     }
     searchFields(text: string){
@@ -259,15 +260,8 @@ export class FieldsComponent implements OnInit {
       this.getFields();
     }
     changeDaysSelected(event:MatCheckboxChange,day){
-      if(event.checked){
-        this.daysSelected.push(day.id)
-      }
-      else{
-        var i = this.daysSelected.indexOf( day.id );
-        if ( i !== -1 ) {
-            this.daysSelected.splice( i, 1 );
-        }
-      }
+      this.daysSelected.splice(0,1);
+      this.daysSelected.push(day.id);
     }
     resetDays(){
       this.daysSelected = [];
@@ -352,5 +346,12 @@ export class FieldsComponent implements OnInit {
     paginate(page){
       this.page = page;
       this.getFields();
+    }
+    openGPSModal(sportCenter){
+      this.sportCenterSelected = sportCenter;
+      this.hiddenGPSModal = true;
+    }
+    closeGPSModal(){
+      this.hiddenGPSModal = false;
     }
 }

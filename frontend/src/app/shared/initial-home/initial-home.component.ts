@@ -11,5 +11,7 @@ export class InitialHomeComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
+  goScroll(el){
+    document.getElementById(el).scrollIntoView();
+  }
 }

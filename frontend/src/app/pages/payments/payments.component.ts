@@ -19,6 +19,7 @@ export class PaymentsComponent implements OnInit {
   payments : [] = [];
   totalPages = null;
   page = 1;
+  filterON: boolean = false;
 
   constructor(private paymentService: PaymentService,
               private router: Router,
@@ -72,13 +73,20 @@ export class PaymentsComponent implements OnInit {
     }
   }
   getPayments(){
+    this.filterON = true;
+    this.loaderService.openLineLoader();
     this.paymentService.getUserPayments(this.userLogged.uid,this.page)
                       .subscribe((resp: any)=> {
                         //traer solo algunos datos, no los criticos.
                         this.payments = resp.param.payments;
                         this.page = resp.param.paginator.page;
                         this.totalPages = resp.param.paginator.totalPages;
-                        console.log(this.payments)
+                        this.filterON = false;
+                        this.loaderService.closeLineLoader();
+                      },(err)=>{
+                        console.log(err);
+                        this.loaderService.closeLineLoader();
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       })
   }
   paginate(page){

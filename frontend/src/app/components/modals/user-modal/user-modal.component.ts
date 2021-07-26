@@ -79,7 +79,7 @@ export class UserModalComponent implements OnInit {
                         }, (err) => {
                           console.log(err);
                           this.loaderService.closeLineLoader();
-                          this.errorService.showErrors('nada',99)
+                          this.errorService.showErrors(err.error.code,err.error.msg);
                         });
       }
     })

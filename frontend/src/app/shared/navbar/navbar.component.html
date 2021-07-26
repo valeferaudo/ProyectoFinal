@@ -29,11 +29,11 @@
         </ul>
         <div class="form-inline my-2 my-lg-0 mr-2">
           <div class="input-group">
-            <input class="form-control" id="input" type="text" 
+            <input class="form-control" id="input" type="text" [(ngModel)]="searchText"
                   placeholder="Buscar" 
                   aria-label="Search" 
-                  #text (keyup.enter)="searchField(text.value)">
-                  <div class="input-group-addon pointer" (click)="searchField(text.value)">
+                  (keyup.enter)="searchField()">
+                  <div class="input-group-addon pointer" (click)="searchField()">
                     <i class="fas fa-search"></i>
                 </div> 
           </div>

@@ -2,6 +2,7 @@ const Appointment = require('../models/appointment.model');
 const User = require('../models/user.model');
 const Field = require('../models/field.model');
 const FieldPrice = require('../models/fieldPrice.model');
+const Payment = require('../models/payment.model');
 const SpecialSchedule = require('../models/specialSchedule.model');
 const SportCenter = require('../models/sportCenter.model');
 var moment = require('moment');
@@ -328,24 +329,26 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
                   }
             })
         }                                    
+        let sort;
+        state === 'Completed' ? sort = -1 : sort = 1;
         if(query['$and'].length > 0){
             [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name')
-                                                                        .populate({ 
-                                                                        path: 'field',
-                                                                        model: 'Field',
-                                                                        populate: {
-                                                                            path: 'sportCenter',
-                                                                            model: 'SportCenter'
-                                                                        }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                    Appointment.find(query).populate('user','name')
                                                                             .populate({ 
                                                                             path: 'field',
                                                                             model: 'Field',
                                                                             populate: {
                                                                                 path: 'sportCenter',
                                                                                 model: 'SportCenter'
-                                                                            }}).countDocuments()
-                                                ])
+                                                                            }}).sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                        Appointment.find(query).populate('user','name')
+                                                                                .populate({ 
+                                                                                path: 'field',
+                                                                                model: 'Field',
+                                                                                populate: {
+                                                                                    path: 'sportCenter',
+                                                                                    model: 'SportCenter'
+                                                                                }}).countDocuments()
+                                                    ])
         }else{
             [appointments,total] = await Promise.all([Appointment.find().populate('user','name')
                                                                         .populate({ 
@@ -354,7 +357,7 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
                                                                         populate: {
                                                                             path: 'sportCenter',
                                                                             model: 'SportCenter'
-                                                                        }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                                        }}).sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
                                                     Appointment.find().populate('user','name')
                                                                             .populate({ 
                                                                             path: 'field',
@@ -366,14 +369,6 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
                                                 ])
         }
         total = Math.ceil(total / registerPerPage);
-        if(appointments.length > 0){
-            if(appointments[0].state === 'Completed'){
-                sortDateFromLargest(appointments);
-            }
-            else{
-                sortDateFromSmallest(appointments);
-            }
-        }
         res.json({
             ok:true,
             msg:'Found Appointments',
@@ -398,7 +393,13 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
     const id = req.params.id;
     const userID = req.uid;
     try {
-        const appointmentDB = await Appointment.findById(id).populate('user').populate('field');
+        const appointmentDB = await Appointment.findById(id).populate('user').populate({ 
+                                                                                        path: 'field',
+                                                                                        model: 'Field',
+                                                                                        populate: {
+                                                                                            path: 'sportCenter',
+                                                                                            model: 'SportCenter'
+                                                                                        }})
         if (!appointmentDB) {
             return unknownIDResponse(res)
         }
@@ -439,9 +440,11 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
                 // cancelAppointmentSMS(appointmentDB)
             }
             else{
+                //aca se enviaria al numero q paso el tipo en la reserva manual
                 // cancelAppointmentSMS(appointmentDB)
             }
         }
+        await Payment.updateMany({appointment:id},{appointment:null})
         await Appointment.findByIdAndDelete(id);
         res.json({
             ok:true,
@@ -458,6 +461,7 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
         })
     }
 }
+
 appointmentCtrl.deleteAppointmentForPayment = async (req = request, res = response) =>{
     const id = req.params.id;
     try {

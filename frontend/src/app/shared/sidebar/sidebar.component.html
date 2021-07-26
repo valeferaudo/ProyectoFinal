@@ -42,13 +42,6 @@
                             <span class="hide-menu"> Usuarios</span>
                         </a>
                     </li>
-                    <!-- REPORTES -->
-                    <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'"> 
-                        <a class="waves-effect waves-dark" [routerLink]="['/admin/reports']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
-                            <i class="fas fa-file-pdf px-1"></i>
-                            <span class="hide-menu"> Reportes</span>
-                        </a>
-                    </li>
                     <!-- SOLICITUDES -->
                     <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' || userLogged.role === 'SUPER-ADMIN'"> 
                         <a class="waves-effect waves-dark" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'" [routerLink]="['/admin/requests']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">

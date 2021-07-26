@@ -90,7 +90,7 @@ export class AdminRequestsComponent implements OnInit {
                     }, (err) => {
                       console.log(err)
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors('nada',99)
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     });
       }
     })
@@ -109,6 +109,7 @@ export class AdminRequestsComponent implements OnInit {
   return request
  }
  getRequests(){
+  this.filterON = true;
   this.loaderService.openLineLoader();
   this.requestService.getSportCenterRequests(this.userLogged.sportCenter.id,this.filters,this.page)
             .subscribe((resp:any)=>{
@@ -117,11 +118,12 @@ export class AdminRequestsComponent implements OnInit {
                 this.requests = resp.param.requests;
                 this.page = resp.param.paginator.page;
                 this.totalPages = resp.param.paginator.totalPages;
+                this.filterON = true;
               }
             }, (err) => {
               console.log(err)
               this.loaderService.closeLineLoader();
-              this.errorService.showErrors('nada',99)
+              this.errorService.showErrors(err.error.code,err.error.msg);
             });
  }
  searchRequests(text: string){

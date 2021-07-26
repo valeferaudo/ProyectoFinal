@@ -106,7 +106,7 @@ export class AdminAppointmentsComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg)
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -123,7 +123,7 @@ export class AdminAppointmentsComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg)
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -140,7 +140,7 @@ export class AdminAppointmentsComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg)
                                         this.loaderService.closeLineLoader();
                                       });
   }
@@ -157,7 +157,7 @@ export class AdminAppointmentsComponent implements OnInit {
                                         }
                                       }, (err) =>{
                                         console.log(err)
-                                        this.errorService.showServerError()
+                                        this.errorService.showErrors(err.error.code,err.error.msg)
                                         this.loaderService.closeLineLoader();
                                       });
   }

@@ -33,11 +33,14 @@
                   </div>
                   <div class="form-group col-md-6 mb-1">
                       <label for="description" class="col-form-label"><strong>Duración:</strong></label>
-                      <input type="number" class="form-control" id="duration" formControlName="duration" placeholder="Minutos">
+                      <input type="number" class="form-control" id="duration" formControlName="duration" placeholder="Minutos" [class.is-invalid]="getFieldValid('duration')">
+                      <p class="text-danger" *ngIf="getFieldValid('duration')">
+                        *Ingrese la <strong>duración</strong>.
+                      </p>
                   </div>
                   <div class="form-group col-md-6 mb-1">
                     <label for="description" class="col-form-label"><strong>Precio:</strong></label>
-                    <input type="number" class="form-control" id="price" formControlName="price" placeholder="$" [class.is-invalid]="getFieldValid('name')">
+                    <input type="number" class="form-control" id="price" formControlName="price" placeholder="$" [class.is-invalid]="getFieldValid('price')">
                     <p class="text-danger" *ngIf="getFieldValid('price')">
                       *Ingrese el <strong>precio</strong>.
                     </p>
@@ -56,7 +59,7 @@
                                               <!-- VALUES -->
                                   <div class="filters__items-container__item__menu__options-container">
                                   <div class="filters__items-container__item__menu__options-container__option" *ngFor="let item of featureCombo">
-                                      <mat-checkbox  (change)="changeFeatureSelected($event,item)" #myCheckBoxFeature [checked]="fieldSelected !== null ? fieldSelected.features.includes(item.id): false">
+                                      <mat-checkbox  (change)="changeFeatureSelected($event,item)" #myCheckBoxFeature [checked]="featuresSelected.includes(item.id)">
                                           <span>{{item.text}}</span>
                                       </mat-checkbox>
                                   </div>

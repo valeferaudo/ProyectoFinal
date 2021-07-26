@@ -11,7 +11,7 @@ export class InterceptorService implements HttpInterceptor {
   weatherHourURL = 'https://community-open-weather-map.p.rapidapi.com/weather?q=rosario&lang=sp&units=metric';
   weatherPerHour = 'https://community-open-weather-map.p.rapidapi.com/forecast?q=rosario%2Car&units=metric&lang=sp&cnt=4';
   forecastURL = 'https://community-open-weather-map.p.rapidapi.com/forecast/daily?q=rosario%2Car&cnt=16&units=metric';
-  currentLocation = `https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4`
+  currentLocation = `https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4`;
   constructor() { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> | any  {

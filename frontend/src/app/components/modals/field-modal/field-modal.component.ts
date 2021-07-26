@@ -64,8 +64,8 @@ export class FieldModalComponent implements OnInit {
                   }
                 },(err) => {
                   console.log(err);
-                      this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                  this.loaderService.closeLineLoader();
+                  this.errorService.showErrors(err.error.code,err.error.msg);
                 })
   }
   fillForm(){
@@ -78,6 +78,7 @@ export class FieldModalComponent implements OnInit {
       sportCenter: this.sportCenterID,
       price: this.fieldSelected.price
     })
+    this.fillCheckBox();
   }
   getFeatureCombo(){
     this.featureService.getCombo()
@@ -88,7 +89,7 @@ export class FieldModalComponent implements OnInit {
                   },(err)=>{
                     console.log(err);
                     this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada');
+                    this.errorService.showErrors(err.error.code,err.error.msg);
                   })
   }
   createFieldForm(){
@@ -96,7 +97,7 @@ export class FieldModalComponent implements OnInit {
       name:["",[Validators.required],],
       description:["",[],],
       sizes:["",[],],
-      duration:["",[],],
+      duration:["",[Validators.required],],
       features:[[],[],],
       sportCenter: [this.sportCenterID,[Validators.required]],
       price: [,[Validators.required],],
@@ -139,7 +140,7 @@ export class FieldModalComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
       }
     })
@@ -177,7 +178,7 @@ export class FieldModalComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
       }
     })
@@ -225,14 +226,12 @@ export class FieldModalComponent implements OnInit {
       features: this.featuresSelected
     })
   }
-  fillCheckBox(item){
-    //ta mal
-    this.fieldSelected.features.forEach(element => {
-      if(element.id === item.id){
-        return true;
-      }
-    });
-    return false;
+  fillCheckBox(){
+    if(this.fieldSelected !== null){
+      this.fieldSelected.features.forEach(element => {
+        this.featuresSelected.push(element._id)
+      });
+    }
   }
   updateImages(fieldID){
     this.uploadFileService.uploadImage(this.images,'field',fieldID)
@@ -247,9 +246,8 @@ export class FieldModalComponent implements OnInit {
                       }
                     },(err)=>{
                       console.log(err);
-                      //PONER QUE EL ERROR ES EN LA SUBA DE IMÁGENES PERO QUE LA CANCHA SE EDITO O CREÓ //ponerlo en el servicio de upñload
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
   }
   setImages(images){
@@ -277,7 +275,7 @@ export class FieldModalComponent implements OnInit {
                     },(err)=>{
                       console.log(err);
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada');
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
       }
     })

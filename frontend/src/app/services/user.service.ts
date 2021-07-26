@@ -79,7 +79,7 @@ export class UserService {
     return this.http.put(`${baseUrl}/users/${id}`, data);
   }
   recoverPassword(email){
-    return this.http.put(`${baseUrl}/users/RegeneratePassword`,email)
+    return this.http.put(`${baseUrl}/users/forgetPassword`,email)
   }
   changePassword(newPasswords){
     const body = {

@@ -18,8 +18,9 @@ sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
             return unknownIDResponse(res);
         }
         const cryptr = new Cryptr(process.env.CRYTPR);
-        sportCenter.credentials.accessToken = cryptr.decrypt(sportCenter.credentials.accessToken)
-        console.log(sportCenter.credentials.accessToken)
+        if(sportCenter.credentials.accessToken){
+            sportCenter.credentials.accessToken = cryptr.decrypt(sportCenter.credentials.accessToken)
+        }
         // const fields = await Field.find({sportCenter:sportCenterID})
         //faltan obtener deportes, caracterisitcas y servicios para mostrar.
         res.json({
@@ -43,6 +44,7 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
     untilHour = req.query.untilHour;
     page = parseInt(req.query.page);
     registerPerPage = parseInt(req.query.registerPerPage);
+    available = req.query.available === 'true' ? true : false;
     try {
         let sportCenters;
         let booleanState;
@@ -58,39 +60,39 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
         };
         if(searchText !== ''){
             query['$and'].push({ name: new RegExp(searchText, 'i')});
-            selectedFilters.push('Texto: ',searchText,' - ')
+            selectedFilters.push(`"${searchText}"`)
         }
         if (state !== ''){
             booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null});
-            selectedFilters.push('Estado: ',state, ' - ');
+            selectedFilters.push(state);
         }
+        available === true ? query['$and'].push({deletedDate: null}) : query;
         if(services !== undefined){
             query['$and'].push({services: {$elemMatch: {service:{ $in: services}}}});
             const servicesName = await Service.find({_id:{ $in: services}},'name');
-            selectedFilters.push('Servicio: ');
             servicesName.forEach(item => {
-                selectedFilters.push(item.name,', ')
+                selectedFilters.push(item.name)
             });
-            selectedFilters.push('- ');
         }
-        if(days !== undefined){
-            query['$and'].push({$and: [ {schedules: {$elemMatch: {day:{ $in: days}}}},
-                                        {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
-                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]});
+        if(days !== undefined && sinceHour !== '0' && untilHour !== '23'){
+            query['$and'].push({schedules:{$elemMatch: {day: days, $and:[{openingHour: {$lte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h')}},
+                                                                        {closingHour: {$gte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}],
+                                                       }}})
             const daysName = await Day.find({idDia:{ $in: days}},'name');
-            selectedFilters.push('Día: ');
-            daysName.forEach(item => {
-                selectedFilters.push(item.name,', ')
-            });
-            selectedFilters.push('- ');
+            selectedFilters.push(daysName[0].name)
         }
-        else{
-            query['$and'].push({$and: [ {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
-                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]})
+        else if (days !== undefined && sinceHour === '0' && untilHour === '23'){
+            query['$and'].push({schedules:{$elemMatch: {day: days}}})
+            const daysName = await Day.find({idDia:{ $in: days}},'name');
+            selectedFilters.push(daysName[0].name)
+        }
+        else if (days === undefined){
+            query['$and'].push({schedules: {$elemMatch: {$and:[{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }},
+                                                                { closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}
+                                                            ]}}})
         }
         if(parseInt(sinceHour) !== 0 || parseInt(untilHour) !== 23){
-            selectedFilters.push('Hora desde: ',sinceHour,' - ')
-            selectedFilters.push('Hora hasta: ',untilHour,' - ')
+            selectedFilters.push(`${sinceHour}-${untilHour} hs`)
         }
         let sportCenterSport = [];
         let sportCenterSportID = [];
@@ -101,11 +103,9 @@ sportCenterCtrl.getSportCenters = async (req = request,res = response)=>{
             });
             sportCenterSport !== [] ? query['$and'].push({_id: {$in: sportCenterSportID}}) : query;
             const sportsName = await Sport.find({_id:{ $in: sports}},'name');
-            selectedFilters.push('Deporte: ');
             sportsName.forEach(item => {
-                selectedFilters.push(item.name,', ')
+                selectedFilters.push(item.name)
             });
-            selectedFilters.push('- ');
         } 
         if(query['$and'].length > 0){
                 [sportCenters,total] = await Promise.all([SportCenter.find(query).skip(registerPerPage*(page -1)).limit(registerPerPage),
@@ -167,6 +167,7 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
             daysID.push(day.idDia)
         });
         const cryptr = new Cryptr(process.env.CRYTPR);
+        console.log(sportCenterBody)
         sportCenter = new SportCenter({
             name: sportCenterBody.name,
             address: sportCenterBody.address,
@@ -182,7 +183,7 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
                 accessToken: sportCenterBody.mercadoPago ? cryptr.encrypt(sportCenterBody.accessToken) : null,
                 publicKey: sportCenterBody.mercadoPago ? sportCenterBody.publicKey : null,
             },
-            paymentRequired: sportCenterBody.paymentRequired,
+            paymentRequired: sportCenterBody.paymentRequired === '' || sportCenterBody.paymentRequired === 'false' ? false : true,
             minimunAmount: sportCenterBody.minimunAmount,
             schedules:[]
         });
@@ -218,7 +219,6 @@ sportCenterCtrl.activateBlockSportCenter = async (req = request, res = response)
             }
             else{
                 sportCenterDB.deletedDate = new Date();
-                //ACA FALTA DAR DE BAJA TODO LO REFERIDO A ESTE CENTRO DEPORTIVO
             }
         }
         else if (action === 'active'){
@@ -231,6 +231,14 @@ sportCenterCtrl.activateBlockSportCenter = async (req = request, res = response)
         }
         await SportCenter.findByIdAndUpdate(sportCenterID,sportCenterDB,{new:true});
         if (action === 'block'){
+            await Field.updateMany({sportCenter: sportCenterDB.id},{deletedDate: new Date()})
+            fieldIDs = await Field.find({sportCenter: sportCenterDB.id},'id')
+            let ids=[];
+            fieldIDs.forEach(element => {
+                ids.push((element._id).toString())
+            });
+            ids.push((sportCenterDB.id).toString());
+            await User.updateMany({},{$pull:{favorites:{$in:ids}}})
             res.json({
                 ok:true,
                 msg:'Blocked SportCenter'
@@ -270,26 +278,32 @@ sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
         }
         changes.aditionalElectricityHour = req.body.aditionalElectricity ? req.body.aditionalElectricityHour : null;
         const cryptr = new Cryptr(process.env.CRYTPR);
-        if(cryptr.decrypt(sportCenterDB.credentials.accessToken) !== req.body.accessToken){
-            changes.credentials = {
-                accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
-                publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+        if(sportCenterDB.credentials.accessToken !== null){
+            if(cryptr.decrypt(sportCenterDB.credentials.accessToken) !== req.body.accessToken){
+                changes.credentials = {
+                    accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
+                    publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+                }
+            }
+            else{
+                delete changes.accessToken
             }
         }
-        else{
-            delete changes.accessToken
-        }
-        if(sportCenterDB.credentials.publicKey !== req.body.publicKey){
-            changes.credentials = {
-                accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
-                publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+        if(sportCenterDB.credentials.publicKey !== null){
+            if(sportCenterDB.credentials.publicKey !== req.body.publicKey){
+                changes.credentials = {
+                    accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
+                    publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+                }
             }
-        }
-        else{
-            delete changes.publicKey
+            else{
+                delete changes.publicKey
+            }
         }
         sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,changes,{new:true})
-        sportCenter.credentials.accessToken = cryptr.decrypt(sportCenter.credentials.accessToken)
+        if(sportCenterDB.credentials.accessToken !== null){
+            sportCenter.credentials.accessToken = cryptr.decrypt(sportCenter.credentials.accessToken)
+        }
         res.json({
             ok:true,
             msg:'Updated Sport Center',
@@ -312,39 +326,46 @@ sportCenterCtrl.updateSchedule = async (req = request, res = response) =>{
         }
         const changes = req.body;
         let arrayChanges = []
-        changes.schedules.forEach(item => {
-            let dayID;
-            switch (item.day) {
-                case 'Lunes':
-                    dayID = 1;
-                    break;
-                case 'Martes':
-                    dayID = 2;  
-                    break;
-                case 'Miércoles':
-                    dayID = 3;
-                    break;
-                case 'Jueves':
-                    dayID = 4;
-                    break;
-                case 'Viernes':
-                    dayID = 5;
-                    break;
-                case 'Sábado':
-                    dayID = 6;
-                    break;
-                case 'Domingo':
-                    dayID = 7;
-                    break;
-            }
-            const obj = {
-                day: dayID,
-                openingHour: setDate(item.openingHour),
-                closingHour: setDate(item.closingHour)
-            }
-            arrayChanges.push(obj)
-        });
+        if(changes.length !== 0){
+            changes.schedules.forEach(item => {
+                let dayID;
+                switch (item.day) {
+                    case 'Lunes':
+                        dayID = 1;
+                        break;
+                    case 'Martes':
+                        dayID = 2;  
+                        break;
+                    case 'Miércoles':
+                        dayID = 3;
+                        break;
+                    case 'Jueves':
+                        dayID = 4;
+                        break;
+                    case 'Viernes':
+                        dayID = 5;
+                        break;
+                    case 'Sábado':
+                        dayID = 6;
+                        break;
+                    case 'Domingo':
+                        dayID = 7;
+                        break;
+                }
+                const obj = {
+                    day: dayID,
+                    openingHour: setDate(item.openingHour),
+                    closingHour: setDate(item.closingHour)
+                }
+                arrayChanges.push(obj)
+            });
+        }
         sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,{$set:{schedules:arrayChanges}},{new:true})
+        if(arrayChanges.length === 0){
+            await Field.updateMany({sportCenter: sportCenterDB.id},{state:false})
+        }else{
+            await Field.updateMany({$and:[{sportCenter: sportCenterDB.id},{sports:{$ne:[]}}]},{state:true})
+        }
         res.json({
             ok:true,
             msg:'Updated Sport Center Schedules',

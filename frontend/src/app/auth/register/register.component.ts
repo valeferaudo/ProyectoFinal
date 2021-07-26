@@ -62,7 +62,7 @@ export class RegisterComponent {
                       }, (err) => {
                         this.loaderService.closeLineLoader();
                         console.log(err)
-                        this.errorService.showErrors('error',99)
+                        this.errorService.showErrors(err.error.code,err.error.msg);
                       });
    }
 

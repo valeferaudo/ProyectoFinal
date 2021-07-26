@@ -31,7 +31,7 @@ export class FavoritesComponent implements OnInit {
   sportCenterSelected: SportCenter;
   hiddenScheduleModal:boolean = false;
   hiddenOnePointMap:boolean = false;
-
+  sportCenterID;
   constructor(private userService: UserService,
               private loaderService: LoaderService,
               private sweetAlertService: SweetAlertService,
@@ -41,9 +41,11 @@ export class FavoritesComponent implements OnInit {
     this.userLogged = this.userService.user;
     this.getFavorites();
   }
-  async getFavorites(){
-    await this.getFieldFavorites()
-    await this.getSportCenterFavorites();
+  getFavorites(){
+    this.getFieldFavorites();
+    setTimeout(() => {
+      this.getSportCenterFavorites();
+    }, 1);
   }
   getFieldFavorites(){
     this.filterFieldON = true;
@@ -61,7 +63,7 @@ export class FavoritesComponent implements OnInit {
                     console.log(err);
                     this.filterFieldON = false;
                     this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada');
+                    this.errorService.showErrors(err.error.code,err.error.msg);
                   })
   }
   getSportCenterFavorites(){
@@ -80,7 +82,7 @@ export class FavoritesComponent implements OnInit {
                     console.log(err);
                     this.filterSportCenterON = false;
                     this.loaderService.closeLineLoader();
-                    this.errorService.showErrors(99,'nada');
+                    this.errorService.showErrors(err.error.code,err.error.msg);
                   })
   }
   removeFavoriteFromArray(item){
@@ -107,16 +109,26 @@ export class FavoritesComponent implements OnInit {
         break;
     }
   }
-  openSportCenterModal(field){
-    console.log(field)
-    this.fieldSelected = field;
+  openSportCenterModal(object, type : 'field' | 'sportCenter'){
+    if (type === 'field'){
+      this.sportCenterID = object.sportCenter.id;
+      this.fieldSelected = object;
+    }
+    else if (type === 'sportCenter'){
+      this.sportCenterID = object.id
+    }
     this.hiddenSportCenterModal = true;
   }
   closeSportCenterModal(){
     this.hiddenSportCenterModal = false;
   }
-  openScheduleModal(field){
-    this.fieldSelected = field;
+  openScheduleModal(object , type: 'field'|'sportCenter'){
+    if (type === 'field'){
+      this.sportCenterSelected = object.sportCenter;
+    }
+    else if (type === 'sportCenter'){
+      this.sportCenterSelected = object
+    }
     this.hiddenScheduleModal = true;
   }
   closeScheduleModal(){

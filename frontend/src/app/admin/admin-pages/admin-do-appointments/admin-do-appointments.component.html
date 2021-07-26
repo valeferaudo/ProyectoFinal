@@ -120,7 +120,9 @@
     </div>
 </div>
 <hr>
-<app-table-do-appointment *ngIf="searchON" [page]="page" [registerPerPage]="registerPerPage" [availableAppointments]="showAvailableAppointments" [field]="field" [searchON]="searchON"></app-table-do-appointment>
+<div id="appointments">
+    <app-table-do-appointment *ngIf="searchON" [page]="page" [registerPerPage]="registerPerPage" [availableAppointments]="showAvailableAppointments" [field]="field" [searchON]="searchON"></app-table-do-appointment>
+</div>
 <div class="row" *ngIf="availableAppointments.length !==0 && totalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -138,3 +140,4 @@
             </ul>
     </div>
 </div>
+<app-line-loader></app-line-loader>

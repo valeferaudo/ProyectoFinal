@@ -21,6 +21,7 @@ export class SportCenterService {
     params = params.append('untilHour',filters.untilHour);
     params = params.append('page',`${page}`);
     params = params.append('registerPerPage',this.registerPerPage);
+    params = params.append('available',`${filters.available}`);
     if(filters.services.length > 0){
       filters.services.forEach(element => {
         params = params.append('service',`${element}`)
@@ -32,9 +33,7 @@ export class SportCenterService {
       });
     }
     if(filters.days.length > 0){
-      filters.days.forEach(element => {
-        params = params.append('day',`${element}`)
-      });
+        params = params.append('day',`${filters.days}`)
     }
     return this.http.get(`${baseUrl}/sportcenters/`,{params});
   }

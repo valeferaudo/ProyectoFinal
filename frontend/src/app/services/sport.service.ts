@@ -34,7 +34,7 @@ export class SportService {
     let body = {
       action: action
     };
-    return this.http.put(`${baseUrl}/sports/activatetBlock/${id}`,body);
+    return this.http.put(`${baseUrl}/sports/activateBlock/${id}`,body);
   }
   getSportCombo(){
     return this.http.get(`${baseUrl}/sports/combo`);

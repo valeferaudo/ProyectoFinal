@@ -12,68 +12,119 @@ export class ErrorsService {
   showErrors(errorCode, errorDescription){
     switch (errorCode) {
       case 1:
-        this.errorTitle="Error en algún campo";
-        this.errorMsg="Por favor, ingrese nuevamente los datos";
+        this.errorTitle="Acceso denegado";
+        this.errorMsg="El usuario no tiene los permisos para acceder";
         break;
       case 2:
-          this.errorTitle="Email y/o contraseña incorrectos";
+          this.errorTitle="Usuario no registrado";
           this.errorMsg="Por favor, ingrese nuevamente los datos";
           break;
       case 3:
-        this.errorTitle="El email ingresado ya está en uso";
-        this.errorMsg="Por favor, ingrese otro email";
+        this.errorTitle="No se encontraron resultados";
+        this.errorMsg="Por favor, ingrese nuevamente los datos";
         break;
       case 4:
-        this.errorTitle="Ha ocurrido un error en la identificación";
-        this.errorMsg="Por favor, inténtelo nuevamente";
+        this.errorTitle="Ya existe un usuario con ese mail";
+        this.errorMsg="Por favor, ingrese un nuevo mail";
         break;
       case 5:
-        this.errorTitle='Usuario bloqueado';
-        this.errorMsg='Por favor, comuníquese con administración';
+        this.errorTitle='Acción prohibida';
+        this.errorMsg='El usuario no tiene los permisos para acceder';
         break;
       case 6:
-        this.errorTitle='El registro que intenta buscar no existe';
-        this.errorMsg='Por favor, ingrese nuevamente los datos';
+        this.errorTitle='Error al bloquear';
+        this.errorMsg='Ya se encuentra bloqueado';
         break;
       case 7:
-        this.errorTitle='Error al enviar el email de registro de usuario';
-        this.errorMsg='Por favor, inténtelo nuevamente';
+        this.errorTitle='Error al activar';
+        this.errorMsg='Ya se encuentra activado';
         break;
       case 8:
-        this.errorTitle='Las contraseñas no coinciden';
-        this.errorMsg='Por favor, ingréselas nuevamente';
+        this.errorTitle='Acción incorrecta';
+        this.errorMsg='Este tipo de usuario no tiene que ser activado';
         break;
       case 9:
         this.errorTitle='La contraseña anterior es incorrecta';
         this.errorMsg='Por favor, ingrésela nuevamente';
         break;
       case 10:
-        this.errorTitle='El registro fue eliminado';
-        this.errorMsg='';
+        this.errorTitle='El nombre indicado ya se encuentra en uso';
+        this.errorMsg='Por favor, ingrese uno distinto';
         break;
       case 11:
-        this.errorTitle='Ha ocurrido un error al registrar el ingreso';
-        this.errorMsg='Por favor, inténtelo nuevamente';
+        this.errorTitle='Las nuevas contraseñas son distintas';
+        this.errorMsg='Por favor, ingréselas nuevamente';
         break;
       case 12:
-        this.errorTitle='El nombre de la carpeta destino de la imagen es inválido';
-        this.errorMsg='';
+        this.errorTitle='Acción prohibida';
+        this.errorMsg='Por políticas del negocio no se puede cancelar un turno 12hs antes';
         break;
       case 13:
-        this.errorTitle='Las proporciones de altura y ancho de la imagen son inválidas';
-        this.errorMsg='Por favor, intente cargar una imagen cuadrada';
+        this.errorTitle='Acción incorrecta';
+        this.errorMsg='Sólo Centros deportivos y canchas pueden tener imágenes';
         break;
       case 14:
-        this.errorTitle='El tipo de archivo es inválido';
-        this.errorMsg='Por favor, intente cargar un tipo de archivo válido';
+        this.errorTitle='No existe el archivo';
+        this.errorMsg='';
         break;
       case 15:
-        this.errorTitle='El tamaño de la imagen es inválido';
-        this.errorMsg='Por favor, intente cargar una imagen con ancho y alto mínimo de 400px';
+        this.errorTitle='La extención del archivo es incorrecta';
+        this.errorMsg='Por favor, intente cargar una archivo de tipo .png .jpg .jpeg';
+        break;
+      case 16:
+        this.errorTitle='Error al subir la imagen';
+        this.errorMsg='Por favor, intente nuevamente';
+        break;
+      case 17:
+        this.errorTitle='Las proporciones de altura y ancho de la imagen son inválidas';
+        this.errorMsg='Por favor, intente cargar una imagen de proporciones cuadradas';
+        break;
+      case 18:
+        this.errorTitle='Acción prohibida';
+        this.errorMsg='El usuario solo puede eliminar turnos generados por él';
+        break;
+      case 19:
+        this.errorTitle='Error al generar un pago';
+        this.errorMsg='Por favor, intente nuevamente';
+        break;
+      case 20:
+        this.errorTitle='Registro no encontrado';
+        this.errorMsg='El pago no fue encontrado';
+        break;
+      case 21:
+        this.errorTitle='Turno cancelado';
+        this.errorMsg='El turno fue cancelado anteriormente';
+        break;
+      case 22:
+        this.errorTitle='Email y/o contraseña incorrectos';
+        this.errorMsg='Por favor, ingrese los datos nuevamente';
+        break;
+      case 23:
+        this.errorTitle='Email incorrecto';
+        this.errorMsg='Por favor, ingrese los datos nuevamente';
+        break;
+      case 24:
+        this.errorTitle='Centro deportivo bloqueado';
+        this.errorMsg='No se puede activar una cancha de un centro deportivo bloqueado.';
         break;
 
 
-
+      case 95:
+        this.errorTitle= 'Error al obtener el ruta';
+        this.errorMsg= 'Si el error persiste, comuníquese con soporte';
+        break;
+      case 96:
+        this.errorTitle= 'Error al obtener el clima';
+        this.errorMsg= 'Si el error persiste, comuníquese con soporte';
+        break;
+      case 97:
+        this.errorTitle='Error de autenticación';
+        this.errorMsg='No hay token en la petición';
+        break;
+      case 98:
+        this.errorTitle='Error de autenticación';
+        this.errorMsg='El token es incorrecto/caducó';
+        break;
       case 99:
         this.errorTitle="Error inesperado, comuníquese con soporte"
         this.errorMsg= `Error: ${errorDescription}`

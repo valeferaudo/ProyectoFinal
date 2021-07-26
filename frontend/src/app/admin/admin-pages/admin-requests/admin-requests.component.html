@@ -171,7 +171,7 @@
         </tbody>
     </table>
 </div>
-<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="requests.length === 0"> 
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="requests.length === 0 && !filterON"> 
     <i class="ti-equs"></i> No se encontraron <strong>Solicitudes</strong>
 </div>
 <div class="row" *ngIf="requests.length!==0 && totalPages > 1">
@@ -191,3 +191,4 @@
             </ul>
     </div>
 </div>
+<app-line-loader></app-line-loader>

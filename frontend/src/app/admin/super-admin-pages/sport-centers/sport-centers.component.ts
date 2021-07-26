@@ -26,8 +26,9 @@ export class SportCentersComponent implements OnInit {
     services: [],
     days: [],
     sports: [],
-    sinceHour: 1,
-    untilHour:23
+    sinceHour: 0,
+    untilHour:23,
+    available:false
   }
   selectedFilters: string [] = [];
   sportCenterStates = ['Activo', 'Bloqueado'];
@@ -60,7 +61,7 @@ export class SportCentersComponent implements OnInit {
                     }, (err) => {
                       console.log(err)
                       this.loaderService.closeLineLoader();
-                      this.errorService.showErrors(99,'nada')
+                      this.errorService.showErrors(err.error.code,err.error.msg);
                     })
   }
   searchSportCenters(text: string){
@@ -98,8 +99,9 @@ export class SportCentersComponent implements OnInit {
       services: [],
       days: [],
       sports: [],
-      sinceHour: 1,
-      untilHour:23
+      sinceHour: 0,
+      untilHour:23,
+      available:false
     }
   }
   activateBlockSportCenter(sportCenter, action: 'active' | 'block'){
@@ -141,7 +143,7 @@ export class SportCentersComponent implements OnInit {
                            }
                          }, (err) => {
                            console.log(err)
-                           this.errorService.showServerError()
+                           this.errorService.showErrors(err.error.code,err.error.msg);
                            this.loaderService.closeLineLoader();
                          })
       }

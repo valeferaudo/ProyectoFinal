@@ -46,7 +46,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     features = req.query.feature;
     sports = req.query.sport;
     days = req.query.day;
-    available = req.query.available;
+    available = req.query.available === 'true' ? true : false;
     page = parseInt(req.query.page);
     registerPerPage = parseInt(req.query.registerPerPage);
     try {
@@ -63,7 +63,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
         let query = {
             '$and': []
         };
-        available !== 'undefined' ? query['$and'].push({ state: true }) : query;
+        available === true ? query['$and'].push({$and:[{ state: true },{deletedDate: null}]}) : query;
         if(searchText !== ''){
             const sportCenters = await SportCenter.find({ name: new RegExp(searchText, 'i')},'_id')
             if(sportCenters.length > 0){
@@ -76,11 +76,11 @@ fieldCtrl.getFields = async (req = request , res = response) => {
             else{
                 query['$and'].push({ name: new RegExp(searchText, 'i')});
             }
-            selectedFilters.push('Texto: ',searchText,' - ')
+            selectedFilters.push(`"${searchText}"`)
         }
         if (state !== ''){
             booleanState === false ? query['$and'].push({deletedDate: {$ne: null}}) : query['$and'].push({deletedDate: null});
-            selectedFilters.push('Estado: ',state, ' - ');
+            selectedFilters.push(state);
         }
         sportCenterID !== '' ? query['$and'].push({sportCenter: sportCenterID}) : query;
         if(features !== undefined){
@@ -91,11 +91,9 @@ fieldCtrl.getFields = async (req = request , res = response) => {
                 query['$and'].push({features: features})
             }
             const featuresName = await Feature.find({_id:{ $in: features}},'name');
-            selectedFilters.push('Servicio: ');
             featuresName.forEach(item => {
-                selectedFilters.push(item.name,', ')
+                selectedFilters.push(item.name)
             });
-            selectedFilters.push('- ');
         }
         if(sincePrice !== 'undefined' && untilPrice !== 'undefined'){
             query['$and'].push({$and: [ {price: {$gte: sincePrice}},
@@ -104,34 +102,37 @@ fieldCtrl.getFields = async (req = request , res = response) => {
             fieldsPrices.length !== 0 ? minPrice = getMin(fieldsPrices) : minPrice =  0;
             fieldsPrices.length !== 0 ? maxPrice = getMax(fieldsPrices) : maxPrice = 0;
             if(minPrice !== parseInt(sincePrice) || maxPrice !== parseInt(untilPrice)){
-            selectedFilters.push('Precio desde: ',sincePrice,' - ')
-            selectedFilters.push('Precio hasta: ',untilPrice,' - ')
+            selectedFilters.push(`${sincePrice}-${untilPrice}$`)
             }
         }
         if(sports !== undefined){
             query['$and'].push({sports: {$elemMatch: {sport:{ $in: sports}}}});
             const sportsName = await Sport.find({_id:{ $in: sports}},'name');
-            selectedFilters.push('Deporte: ');
             sportsName.forEach(item => {
-                selectedFilters.push(item.name,', ')
+                selectedFilters.push(item.name)
             });
-            selectedFilters.push('- ');
         } 
         let sportCentersDay = [];
-        if(days !== undefined){
-            sportCentersDay = await SportCenter.find({$and: [ {schedules: {$elemMatch: {day:{ $in: days}}}},
-                                        {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
-                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]},'_id')
+        if(days !== undefined && sinceHour !== '0' && untilHour !== '23'){
+            sportCentersDay = await SportCenter.find({schedules:{$elemMatch: {day: days, $and:[{openingHour: {$lte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h')}},
+                                                                                                {closingHour: {$gte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}],
+                                                                            }}},'_id')
             const daysName = await Day.find({idDia:{ $in: days}},'name');
-            selectedFilters.push('Día: ');
             daysName.forEach(item => {
-                selectedFilters.push(item.name,', ')
+                selectedFilters.push(item.name)
             });
-            selectedFilters.push('- ');
         }
-        else{
-            sportCentersDay = await SportCenter.find({$and: [ {schedules: {$elemMatch:{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }}}},
-                                        {schedules: {$elemMatch:{ closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}}}]},'_id')
+        else if (days !== undefined && sinceHour === '0' && untilHour === '23'){
+            sportCentersDay = await SportCenter.find({schedules:{$elemMatch: {day: days}}},'_id')
+            const daysName = await Day.find({idDia:{ $in: days}},'name');
+            daysName.forEach(item => {
+                selectedFilters.push(item.name)
+            });
+        }
+        else if (days === undefined && !available){
+            sportCentersDay = await SportCenter.find({schedules: {$elemMatch: {$and:[{ openingHour: {$gte: moment("1970-01-01").add(parseInt(sinceHour),'h').subtract(3,'h') }},
+                                                                                        { closingHour: {$lte: moment("1970-01-01").add(parseInt(untilHour),'h').subtract(3,'h') }}
+                                                                                    ]}}},'_id')
         }
         let sportCentersDayID = [];
         if(sportCentersDay.length > 0){
@@ -142,8 +143,7 @@ fieldCtrl.getFields = async (req = request , res = response) => {
         }
         if(sinceHour !== 'undefined' && untilHour !== 'undefined'){
             if(parseInt(sinceHour) !== 0 || parseInt(untilHour) !== 23){
-                selectedFilters.push('Hora desde: ',sinceHour,' - ')
-                selectedFilters.push('Hora hasta: ',untilHour,' - ')
+                selectedFilters.push(`${sinceHour}-${untilHour} hs`)
             }
         }
         if(query['$and'].length > 0){
@@ -156,6 +156,10 @@ fieldCtrl.getFields = async (req = request , res = response) => {
                                                 ])
         }
         total = Math.ceil(total / registerPerPage);
+        if(days !== undefined && sportCentersDay.length === 0 && available === true){
+            fields = [];
+            total = 0;
+        }
         res.json({
             ok: true,
             msg:'Found sports',
@@ -175,10 +179,13 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     }
 }
 fieldCtrl.createField = async (req = request , res = response) => {
-    const name = req.body.name;
     const price = req.body.price;
     try {
-        const field = new Field(req.body)
+        let field = new Field(req.body);
+        const sportCenterDB = await SportCenter.findById(req.body.sportCenter);
+        if(sportCenterDB.deletedDate !== null){
+            field.deletedDate = new Date();
+        }
         let fieldDB = await field.save();
         const fieldPrice = new FieldPrice({field: fieldDB.id, sinceDate: new Date(), price: price})
         await fieldPrice.save();
@@ -246,8 +253,14 @@ fieldCtrl.updateFieldSport = async (req = request , res = response) => {
             }
             arrayChanges.push(obj)
         });
+        const sportCenterDB = await SportCenter.findById(fieldDB.sportCenter);
         let state;
-        arrayChanges.length === 0 ? state = false : state = true;
+        if(arrayChanges.length === 0 || sportCenterDB.schedules.length === 0){
+            state = false;
+        }else if (arrayChanges.length !== 0 && sportCenterDB.schedules.length !== 0){
+            state = true;
+        }
+        
         const field = await Field.findByIdAndUpdate(fieldID, {$set:{sports:arrayChanges, state: state}},{new:true})
         res.json({
             ok:true,
@@ -377,19 +390,23 @@ fieldCtrl.activateBlockField = async (req = request, res = response) =>{
             }
             else{
                 fieldDB.deletedDate = new Date();
-                //ACA FALTA DAR DE BAJA TODO LO REFERIDO A ESTA CAMNCHA
             }
         }
         else if (action === 'active'){
+            const sportCenterDB = await SportCenter.findById(fieldDB.sportCenter)
             if(fieldDB.deletedDate === null){
                 return fieldActiveResponse(res);
             }
-            else{
+            if(sportCenterDB.deletedDate !== null){
+                return sportCenterBlockedResponse(res)
+            }
+            if(fieldDB.deletedDate !== null && sportCenterDB.deletedDate === null){
                 fieldDB.deletedDate = null;
             }
         }
         await Field.findByIdAndUpdate(fieldID,fieldDB,{new:true});
         if (action === 'block'){
+            await User.updateMany({},{$pull:{favorites:{$in:[fieldDB.id]}}})
             res.json({
                 ok:true,
                 msg:'Blocked Field'
@@ -439,6 +456,13 @@ function fieldActiveResponse(res){
         ok:false,
         code: 7,
         msg:'This Field is active'
+    })
+}
+function sportCenterBlockedResponse(res){
+    return res.status(404).json({
+        ok:false,
+        code: 24,
+        msg:'This Sport Center is blocked'
     })
 }
 module.exports = fieldCtrl;

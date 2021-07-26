@@ -9,10 +9,12 @@ const sendAcceptUser = async (user) =>{
         }
       });
       var mailOptions = {
-          from: 'sporturno.new.user@gmail.com',
+          from: 'sporturno@gmail.com',
           to: user.email,
           subject: 'Aviso - Solicitud de registro aceptada',
-          html: '<h1>BIENVENIDO</h1><p>+user.email+</p>'
+          html: `Estimado Usuario, su cuenta ha sido aceptada para publicar canchas en la plataforma. 
+          Al ingresar por primera vez se le solicitará la creación del centro deportivo. 
+          ¡Bienvenido!`
         }
     await transporter.sendMail(mailOptions, function(error, info){
         if (error) {

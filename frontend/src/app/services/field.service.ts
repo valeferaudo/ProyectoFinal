@@ -39,9 +39,7 @@ export class FieldService {
       });
     }
     if(filters.days.length > 0){
-      filters.days.forEach(element => {
-        params = params.append('day',`${element}`)
-      });
+      params = params.append('day',`${filters.days}`)
     }
     return this.http.get(`${baseUrl}/fields/` ,{params});
   }

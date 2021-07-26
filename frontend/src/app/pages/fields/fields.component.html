@@ -4,13 +4,7 @@
             <h2 class="card-title" *ngIf="sportCenterInParam === '' && sportCenterNameSelected === ''"><strong>Listado de canchas </strong></h2>
             <h2 class="card-title" *ngIf="sportCenterInParam !== '' && sportCenterNameSelected === ''"><strong>{{sportCenterSelected.name}}</strong> - <small>Listado de canchas </small></h2>
             <h2 class="card-title" *ngIf="sportCenterInParam === '' && sportCenterNameSelected !== ''"><strong>{{sportCenterNameSelected}}</strong> - <small>Listado de canchas </small></h2>
-        </div>
-        <div class="col-md-6">
-            <button class="btn btn-danger btn-sm pull-right pointer" style="position: absolute;right: 0;z-index: 10;" *ngIf="sportCenterInParam !== ''" (click)="goBack()">
-                <i class="fas fa-arrow-alt-circle-left"></i> Atrás
-            </button>
-        </div>
-        
+        </div>        
     </div>
 </div>
 <hr>
@@ -96,11 +90,11 @@
                     <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
-                        <div class="filters__items-container__item__menu__options-container__option" *ngFor="let day of daysCombo; let i = index">
-                            <mat-checkbox  (change)="changeDaysSelected($event,day)" #myCheckBoxCategory [checked]="daysSelected.includes(day.id)">
-                            <span>{{day.text}}</span>
-                            </mat-checkbox>
-                        </div>
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"  [(ngModel)]="daysSelected[0]">
+                                <mat-radio-button class="example-radio-button" *ngFor="let day of daysCombo" [value]="day.id" (change)="changeDaysSelected($event,day)">
+                                        {{day.text}}
+                                </mat-radio-button>
+                            </mat-radio-group>
                         </div>
                     </div>
                                     <!-- ACTIONS -->
@@ -184,7 +178,7 @@
                     </div>
                   </mat-menu>
                 </div>
-                <div class="filters__items-container__item">
+                <div class="filters__items-container__item" *ngIf="sportCenterInParam === ''">
                     <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuMap">
                     <span class="filters__items-container__item__button__resume">Mapa</span>
@@ -196,7 +190,6 @@
                         <div class="filters__items-container__item__menu__range-container__header">
                             <h6 class="card-title">Ubicación de centros deportivos</h6>
                         </div>
-                        <div class="text-center">
                             <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [mapTypeId]="mapTypeId">
                                 <agm-marker [latitude]="item.coords.latitude" [longitude]="item.coords.longitude" *ngFor="let item of sportCentersCombo">
                                     <agm-info-window>
@@ -206,7 +199,6 @@
                                     </agm-info-window>
                                 </agm-marker>
                             </agm-map>
-                        </div>
                     </div>
                                     <!-- ACTIONS -->
                     <div class="filters__items-container__item__actions-container">
@@ -219,7 +211,7 @@
         </article>
     </div>
 </div>
-<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span *ngFor="let item of selectedFilters">{{item}}</span></p>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters"> "{{item}}" </span></p>
 <div class="card-group" *ngIf="fields.length > 0">
     <div class="col-sm-12 col-md-6 col-lg-4 animated fadeIn fast" *ngFor="let field of fields">
         <app-card-field [field]="field" (goSportCenterModal)="openSportCenterModal($event)" (goScheduleModal)="openScheduleModal($event)" (goOpenMap)="openMap($event)">
@@ -257,4 +249,5 @@
                                 (closeModal)="closeScheduleModal()">
 </app-sport-center-schedule-modal>
 
-<app-one-point-map *ngIf="hiddenOnePointMap" [hiddenOnePointMap]="!hiddenOnePointMap" [sportCenter]="sportCenterSelected" (closeModal)="closeMap()"></app-one-point-map>
+<app-one-point-map *ngIf="hiddenOnePointMap" [hiddenOnePointMap]="!hiddenOnePointMap" [sportCenter]="sportCenterSelected" (goGPSModal)="openGPSModal($event)" (closeModal)="closeMap()"></app-one-point-map>
+<app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [sportCenter]="sportCenterSelected" (closeModal)="closeGPSModal()"></app-gps-map>

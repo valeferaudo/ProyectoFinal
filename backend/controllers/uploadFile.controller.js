@@ -29,6 +29,7 @@ uploadCtrl.fileUpload = async (req = request,res=response)=>{
     }
     //Validate if exists a file
     if (!req.files || Object.keys(req.files).length === 0) {
+        console.log('sale aca 1 ')
         return res.status(400).json({
             ok:false,
             code: 14,
@@ -47,6 +48,8 @@ uploadCtrl.fileUpload = async (req = request,res=response)=>{
         //Validate extension
         const validExtension = ['png','jpg','jpeg'];
         if(!validExtension.includes(fileExtension)){
+            console.log('sale aca 2 ')
+
             return res.status(400).json({
                 ok:false,
                 code: 15,
@@ -55,23 +58,16 @@ uploadCtrl.fileUpload = async (req = request,res=response)=>{
         }
         //MODIFICAR EL FILE PARA QUE SEA CCUADRADO, ANTES HACER VALIDACION DE TAMAÑo
         const dimensions = sizeOf(file.data);
-        if(dimensions.width < 600 && dimensions.height < 600){
+        if(dimensions.width < 400 && dimensions.height < 400){
             notUploadImages.push(file.name)
         }
         else{
             //valido que no haya una proporción muy grande entre ancho y alto
-            if((dimensions.height / dimensions.width) < 0.83 || ((dimensions.height / dimensions.width) > 1.2)){
-                notUploadImages.push(file.name)
+            if(false){
+            // if((dimensions.height / dimensions.width) < 0.90 || ((dimensions.height / dimensions.width) > 1.1)){
+                // notUploadImages.push(file.name)
             }
             else{
-            //cambio el tamaño a 600 x 600
-            //console.log(file)
-            //sharp(file.data)
-            //    .resize(320, 240)
-            //    .toBuffer((err, info) => { 
-            //        console.log(err,info)
-            //        file.data = info
-            //    });
             //Create unique file name with uuidv4
             const fileName = `${uuidv4()}.${fileExtension}`;
             uploadImages.push(fileName)

@@ -11,6 +11,9 @@ const PaymentSchema = new Schema({
     state: {type:String, enum: ['APPROVED', 'PENDING'],required: true},
     type: {type:String, enum: ['MERCADO-PAGO', 'CASH', 'OTHER'],required: true},
     appointment: {type:Schema.Types.ObjectId,ref:'Appointment',required:true},
+    appointmentDate: {type:Date},
+    appointmentField: {type:String},
+    appointmentSportCenter: {type:String},
 },{collection:'payments'})
 
 

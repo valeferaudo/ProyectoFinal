@@ -27,7 +27,6 @@ import { MaterialModule } from '../material.module';
 import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-requests.component';
 import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
-import { AdminReportsComponent } from './admin-pages/admin-reports/admin-reports.component';
 import { AdminPaymentsComponent } from './admin-pages/admin-payments/admin-payments.component';
 
 
@@ -48,7 +47,6 @@ import { AdminPaymentsComponent } from './admin-pages/admin-payments/admin-payme
      AdminRequestsComponent,
      RequestDoComponent,
      AdminUsersComponent,
-     AdminReportsComponent,
      AdminPaymentsComponent,
   ],
   imports: [

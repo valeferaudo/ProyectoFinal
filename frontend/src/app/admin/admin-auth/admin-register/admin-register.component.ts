@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ErrorsService } from 'src/app/services/errors.service';
+import { LoaderService } from 'src/app/services/loader.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
 import { ValidatorService } from 'src/app/services/validator.service';
@@ -19,6 +20,7 @@ export class AdminRegisterComponent {
               private userService: UserService,
               private router: Router,
               private validator: ValidatorService,
+              private loaderService: LoaderService,
               private errorService: ErrorsService,
               private sweetAlertService: SweetAlertService) {
     this.createForm();
@@ -47,8 +49,10 @@ export class AdminRegisterComponent {
        });
        return;
      }
+     this.loaderService.openLineLoader();
      this.userService.signUp(this.registerForm.value, 'CENTER-SUPER-ADMIN')
                       .subscribe(resp => {
+                        this.loaderService.closeLineLoader();
                         this.sweetAlertService.showSwalResponseDelay({
                           title: '¡Usuario registrado!',
                           text:'Por favor, espere que el administrador general apruebe su registro.',
@@ -59,7 +63,8 @@ export class AdminRegisterComponent {
                         }, 2000);
                       }, (err) => {
                         console.log(err)
-                        this.errorService.showErrors('error',99)
+                        this.loaderService.closeLineLoader();
+                        this.errorService.showErrors(err.error.code,err.error.msg)
                       });
    }
 

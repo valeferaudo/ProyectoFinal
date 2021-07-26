@@ -9,10 +9,8 @@
 @media (max-width: 767px) {
     .filters {
         flex-direction: column;
-    align-items: flex-start;
-}
-
-    
+        align-items: flex-start;
+    }
     .filters__items-container {
         margin: 0;
         width: 100%;
@@ -20,14 +18,9 @@
         grid-template-rows: repeat(2, 1fr);
         grid-row-gap: .875rem;
     }
-
     .filters__title {
         margin-top: auto;
         margin-bottom: 1rem;
-    }
-    agm-map {
-        height: 50vh;
-        width: 80vw;
     }
 }
 agm-map {
@@ -35,11 +28,11 @@ agm-map {
     width: 60vw;
 }
   ::ng-deep.mat-menu-panel {
-      display: flex;
-      align-items: middle;
+    display: flex;
+    align-items: middle;
     max-width: none !important;
   }
-  .txt:hover {
+.txt:hover {
     text-decoration: underline;
 }
 /* Paginador */

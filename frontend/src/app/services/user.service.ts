@@ -17,6 +17,10 @@ const baseUrl = environment.base_url;
 export class UserService {
   registerPerPage = '6';
   public user: User;
+  public haveDebt: boolean;
+  public nonPayment: boolean;
+  public pendingPayment: boolean;
+
   constructor(private http: HttpClient,
               private router: Router) {
   }
@@ -39,8 +43,11 @@ export class UserService {
   validateToken(): Observable<boolean>{
     return this.http.get(`${baseUrl}/login/renew`)
               .pipe(map((resp: any) => {
-                        const{name,lastName, uid, email, role, phone, address, favorites, sportCenter} = resp.user;
-                        this.user  = new User( name, lastName, address, phone, email, '', role, uid, favorites,sportCenter);
+                        const{name,lastName, uid, email, role, phone, address, favorites, sportCenter,paymentNotification, debtNotification} = resp.user;
+                        this.user  = new User( name, lastName, address, phone, email, '', role, uid, favorites,sportCenter,paymentNotification, debtNotification);
+                        this.haveDebt = resp.haveDebt;
+                        this.nonPayment = resp.nonPayment;
+                        this.pendingPayment = resp.pendingPayment;
                         localStorage.setItem('token', resp.token);
                         return true;
             }), catchError(error => {
@@ -110,5 +117,9 @@ export class UserService {
   }
   getLocation(){
     return this.http.post(`https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyD3VgKPKtNrPpr-86YZT-s7SFLJtHSHyU4`,{})
+  }
+  changeNotification(type,state){
+
+    return this.http.put(`${baseUrl}/users/changeNotification/${this.user.uid}`,{type,state});
   }
 }

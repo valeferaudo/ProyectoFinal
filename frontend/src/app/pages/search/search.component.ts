@@ -17,6 +17,16 @@ import { SportCenterService } from 'src/app/services/sport-center.service';
 })
 export class SearchComponent implements OnInit {
 
+  hiddenSportCenterModal: boolean = false;
+  fieldSelected: any;
+  sportCenterSelected: SportCenter;
+  hiddenScheduleModal:boolean = false;
+  hiddenOnePointMap:boolean = false;
+  hiddenGPSModal:boolean = false;
+  hiddenCancelPolicyModal: boolean = false;
+
+  sportCenterID;
+
   searchText: string = '';
   filterON: boolean = false;
   fields: Field [] = [];
@@ -140,5 +150,51 @@ export class SearchComponent implements OnInit {
         this.getSportCenters();
         break;
     }
+  }
+  openSportCenterModal(object, type : 'field' | 'sportCenter'){
+    if (type === 'field'){
+      this.sportCenterID = object.sportCenter._id;
+      this.fieldSelected = object;
+    }
+    else if (type === 'sportCenter'){
+      this.sportCenterID = object.id
+    }
+    this.hiddenSportCenterModal = true;
+  }
+  closeSportCenterModal(){
+    this.hiddenSportCenterModal = false;
+  }
+  openScheduleModal(object , type: 'field'|'sportCenter'){
+    if (type === 'field'){
+      this.sportCenterSelected = object.sportCenter;
+    }
+    else if (type === 'sportCenter'){
+      this.sportCenterSelected = object
+    }
+    this.hiddenScheduleModal = true;
+  }
+  closeScheduleModal(){
+    this.hiddenScheduleModal = false;
+  }
+  openMap(sportCenter){
+    this.sportCenterSelected = sportCenter;
+    this.hiddenOnePointMap = true;
+  }
+  closeMap(){
+    this.hiddenOnePointMap = false;
+  }
+  openGPSModal(sportCenter){
+    this.sportCenterSelected = sportCenter;
+    this.hiddenGPSModal = true;
+  }
+  closeGPSModal(){
+    this.hiddenGPSModal = false;
+  }
+  openCancelPolicyModal(sportCenter){
+    this.sportCenterSelected = sportCenter
+    this.hiddenCancelPolicyModal = true;
+  }
+  closeCancelPolicyModal(){
+    this.hiddenCancelPolicyModal = false;
   }
 }

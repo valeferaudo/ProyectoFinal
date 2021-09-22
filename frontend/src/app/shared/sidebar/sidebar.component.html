@@ -94,6 +94,20 @@
                             <span class="hide-menu"> Pagos</span>
                         </a>
                     </li>
+                    <!-- DEUDAS -->
+                    <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' || userLogged.role === 'CENTER-ADMIN'"> 
+                        <a class="waves-effect waves-dark" [routerLink]="['/admin','debts']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                            <i class="fas fa-cart-plus"></i>
+                            <span class="hide-menu"> Devoluciones</span>
+                        </a>
+                    </li>
+                    <!-- REPORTES -->
+                    <li *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN' || userLogged.role === 'CENTER-ADMIN'"> 
+                        <a class="waves-effect waves-dark" [routerLink]="['/admin','report']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" aria-expanded="false">
+                            <i class="fas fa-file-pdf"></i>
+                            <span class="hide-menu"> Reportes</span>
+                        </a>
+                    </li>
             </ul>
         </nav>
     </div>

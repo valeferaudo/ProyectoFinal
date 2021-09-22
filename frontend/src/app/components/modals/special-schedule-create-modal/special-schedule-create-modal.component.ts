@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, resolveForwardRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
+import { Appointment } from 'src/app/models/appointment.model';
 import { User } from 'src/app/models/user.model';
+import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
@@ -19,10 +21,15 @@ export class SpecialScheduleCreateModalComponent implements OnInit {
   @Output() closeModal = new EventEmitter<string>();
   specialScheduleForm : FormGroup;
   userLogged: User;
-  minDate = new Date() 
+  minDate = new Date();
+  filterObject;
+  reservedAppointment: Appointment [] = [];
+  totalAppointments = null;
+
   constructor(private scheduleService: ScheduleService,
               private loaderService: LoaderService,
               private userService: UserService,
+              private appointmentService: AppointmentService,
               private sweetAlertService: SweetAlertService,
               private dateAdapter: DateAdapter<Date>,
               private fb: FormBuilder,
@@ -33,6 +40,7 @@ export class SpecialScheduleCreateModalComponent implements OnInit {
     this.dateAdapter.setLocale('es-AR');
     this.createForm();
     // this.getMinDate();
+    this.listenerForm();
   }
   createForm(){
     this.specialScheduleForm = this.fb.group({
@@ -83,4 +91,21 @@ export class SpecialScheduleCreateModalComponent implements OnInit {
   // getMinDate(){
   //   this.minDate.setDate(this.minDate.getDate() + 1)
   // }
+  listenerForm(){
+    this.specialScheduleForm.valueChanges
+                .subscribe((form:any)=>{
+                  if(form.date !== '' && form.sinceHour !== '' && form.untilHour !== ''){
+                    this.filterObject = {
+                      date: form.date,
+                      sinceHour: form.sinceHour,
+                      untilHour: form.untilHour
+                    }
+                    this.appointmentService.getReservedSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObject)
+                                          .subscribe((resp: any)=>{
+                                            this.reservedAppointment = resp.param.appointments;
+                                            this.totalAppointments = resp.param.total
+                                          })
+                  }
+                })
+  }
 }

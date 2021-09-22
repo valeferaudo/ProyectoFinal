@@ -45,7 +45,8 @@ export class AppointmentsComponent {
     untilDate: null,
     sinceHour: 0,
     untilHour: 23,
-    fieldID: null
+    fieldID: null,
+    payment: null
   }
   filterReservedON: boolean = false;
   filterCompletedON: boolean = false;
@@ -53,6 +54,8 @@ export class AppointmentsComponent {
   filterInProgressON: boolean = false;
   states = ['Reservado','Por comenzar','En progreso','Completado']
   statesSelected = ['Reservado','Por comenzar','En progreso'];
+  payments = ['Total','Parcial','Sin Pagos'];
+  paymentSelected: 'Total' | 'Parcial' | 'Sin Pagos';
   //PAGINATOR
   reservedTotalPages = null;
   reservedPage = 1;
@@ -159,6 +162,7 @@ export class AppointmentsComponent {
       sinceHour: this.sinceHourSelected,
       untilHour: this.untilHourSelected,
       fieldID: this.fieldID,
+      payment: this.paymentSelected
     }
   }
   clearFilters(){
@@ -246,6 +250,15 @@ export class AppointmentsComponent {
   }
   resetStates(){
     this.statesSelected = ['Reservado'];
+    this.fillFilterObject();
+    this.getAppointments();
+  }
+  filterPayment(){
+    this.fillFilterObject();
+    this.getAppointments();
+  }
+  resetPayment(){
+    this.paymentSelected = null;
     this.fillFilterObject();
     this.getAppointments();
   }

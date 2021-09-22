@@ -9,10 +9,10 @@
         </div>
         <div class="card-body bg-white p-0 ">
             <h4 class="card-title mt-2">Por comenzar:</h4>
-                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'" (getAppointments)="getAboutToStartAppointments()"></app-carousel-appointment>
+                <app-carousel-appointment [appointments]="aboutToStartAppointments" [type]="'Por comenzar'" (getAppointments)="getAboutToStartAppointments()" (goPaymentCenterModal)="openPaymentModal($event)"></app-carousel-appointment>
                 <hr>
             <h4 class="card-title">Reservados:</h4>
-                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'" (getAppointments)="getReservedAppointments()"></app-carousel-appointment>
+                <app-carousel-appointment [appointments]="reservedAppointments" [type]="'Reservados'" (getAppointments)="getReservedAppointments()" (goPaymentCenterModal)="openPaymentModal($event)"></app-carousel-appointment>
             <hr>
             <button class="btn btn-success btn-block" [routerLink]="['/admin/appointment']"><strong>Nuevo turno</strong></button>
         </div>
@@ -102,6 +102,10 @@
         </div>
     </div>
 </div>
-
 <app-line-loader></app-line-loader>
 <app-sport-center-modal *ngIf="hiddenSportCenterModal" [hiddenSportCenterModal]="!hiddenSportCenterModal" (closeModalOutput)="closeSportCenterModal($event)"></app-sport-center-modal>
+
+<app-notification-toast (openDebtModal)="openDebtModal()" (openPaymentModal)="openNotPaymentModal()"></app-notification-toast>
+<app-add-payment *ngIf="hiddenPaymentModal" [appointment]="appointmentSelected" [hiddenModal]="!hiddenPaymentModal" (closeModal)="closePaymentModal($event)"></app-add-payment>
+<app-not-payment-table *ngIf="hiddenNotPaymentModal" [hiddenModal]="!hiddenNotPaymentModal" (openPaymentModal)="openPaymentModal($event)" (closeModal)="closeNotPaymentModal()"></app-not-payment-table>
+<app-debt-table *ngIf="hiddenDebtModal" [hiddenModal]="!hiddenDebtModal" (closeModal)="closeDebtModal()"></app-debt-table>

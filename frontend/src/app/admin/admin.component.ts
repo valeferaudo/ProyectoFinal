@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 declare function customInitFunctions();
+declare function toastInitFunctions();
+
 
 @Component({
   selector: 'app-admin',
@@ -13,6 +15,7 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     customInitFunctions();
+    toastInitFunctions();
   }
 
 }

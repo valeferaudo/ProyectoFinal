@@ -11,7 +11,10 @@
 <h6 class="card-title"><strong>Canchas </strong></h6>
 <div class="card-group" *ngIf="fields.length > 0">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let field of fields">
-        <app-card-field [field]="field" (removeFavorite)="removeFavoriteFromArray($event)"></app-card-field>
+        <app-card-field [field]="field" (removeFavorite)="removeFavoriteFromArray($event)" 
+                                        (goSportCenterModal)="openSportCenterModal($event,'field')"
+                                        (goScheduleModal)="openScheduleModal($event,'field')"
+                                        (goOpenMap)="openMap($event)"></app-card-field>
     </div>
 </div>
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="fields.length === 0 && !filterON"> 
@@ -38,7 +41,10 @@
 <h6 class="card-title"><strong>Centros Deportivos </strong></h6>
 <div class="card-group" *ngIf="sportCenters.length > 0">
     <div class="col-md-6 col-lg-4 col-sm-12 animated fadeIn fast" *ngFor="let sportCenter of sportCenters">
-        <app-card-sport-center [sportCenter]="sportCenter" (removeFavorite)="removeFavoriteFromArray($event)"></app-card-sport-center>
+        <app-card-sport-center [sportCenter]="sportCenter" (removeFavorite)="removeFavoriteFromArray($event)" 
+                                                            (goSportCenterModal)="openSportCenterModal($event,'sportCenter')" 
+                                                            (goScheduleModal)="openScheduleModal($event,'sportCenter')"
+                                                            (goOpenMap)="openMap($event)"></app-card-sport-center>
     </div>
 </div> 
 <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="sportCenters.length === 0 && !filterON"> 
@@ -62,3 +68,16 @@
     </div>
 </div>
 <app-line-loader></app-line-loader>
+<app-line-loader></app-line-loader>
+<app-sport-center-info-modal *ngIf="hiddenSportCenterModal" [hiddenModal]="!hiddenSportCenterModal" [sportCenterSelectedID]="sportCenterID"
+                                (closeModal)="closeSportCenterModal()" (openPolicyModal)="openCancelPolicyModal($event)">
+
+</app-sport-center-info-modal>
+<app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
+                                [sportCenter]="fieldSelected.sportCenter" [sportCenterID]="fieldSelected.sportCenter.id"
+                                (closeModal)="closeScheduleModal()">
+</app-sport-center-schedule-modal>
+
+<app-one-point-map *ngIf="hiddenOnePointMap" [hiddenOnePointMap]="!hiddenOnePointMap" [sportCenter]="sportCenterSelected" (goGPSModal)="openGPSModal($event)" (closeModal)="closeMap()"></app-one-point-map>
+<app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [sportCenter]="sportCenterSelected" (closeModal)="closeGPSModal()"></app-gps-map>
+<app-cancel-policy *ngIf="hiddenCancelPolicyModal" [hiddenModal]="!hiddenCancelPolicyModal" [sportCenter]="sportCenterSelected" (closeModal)="closeCancelPolicyModal()"></app-cancel-policy>

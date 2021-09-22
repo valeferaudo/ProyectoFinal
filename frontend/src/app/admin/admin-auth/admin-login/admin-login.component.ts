@@ -33,7 +33,7 @@ export class AdminLoginComponent implements OnInit {
   createLoginForm(){
     this.loginForm = this.fb.group({
       email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
-      password: ['123456789', Validators.required],
+      password: [, Validators.required],
       remember: [true]
     });
   }

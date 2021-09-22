@@ -67,13 +67,14 @@ paymentCtrl.createMercadoPagoPayment = async (req = request , res = response) =>
             mercadoPagoPaymentID: null,
             description: null,
             amountPayment: paymentBody.amountPayment,
-            date: moment().subtract(3,'h'),
+            date: new Date(),
             state: 'PENDING',
             type: 'MERCADO-PAGO',
             appointment: paymentBody.appointmentID,
             appointmentDate: moment(appointmentDB.date).add(3,'h'),
-            appointmentField: appointmentDB.field.name,
-            appointmentSportCenter: appointmentDB.field.sportCenter.name,
+            appointmentField: appointmentDB.field.id,
+            appointmentSportCenter: appointmentDB.sportCenter.id,
+            user:appointmentDB.user
         })
         await mercadoPagoPayment.save();
         res.json({
@@ -149,17 +150,66 @@ paymentCtrl.updateSportCenterMercadoPagoPayment = async (req = request , res = r
 }
 paymentCtrl.getUserPayments = async (req = request , res = response) => {
     const userID = req.params.userID;
+    const state = req.query.state;
+    const type = req.query.type;
+    const sincePaymentDate = req.query.sincePaymentDate === "null" || req.query.sincePaymentDate === "undefined" ? null : req.query.sincePaymentDate;
+    const untilPaymentDate = req.query.untilPaymentDate === "null" || req.query.untilPaymentDate === "undefined" ? null : req.query.untilPaymentDate;
+    const sinceAppointmentDate = req.query.sinceAppointmentDate === "null" || req.query.sinceAppointmentDate === "undefined" ? null : req.query.sinceAppointmentDate;
+    const untilAppointmentDate = req.query.untilAppointmentDate === "null" || req.query.untilAppointmentDate === "undefined" ? null : req.query.untilAppointmentDate;
+    const sportCenterID = req.params.sportCenterID;
     page = parseInt(req.query.page);
     registerPerPage = parseInt(req.query.registerPerPage);
     try {
-        [payments,total] = await Promise.all([Payment.find({},'date appointment amountPayment preferenceID type').populate('appointment')
-                                                                            .populate({path:'appointment',populate:{path: 'field', populate:{path:'sportCenter'}}})
-                                                                            .populate({path:'appointment.user',match:{'id': userID}})
-                                                                            .sort({date: -1}).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                    Payment.find({},'date appointment amountPayment').populate('appointment')
-                                                                            .populate({path:'appointment',populate:{path: 'field', populate:{path:'sportCenter'}}})
-                                                                            .populate({path:'appointment.user',match:{'role': 'USER'}})
-                                                                            .sort({date: -1}).countDocuments()]);
+        let query = {
+            '$and': []
+        };
+        query['$and'].push({user:userID});
+        if (state !== null){
+            if (state === 'Aprobado'){
+                state !== null ? query['$and'].push({ state: 'APPROVED'}) : query ;
+            }
+            else if (state === 'Pendiente'){
+                state !== null ? query['$and'].push({ state: 'PENDING'}) : query ;
+            }
+        }
+        if (type !== null){
+            if (type === 'Mercado Pago'){
+                type !== null ? query['$and'].push({ type: 'MERCADO-PAGO'}) : query ;
+            }
+            else if (type === 'Otro'){
+                type !== null ? query['$and'].push({ type: 'OTHER'}) : query ;
+            }
+            else if (type === 'Efectivo'){
+                type !== null ? query['$and'].push({ type: 'CASH'}) : query ;
+            }
+        }
+        if(sincePaymentDate !== null && untilPaymentDate !== null){
+            query['$and'].push({$and: [ { date: { $gte: moment(sincePaymentDate) } },
+                                        { date: { $lte: moment(untilPaymentDate).add(1,'d') }}]})
+        }
+        if(sinceAppointmentDate !== null && untilAppointmentDate !== null){
+            query['$and'].push({$and: [ { appointmentDate: { $gte: moment(sinceAppointmentDate) } },
+                                        { appointmentDate: { $lte: moment(untilAppointmentDate).add(1,'d') }}]})
+        }
+        if(query['$and'].length > 0){
+            [payments,total] = await Promise.all([Payment.find(query).populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                    .populate('appointmentSportCenter')                                                                
+                                                                    .sort({date: -1}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Payment.find(query).populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                    .populate('appointmentSportCenter')  
+                                                                    .sort({date: -1}).countDocuments()]);
+        }else{
+            [payments,total] = await Promise.all([Payment.find().populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                .populate('appointmentSportCenter')                                                                
+                                                                .sort({date: -1}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Payment.find().populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                .populate('appointmentSportCenter')  
+                                                                .sort({date: -1}).countDocuments()]);
+        }
+        // [payments,total] = await Promise.all([Payment.find().populate('appointment').populate('appointmentField').populate('appointmentSportCenter')
+        //                                                                     .sort({date: -1}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+        //                                             Payment.find().populate('appointment').populate('appointmentField').populate('appointmentSportCenter')
+        //                                                                     .sort({date: -1}).countDocuments()]);
         total = Math.ceil(total / registerPerPage);
         res.json({
             ok:true,
@@ -178,18 +228,64 @@ paymentCtrl.getUserPayments = async (req = request , res = response) => {
     }
 }
 paymentCtrl.getSportCenterPayments = async (req = request , res = response) => {
+    const state = req.query.state;
+    const type = req.query.type;
+    const sincePaymentDate = req.query.sincePaymentDate === "null" || req.query.sincePaymentDate === "undefined" ? null : req.query.sincePaymentDate;
+    const untilPaymentDate = req.query.untilPaymentDate === "null" || req.query.untilPaymentDate === "undefined" ? null : req.query.untilPaymentDate;
+    const sinceAppointmentDate = req.query.sinceAppointmentDate === "null" || req.query.sinceAppointmentDate === "undefined" ? null : req.query.sinceAppointmentDate;
+    const untilAppointmentDate = req.query.untilAppointmentDate === "null" || req.query.untilAppointmentDate === "undefined" ? null : req.query.untilAppointmentDate;
+    const field = req.query.field === "null" || req.query.field === "undefined" ? null : req.query.field;
     const sportCenterID = req.params.sportCenterID;
-    page = parseInt(req.query.page);
-    registerPerPage = parseInt(req.query.registerPerPage);
+    const page = parseInt(req.query.page);
+    const registerPerPage = parseInt(req.query.registerPerPage);
     try {
-        [payments,total] = await Promise.all([Payment.find({}).populate({path:'appointment',populate:{path: 'field'}})
-                                                                .populate({path:'appointment.field' ,match:{sportCenter: sportCenterID},populate:{path:'sportCenter'}})
-                                                                .populate({path:'appointment.user'})
+        let query = {
+            '$and': []
+        };
+        query['$and'].push({ appointmentSportCenter: sportCenterID});
+        if (state !== null){
+            if (state === 'Aprobado'){
+                state !== null ? query['$and'].push({ state: 'APPROVED'}) : query ;
+            }
+            else if (state === 'Pendiente'){
+                state !== null ? query['$and'].push({ state: 'PENDING'}) : query ;
+            }
+        }
+        if (type !== null){
+            if (type === 'Mercado Pago'){
+                type !== null ? query['$and'].push({ type: 'MERCADO-PAGO'}) : query ;
+            }
+            else if (type === 'Otro'){
+                type !== null ? query['$and'].push({ type: 'OTHER'}) : query ;
+            }
+            else if (type === 'Efectivo'){
+                type !== null ? query['$and'].push({ type: 'CASH'}) : query ;
+            }
+        }
+        if(sincePaymentDate !== null && untilPaymentDate !== null){
+            query['$and'].push({$and: [ { date: { $gte: moment(sincePaymentDate) } },
+                                        { date: { $lte: moment(untilPaymentDate).add(1,'d') }}]})
+        }
+        if(sinceAppointmentDate !== null && untilAppointmentDate !== null){
+            query['$and'].push({$and: [ { appointmentDate: { $gte: moment(sinceAppointmentDate) } },
+                                        { appointmentDate: { $lte: moment(untilAppointmentDate).add(1,'d') }}]})
+        }
+        field !== null ? query['$and'].push({appointmentField: field}) : query;
+        if(query['$and'].length > 0){
+            [payments,total] = await Promise.all([Payment.find(query).populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                    .populate('appointmentSportCenter')                                                                
+                                                                    .sort({date: -1}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Payment.find(query).populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                    .populate('appointmentSportCenter')  
+                                                                    .sort({date: -1}).countDocuments()]);
+        }else{
+            [payments,total] = await Promise.all([Payment.find().populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                .populate('appointmentSportCenter')                                                                
                                                                 .sort({date: -1}).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                    Payment.find({}).populate({path:'appointment',populate:{path: 'field'}})
-                                                                .populate({path:'appointment.field.sportCenter' ,match:{sportCenter: sportCenterID}})
-                                                                .populate({path:'appointment.user'})
+                                                Payment.find().populate('appointment').populate({path:'appointment.user'}).populate('appointmentField')
+                                                                .populate('appointmentSportCenter')  
                                                                 .sort({date: -1}).countDocuments()]);
+        }
         total = Math.ceil(total / registerPerPage);
         res.json({
             ok:true,
@@ -245,13 +341,7 @@ paymentCtrl.createSportCenterPayment = async (req = request , res = response) =>
     const sportCenterID = req.params.sportCenterID
     const paymentBody = req.body;
     try {
-        const appointmentDB = await Appointment.findById(paymentBody.appointmentID).populate({ 
-                                                                                                path: 'field',
-                                                                                                model: 'Field',
-                                                                                                populate: {
-                                                                                                    path: 'sportCenter',
-                                                                                                    model: 'SportCenter'
-                                                                                                }})
+        const appointmentDB = await Appointment.findById(paymentBody.appointmentID).populate('field').populate('sportCenter')
         if(!appointmentDB){
         return canceledAppointmentResponse(res);
         }
@@ -263,8 +353,8 @@ paymentCtrl.createSportCenterPayment = async (req = request , res = response) =>
             type: paymentBody.type,
             appointment: paymentBody.appointmentID,
             appointmentDate: moment(appointmentDB.date).add(3,'h'),
-            appointmentField: appointmentDB.field.name,
-            appointmentSportCenter: appointmentDB.field.sportCenter.name,
+            appointmentField: appointmentDB.field.id,
+            appointmentSportCenter: appointmentDB.sportCenter.id,
         })
         const newPayment = await mercadoPagoPayment.save();
         appointmentDB.totalPaid = appointmentDB.totalPaid + newPayment.amountPayment;

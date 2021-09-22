@@ -43,6 +43,34 @@
               <button type="button" class="btn btn-info" (click)="createSpecialSchedule()">Crear</button>
               <button type="button" class="btn btn-danger"  (click)="closedModal()">Cancelar</button>
             </div>
+            <div class="modal-body">
+              <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="totalAppointments === 0 && totalAppointments !== null" > 
+                <i class="fas fa-times"></i> No hay turnos <strong>reservados</strong> para la fecha y horario indicado.
+              </div>
+              <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="totalAppointments > 0 && totalAppointments !== null" > 
+                <i class="fas fa-times"></i> Al crear este horario especial, se darán de baja todos los turnos enumerados a continuación. En el caso de existir un pago sobre alguno de estos turnos, se generará una deuda en caso de corresponder.
+              </div>
+              <div style="overflow-x: auto;">
+                <table *ngIf="totalAppointments > 0 && totalAppointments !== null" class="table table-stripped color-table inverse-table">
+                    <thead>
+                      <tr>
+                        <th class="text-center" scope="col">#</th>
+                        <th class="text-center" scope="col">Cancha</th>
+                        <th class="text-center" scope="col">Horario</th>
+                        <th class="text-center" scope="col">Pagado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of reservedAppointment; let i=index">
+                        <th class="text-center" scope="row">{{i+1}}</th>
+                        <td class="text-center" >{{item.field.name}}</td>
+                        <td class="text-center" >{{item.date | date:'HH:mm':'+0'}}</td>
+                        <td class="text-center" >{{item.totalPaid}} / {{item.totalAmount}} $</td>
+                      </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
     </div>

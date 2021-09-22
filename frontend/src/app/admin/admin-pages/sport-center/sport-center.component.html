@@ -3,17 +3,17 @@
     </h1>
     <h4 class="card-subtitle text-danger" *ngIf="sportCenter.deletedDate !== null"> <small>Dado de baja<i class="fas fa-exclamation-circle"></i></small></h4>
     <div class="row" *ngIf="userLogged.role === 'CENTER-SUPER-ADMIN'">
-        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
-            <a href="javascript:void(0)" *ngIf="!editMode" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><p class="mb-0">Editar</p></a>
+        <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><span class="mb-0">Editar</span></a>
         </div>
-        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
-            <a href="javascript:void(0)" *ngIf="!editMode" (click)="openServiceModal()" class=" text-info"><i class="fas fa-certificate"></i><br><p class="mb-0">Servicios</p></a>
+        <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="openServiceModal()" class=" text-info"><i class="fas fa-certificate"></i><br><span class="mb-0">Servicios</span></a>
         </div>
-        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
-            <a href="javascript:void(0)" *ngIf="!editMode" (click)="updateSchedule()" class="text-info"><i class="far fa-clock"></i><br><p class="mb-0">Horarios</p></a>
+        <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="updateSchedule()" class="text-info"><i class="far fa-clock"></i><br><span class="mb-0">Horarios</span></a>
         </div>
-        <div class="col-sm-3 col-xs-6 col-md-3 col-xl-3 text-center">
-            <a href="javascript:void(0)" *ngIf="!editMode" (click)="openSpecialScheduleInfoModal()" class="text-info"><i class="far fa-calendar-plus"></i><br><p class="mb-0">Fecha Especial</p></a>
+        <div class="col text-center">
+            <a href="javascript:void(0)" *ngIf="!editMode" (click)="openSpecialScheduleInfoModal()" class="text-info"><i class="far fa-calendar-plus"></i><br><span class="mb-0">Fecha Especial</span></a>
         </div>
     </div>
 </div>
@@ -71,9 +71,7 @@
                 <div class="form-group col-md-12 m-t-5 m-b-5">
                     <label for="">
                         <strong>Dirección </strong>
-                        <i class="fas fa-question-circle content-tooltip">
-                            <span class="tooltip-box">Indique la dirección y luego márquela en el mapa.</span>
-                        </i>
+                        <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Indique la dirección y luego márquela en el mapa."></i>
                     </label>
                     <input type="text" 
                         class="form-control form-control-line m-b-5"
@@ -97,14 +95,12 @@
                 
             </div>
         </div>
-        <div class="col-md-6 col-lg-6">
+        <div class="col-md-8 col-lg-8">
             <div class="row">
                 <div class="form-group col-md-12 m-t-5 m-b-5">
                     <label for="mercadoPago" class="col-form-label mr-2">
                         <strong>Cobro electrónico 
-                            <i class="fas fa-question-circle content-tooltip">
-                                <span class="tooltip-box">Sólo se aceptarán mediante MercadoPago.</span>
-                            </i>
+                            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Solo se aceptarán mediante MercadoPago."></i>
                         </strong>
                         
                     </label> 
@@ -114,7 +110,7 @@
                     <br>
                     <small><a href="../../../../assets/document/mercadopagoKey.pdf" *ngIf="slideMercadoPago && editMode" download="clavesMercadoPago">Obtener claves de Mercado Pago</a></small>
                 </div>
-                <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideMercadoPago">
+                <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideMercadoPago">
                     <label for="aditionalElectricity" class="col-form-label">Access Token</label>
                     <div class="input-group">
                         <input type="password" class="form-control" formControlName="accessToken" [type]="accessTokenIsVisible ? 'text' : 'password'" [class.is-invalid]="getFieldValid('accessToken')">
@@ -126,7 +122,7 @@
                         </small>
                     </div>
                 </div>
-                <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slideMercadoPago">
+                <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideMercadoPago">
                     <label for="aditionalElectricityHour" class="col-form-label">Public Key</label>
                     <div class="input-group">
                         <input type="password" class="form-control"  formControlName="publicKey" [type]="publicKeyIsVisible ? 'text' : 'password'" [class.is-invalid]="getFieldValid('publicKey')">
@@ -138,9 +134,23 @@
                         </small>
                     </div>
                 </div>
+                <div class="form-group col-md-4 m-t-5 m-b-5" *ngIf="slideMercadoPago">
+                    <label for="aditionalElectricityHour" class="col-form-label">Cancelación
+                        <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Hora de anticipación máxima de cancelación de turno para no perder el dinero de pagos realizados."></i>
+                    </label>
+                    <div class="input-group" [class.has-danger]="getFieldValid('cancelationHour')">
+                        <input type="number" class="form-control"  formControlName="cancelationHour"  [class.is-invalid]="getFieldValid('cancelationHour')">
+                        <div class="input-group-addon">
+                            HS
+                        </div> 
+                        <small *ngIf="getFieldValid('cancelationHour')" class="text-danger">
+                            *Ingrese las <strong>horas </strong>para cancelación permitidas.
+                        </small>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-6" *ngIf="slideMercadoPago">
+        <div class="col-md-4 col-lg-4" *ngIf="slideMercadoPago">
             <div class="row">
                 <div class="form-group col-md-12 m-t-5 m-b-5">
                     <label for="paymentRequired" class="col-form-label mr-2">
@@ -152,7 +162,7 @@
                     <br>
                     <small class="a pointer" (click)="openPaymentRequiredModal()" style="color: #007bff;" *ngIf="slidePaymentRequired && editMode" data-toggle="tooltip" title="Al momento de realizar la reserva del turno, el usuario deberá pagar el % indicado.">¿Qué significa?</small>
                 </div>
-                <div class="form-group col-md-6 m-t-5 m-b-5" *ngIf="slidePaymentRequired">
+                <div class="form-group col-md-12 m-t-5 m-b-5" *ngIf="slidePaymentRequired">
                     <label for="minimunAmount" class="col-form-label">Porcentaje mínimo</label>
                     <div class="input-group" [class.has-danger]="getFieldValid('minimunAmount')">
                         <input type="number" class="form-control" formControlName="minimunAmount" [class.is-invalid]="getFieldValid('minimunAmount')">
@@ -169,7 +179,7 @@
         
         <div class="form-group col-md-12 m-t-5 m-b-5" >
             <label for="description" class="col-form-label"><strong>Imágenes:</strong> ({{sportCenter.images.length}})</label>
-            <app-carousel-images [images]="sportCenter.images" [type]="'sportCenter'" [mode]="'update'" (deleteImage)="deleteImage($event)"></app-carousel-images>
+            <app-carousel-images [images]="sportCenter.images" [type]="'sportCenter'" [mode]="'update'" [editMode]="editMode" (deleteImage)="deleteImage($event)"></app-carousel-images>
             <app-image-drop-zone-modal *ngIf="editMode" (setImages)="setImages($event)"></app-image-drop-zone-modal>
         </div>
     </form>
@@ -196,3 +206,7 @@
                                     (closeModal)="closeSpecialScheduleCreateModal()">
 </app-special-schedule-create-modal>
 <app-payment-required-info *ngIf="hiddenPaymentRequiredModal" [hiddenModal]="!hiddenPaymentRequiredModal"(closeModal)="closePaymentRequiredModal()"></app-payment-required-info>
+<app-notification-toast (openDebtModal)="openDebtModal()" (openPaymentModal)="openNotPaymentModal()"></app-notification-toast>
+<app-add-payment *ngIf="hiddenPaymentModal" [appointment]="appointmentSelected" [hiddenModal]="!hiddenPaymentModal" (closeModal)="closePaymentModal($event)"></app-add-payment>
+<app-not-payment-table *ngIf="hiddenNotPaymentModal" [hiddenModal]="!hiddenNotPaymentModal" (openPaymentModal)="openPaymentModal($event)" (closeModal)="closeNotPaymentModal()"></app-not-payment-table>
+<app-debt-table *ngIf="hiddenDebtModal" [hiddenModal]="!hiddenDebtModal" (closeModal)="closeDebtModal()"></app-debt-table>

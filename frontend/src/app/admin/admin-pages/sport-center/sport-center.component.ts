@@ -6,6 +6,7 @@ import { SportCenter } from 'src/app/models/sportCenter.model';
 import { User } from 'src/app/models/user.model';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { SportCenterService } from 'src/app/services/sport-center.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UploadFileService } from 'src/app/services/upload-file.service';
@@ -30,6 +31,10 @@ export class SportCenterComponent implements OnInit {
   hiddenServiceModal: boolean = false;
   hiddenSpecialScheduleInfoModal: boolean = false;
   hiddenSpecialScheduleCreateModal: boolean = false;
+  hiddenNotPaymentModal: boolean = false;
+  hiddenDebtModal: boolean = false;
+  hiddenPaymentModal = false;
+  appointmentSelected = null;
   accessTokenIsVisible: boolean;
   publicKeyIsVisible: boolean;
   hiddenPaymentRequiredModal: boolean = false;
@@ -43,7 +48,8 @@ export class SportCenterComponent implements OnInit {
               private sportCenterService: SportCenterService,
               private errorService: ErrorsService,
               private loaderService: LoaderService,
-              private uploadFileService: UploadFileService) { }
+              private uploadFileService: UploadFileService,
+              private notificationService: NotificationService) { }
 
   ngOnInit(): void {
     this.userLogged = this.userService.user;
@@ -51,6 +57,7 @@ export class SportCenterComponent implements OnInit {
     // this.getSportCenter();
     this.createForm();
     this.setSlide();
+    this.throwNotification();
   }
   getSportCenter(){
     this.loaderService.openLineLoader();
@@ -79,7 +86,8 @@ export class SportCenterComponent implements OnInit {
       paymentRequired: [{value: this.sportCenter.paymentRequired, disabled: true}, ],
       minimunAmount: [{value: this.sportCenter.minimunAmount, disabled: true},[Validators.min(0),Validators.max(100)]],
       accessToken: [{value: this.sportCenter.credentials.accessToken, disabled: true}],
-      publicKey: [{value: this.sportCenter.credentials.publicKey, disabled: true}]
+      publicKey: [{value: this.sportCenter.credentials.publicKey, disabled: true}],
+      cancelationHour: [{value: this.sportCenter.cancelationHour, disabled: true}],
     });
   }
   setSlide(){
@@ -122,7 +130,8 @@ export class SportCenterComponent implements OnInit {
         paymentRequired: this.sportCenter.paymentRequired,
         minimunAmount: this.sportCenter.minimunAmount,
         accessToken: this.sportCenter.credentials.accessToken,
-        publicKey: this.sportCenter.credentials.publicKey
+        publicKey: this.sportCenter.credentials.publicKey,
+        cancelationHour: this.sportCenter.cancelationHour
       })
   }
   disableForm(){
@@ -178,6 +187,14 @@ export class SportCenterComponent implements OnInit {
         }
         else{
           this.sportCenterForm.controls['publicKey'].setErrors(null);
+        }
+        if(this.sportCenterForm.controls['cancelationHour'].value === null){
+          this.sportCenterForm.controls['cancelationHour'].setErrors({'incorrect': true});
+          this.markAsTouched();
+          return;
+        }
+        else{
+          this.sportCenterForm.controls['cancelationHour'].setErrors(null);
         }
       }
       if(this.slidePaymentRequired === true){
@@ -354,5 +371,36 @@ export class SportCenterComponent implements OnInit {
   }
   closePaymentRequiredModal(){
     this.hiddenPaymentRequiredModal = false;
+  }
+  throwNotification(){
+    if(this.userService.haveDebt){
+      this.notificationService.showDebtNotification();
+    }
+    if(this.userService.nonPayment){
+      this.notificationService.showNonPaymentNotification();
+    }
+    if(this.userService.pendingPayment){
+      this.notificationService.showPendingNotification();
+    }
+  }
+  openDebtModal(){
+    this.hiddenDebtModal = true;
+  }
+  closeDebtModal(){
+    this.hiddenDebtModal = false;
+  }
+  openNotPaymentModal(){
+    this.hiddenNotPaymentModal = true;
+  }
+  closeNotPaymentModal(){
+    this.hiddenNotPaymentModal = false;
+  }
+  openPaymentModal(appointment){
+    this.hiddenNotPaymentModal = false;
+    this.appointmentSelected = appointment;
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(boolean){
+    this.hiddenPaymentModal = false;
   }
 }

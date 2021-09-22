@@ -1,4 +1,7 @@
 const User = require ('../models/user.model');
+const Appointment = require ('../models/appointment.model');
+const Payment = require ('../models/payment.model');
+const Debt = require ('../models/debt.model')
 const {request, response} = require('express');
 const authCtrl ={};
 const Cryptr = require('cryptr');
@@ -87,7 +90,7 @@ authCtrl.renewToken = async (req,res)=>{
     const token =  await generateJWT(uid)    
 
 //OBTENER USUARIO
-    var userDB = await User.findById(uid,{uid:1,name:1,lastName:1,address:1,phone:1,email:1,role:1,sportCenter:1,favorites:1})
+    var userDB = await User.findById(uid,{uid:1,name:1,lastName:1,address:1,phone:1,email:1,role:1,sportCenter:1,favorites:1,debtNotification:1,paymentNotification:1})
                                     .populate('sportCenter');
     if(!userDB){
         return console.log('NO ENCUENTRA USUARIO')
@@ -101,7 +104,9 @@ authCtrl.renewToken = async (req,res)=>{
         email: userDB.email,
         role: userDB.role,
         sportCenter: userDB.sportCenter,
-        favorites: userDB.favorites
+        favorites: userDB.favorites,
+        paymentNotification: userDB.paymentNotification,
+        debtNotification: userDB.debtNotification
     }
     if(user.role === 'CENTER-SUPER-ADMIN'){
         const cryptr = new Cryptr(process.env.CRYTPR);
@@ -109,10 +114,29 @@ authCtrl.renewToken = async (req,res)=>{
             user.sportCenter.credentials.accessToken =  cryptr.decrypt(user.sportCenter.credentials.accessToken)
         }
     }
+    let appointments = [];
+    let debts = [];
+    let payments = [];
+    if(user.role === 'CENTER-SUPER-ADMIN' || user.role === 'CENTER-ADMIN'){
+        if(userDB.paymentNotification && userDB.sportCenter.paymentRequired){
+            appointments = await Appointment.find({$and:[{state:{$ne:'Completed'}},{payments:[]},{sportCenter: userDB.sportCenter}]}).populate({
+                                                                                                path: "user",
+                                                                                                match: {
+                                                                                                    role: {$nin :['USER','SUPER-ADMIN']},
+                                                                                                }})
+        }
+        if(userDB.debtNotification){
+            debts = await Debt.find({$and:[{centerApprove:false},{sportCenter: userDB.sportCenter}]})
+        }
+        payments = await Payment.find({$and:[{appointmentSportCenter: userDB.sportCenter},{state:'PENDING'}]});
+    }
     res.json({
         ok:true,
         user,
-        token: token
+        token: token,
+        haveDebt: debts.length !== 0 ? true : false,
+        nonPayment: appointments.length !== 0 ? true : false,
+        pendingPayment: payments.length !== 0 ? true : false,
     })
 }
 

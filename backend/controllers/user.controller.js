@@ -121,19 +121,29 @@ userCtrl.createUser = async (req = request, res = response) =>{
         if(existsEmail){
             return existsEmailResponse(res);
         }
-        var initialState = false;
+        let initialState = false;
+        let debtNotification = false;
+        let paymentNotification = false;
         switch (role) {
                 case 'USER':
                     initialState = true;
+                    debtNotification = null;
+                    paymentNotification = null;
                     break;
                 case 'CENTER-ADMIN':
                     initialState = true;
+                    debtNotification = true;
+                    paymentNotification = true;
                     break;
                 case 'CENTER-SUPER-ADMIN':
                     initialState = false;
+                    debtNotification = true;
+                    paymentNotification = true;
                     break;
                 case 'SUPER-ADMIN':
                     initialState = true;
+                    debtNotification = null;
+                    paymentNotification = null;
                     break;
                 default:
                     wrongRoleResponse(res);
@@ -154,7 +164,9 @@ userCtrl.createUser = async (req = request, res = response) =>{
             password: req.body.password,
             state: initialState,
             sportCenter: sportCenter,
-            role: req.body.role
+            role: req.body.role,
+            debtNotification: debtNotification,
+            paymentNotification: paymentNotification
         });
         
         const salt = bcrypt.genSaltSync();
@@ -209,7 +221,7 @@ userCtrl.updateUser = async (req = request, res = response) =>{
                 delete changes.role
             }
         }
-        const user = await User.findByIdAndUpdate(uid,changes,{new:true})
+        const user = await User.findByIdAndUpdate(uid,changes,{new:true}).populate('sportCenter')
         res.json({
             ok:true,
             msg:'Updated User',
@@ -446,6 +458,29 @@ userCtrl.forgetPassword = async (req = request, res = response) =>{
         res.json({
             ok:true,
             msg: 'Updated User Password',
+        })
+    } catch (error) {
+        console.log(error);
+        errorResponse(res);
+    }
+}
+userCtrl.changeNotification = async (req = request, res = response) =>{
+    const userID = req.uid;
+    const type = req.body.type;
+    const state = req.body.state;
+    try {
+        let user;
+        if(type === 'nonPayment'){
+            user = await User.findByIdAndUpdate(userID,{ $set:{paymentNotification:state}},{new:true})
+        }else if(type === 'debt'){
+            user = await User.findByIdAndUpdate(userID,{ $set:{debtNotification:state}},{new:true})
+        }
+        res.json({
+            ok:true,
+            msg: 'Updated User Notifications',
+            param:{
+                user
+            }
         })
     } catch (error) {
         console.log(error);

@@ -5,6 +5,7 @@ const FieldPrice = require('../models/fieldPrice.model');
 const Payment = require('../models/payment.model');
 const SpecialSchedule = require('../models/specialSchedule.model');
 const SportCenter = require('../models/sportCenter.model');
+const Debt = require('../models/debt.model');
 var moment = require('moment');
 moment().format();
 
@@ -172,6 +173,8 @@ appointmentCtrl.createAppointment = async (req = request, res = response) =>{
             },
             user: body.user,
             field: body.field,
+            sportCenter: fieldDB.sportCenter.id,
+            description: body.description
         })
         let newAppointment = await appointment.save()
         newAppointment = await Appointment.findById(newAppointment.id).populate({ 
@@ -181,6 +184,8 @@ appointmentCtrl.createAppointment = async (req = request, res = response) =>{
                                                                             path: 'sportCenter',
                                                                             model: 'SportCenter'
                                                                         }})
+        const appointmentsDB = await Appointment.find({state:{$ne:'Completed'}})
+        updateAutomatic(appointmentsDB);
         res.json({
             ok:true,
             msg:'Created Appointment',
@@ -210,6 +215,7 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
     const sinceHour = req.query.sinceHour !== undefined ? parseInt(req.query.sinceHour) : '1';
     const untilHour = req.query.untilHour !== undefined ? parseInt(req.query.untilHour) : '23';
     const fieldID = req.query.fieldID === "null" || req.query.fieldID === "undefined" ? null : req.query.fieldID;
+    const payment = req.query.payment === "null" || req.query.payment === "undefined" ? null : req.query.payment;
     page = parseInt(req.query.page);
     registerPerPage = parseInt(req.query.registerPerPage);
     try {
@@ -220,8 +226,12 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
         let query = {
             '$and': []
         };
+        query['$and'].push({ sportCenter: sportCenterID})
         state !== null ? query['$and'].push({ state: state}) : query ;
         fieldID !== null ? query['$and'].push({field: fieldID}) : query;
+        payment === 'Total'? query['$and'].push({'$expr': { $eq: [ '$totalAmount' , '$totalPaid']}}) : query;
+        payment === 'Parcial'? query['$and'].push({'$expr': { $lt: [ '$totalPaid' , '$totalAmount']}}) : query;
+        payment === 'Sin Pagos'? query['$and'].push({ totalPaid: { $eq: 0 } }) : query;
         if(sinceDate !== null && untilDate !== null){
             query['$and'].push({$and: [ { date: { $gte: moment(sinceDate).add(parseInt(sinceHour),'h').subtract(3,'h') } },
                                         { date: { $lte: moment(untilDate).add(parseInt(untilHour),'h').subtract(3,'h') }}]})
@@ -237,33 +247,12 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
             })
         }
         if(query['$and'].length > 0){
-            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name')
-                                                                            .populate({
-                                                                            path: "field",
-                                                                            match: {
-                                                                                sportCenter: sportCenterID,
-                                                                            }})
-                                                                            .populate({path:"field",populate:{path:"sportCenter"}}).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                    Appointment.find(query).populate('user','name')
-                                                                            .populate({
-                                                                            path: "field",
-                                                                            match: {
-                                                                                sportCenter: sportCenterID,
-                                                                            }}).countDocuments()
+            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                 ])
         }else{
-            [appointments,total] = await Promise.all([Appointment.find().populate('user','name')
-                                                                        .populate({
-                                                                        path: "field",
-                                                                        match: {
-                                                                            sportCenter: sportCenterID,
-                                                                        }}).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                    Appointment.find().populate('user','name')
-                                                                        .populate({
-                                                                        path: "field",
-                                                                        match: {
-                                                                            sportCenter: sportCenterID,
-                                                                        }}).countDocuments()
+            [appointments,total] = await Promise.all([Appointment.find().populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Appointment.find().populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                 ])
         }
         total = Math.ceil(total / registerPerPage);
@@ -295,6 +284,52 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
         })
     }
 }
+appointmentCtrl.getReservedSportCenterAppointments = async (req = request , res = response) => {
+    const sportCenterID = req.params.id;
+    const date = req.query.date;
+    const sinceHour = req.query.sinceHour !== undefined ? parseInt(req.query.sinceHour) : '1';
+    const untilHour = req.query.untilHour !== undefined ? parseInt(req.query.untilHour) : '23';
+    try {
+        const sportCenterDB = await SportCenter.findById(sportCenterID)
+        if(!sportCenterDB){
+            return unknownIDResponse(res);
+        }
+        let query = {
+            '$and': []
+        };
+        query['$and'].push({ sportCenter: sportCenterID})
+        query['$and'].push({$and: [ { date: { $gte: moment(date).add(parseInt(sinceHour),'h').subtract(3,'h') } },
+                                    { date: { $lt: moment(date).add(parseInt(untilHour),'h').subtract(3,'h') }}]})
+        if(query['$and'].length > 0){
+            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name').populate('field').populate('sportCenter'),
+                                                    Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').countDocuments()
+                                                ])
+        }
+        if(appointments.length > 0){
+            if(appointments[0].state === 'Completed'){
+                sortDateFromLargest(appointments);
+            }
+            else{
+                sortDateFromSmallest(appointments);
+            }
+        }
+        res.json({
+            ok:true,
+            msg:'Found Reserved Appointments',
+            param:{
+                appointments,
+                total
+            }
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error ocurred'
+        })
+    }
+}
 appointmentCtrl.getUserAppointments = async (req = request , res = response) => {
     const userID = req.params.id;
     const state = req.query.state;
@@ -303,6 +338,7 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
     const sinceHour = req.query.sinceHour !== undefined ? parseInt(req.query.sinceHour) : '1';
     const untilHour = req.query.untilHour !== undefined ? parseInt(req.query.untilHour) : '23';
     const fieldID = req.query.fieldID === "null" || req.query.fieldID === "undefined" ? null : req.query.fieldID;
+    const payment = req.query.payment === "null" || req.query.payment === "undefined" ? null : req.query.payment;
     page = parseInt(req.query.page);
     registerPerPage = parseInt(req.query.registerPerPage);
     try {
@@ -313,8 +349,12 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
         let query = {
             '$and': []
         };
+        query['$and'].push({user:userID})
         state !== null ? query['$and'].push({ state: state}) : query ;
         fieldID !== null ? query['$and'].push({field: fieldID}) : query;
+        payment === 'Total'? query['$and'].push({'$expr': { $eq: [ '$totalAmount' , '$totalPaid']}}) : query;
+        payment === 'Parcial'? query['$and'].push({'$expr': { $lt: [ '$totalPaid' , '$totalAmount']}}) : query;
+        payment === 'Sin Pagos'? query['$and'].push({ totalPaid: { $eq: 0 } }) : query;
         if(sinceDate !== null && untilDate !== null){
             query['$and'].push({$and: [ { date: { $gte: moment(sinceDate).add(parseInt(sinceHour),'h').subtract(3,'h') } },
                                         { date: { $lte: moment(untilDate).add(parseInt(untilHour),'h').subtract(3,'h') }}]})
@@ -333,39 +373,12 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
         state === 'Completed' ? sort = -1 : sort = 1;
         if(query['$and'].length > 0){
             [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name')
-                                                                            .populate({ 
-                                                                            path: 'field',
-                                                                            model: 'Field',
-                                                                            populate: {
-                                                                                path: 'sportCenter',
-                                                                                model: 'SportCenter'
-                                                                            }}).sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                        Appointment.find(query).populate('user','name')
-                                                                                .populate({ 
-                                                                                path: 'field',
-                                                                                model: 'Field',
-                                                                                populate: {
-                                                                                    path: 'sportCenter',
-                                                                                    model: 'SportCenter'
-                                                                                }}).countDocuments()
+                                                                            .populate('field').populate('sportCenter').sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                        Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                     ])
         }else{
-            [appointments,total] = await Promise.all([Appointment.find().populate('user','name')
-                                                                        .populate({ 
-                                                                        path: 'field',
-                                                                        model: 'Field',
-                                                                        populate: {
-                                                                            path: 'sportCenter',
-                                                                            model: 'SportCenter'
-                                                                        }}).sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
-                                                    Appointment.find().populate('user','name')
-                                                                            .populate({ 
-                                                                            path: 'field',
-                                                                            model: 'Field',
-                                                                            populate: {
-                                                                                path: 'sportCenter',
-                                                                                model: 'SportCenter'
-                                                                            }}).countDocuments()
+            [appointments,total] = await Promise.all([Appointment.find().populate('user','name').populate('field').populate('sportCenter').sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                    Appointment.find().populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                 ])
         }
         total = Math.ceil(total / registerPerPage);
@@ -389,17 +402,53 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
         })
     }
 }
+appointmentCtrl.getNotPayAppointments = async (req = request , res = response) => {
+    const sportCenterID = req.params.id;
+    page = parseInt(req.query.page);
+    registerPerPage = parseInt(req.query.registerPerPage);
+    try {
+        const sportCenterDB = await SportCenter.findById(sportCenterID)
+        if(!sportCenterDB){
+            return unknownIDResponse(res);
+        }
+        let query = {
+            '$and': []
+        };
+        query['$and'].push({ sportCenter: sportCenterID});
+        query['$and'].push({ payments: { $exists: true, $size: 0 }});        
+        [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').countDocuments()
+                                                ])
+        total = Math.ceil(total / registerPerPage);
+        if(appointments.length > 0){
+            sortDateFromSmallest(appointments);
+        }
+        res.json({
+            ok:true,
+            msg:'Found Appointments',
+            param:{
+                appointments,
+                paginator:{
+                    totalPages: total,
+                    page: page
+                }
+            }
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error ocurred'
+        })
+    }
+}
 appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
     const id = req.params.id;
     const userID = req.uid;
+    const description = req.body.description;
     try {
-        const appointmentDB = await Appointment.findById(id).populate('user').populate({ 
-                                                                                        path: 'field',
-                                                                                        model: 'Field',
-                                                                                        populate: {
-                                                                                            path: 'sportCenter',
-                                                                                            model: 'SportCenter'
-                                                                                        }})
+        const appointmentDB = await Appointment.findById(id).populate('user').populate('field').populate('sportCenter')
         if (!appointmentDB) {
             return unknownIDResponse(res)
         }
@@ -413,46 +462,70 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
                 })
             }
         }
-        if(appointmentDB.state !== 'Reserved' || moment(appointmentDB.date).add(3,'h').subtract(12,'h') < moment()){
-            return res.status(404).json({
-                ok:false,
-                code:12,
-                msg:'The appointment cannot be deleted due to cancelation policies'
+        if(appointmentDB.state !== 'Completed'){
+            let userPhone;
+            if (appointmentDB.owner.phone !== null){
+                userPhone = appointmentDB.owner.phone
+            }
+            else if(appointmentDB.owner.phone === null){
+                userPhone = appointmentDB.user.phone
+            }
+            //ENVIAR MAIL DE CANCELACION --> VERIFICAR QUIEN CANCELA SI USUAIRO COMUN O CENTRO
+            if(userDB.role === 'USER'){
+                let userCenter = await User.find({ $and: [ { sportCenter: appointmentDB.sportCenter }, 
+                                                            { role: 'CENTER-SUPER-ADMIN' } ] });
+                userCenter.forEach(user => {
+                    cancelAppointmentUserEmail(user,appointmentDB)
+                });
+            }else{
+                if(appointmentDB.user.role === 'USER'){
+                    cancelAppointmentCenterEmail(appointmentDB.user, appointmentDB);
+                    // cancelAppointmentSMS(appointmentDB)
+                }
+                else{
+                    //aca se enviaria al numero q paso el tipo en la reserva manual
+                    // cancelAppointmentSMS(appointmentDB)
+                }
+            }
+            [ids, updates] = await Promise.all([Payment.find({appointment:id},'id amountPayment'),
+                                                Payment.updateMany({appointment:id},{appointment:null, state:'APPROVED'})]);
+            paymentsID = [];
+            totalPaid = 0;
+            ids.forEach(element => {
+                paymentsID.push(element._id)
+                totalPaid = totalPaid + element.amountPayment;
+            });
+            appointmentDB.totalPaid = totalPaid;
+            appointmentDB.payments = paymentsID
+            console.log(appointmentDB)
+            await Appointment.findByIdAndUpdate(id,appointmentDB)
+            if(updates.n !== 0){
+                if(userDB.role === 'USER'){
+                    if(breakPolicy(appointmentDB)){
+                        createDebt(appointmentDB,userDB,description)
+                    }
+                }else{
+                    createDebt(appointmentDB,userDB,description)
+                }
+            }
+            await Appointment.findByIdAndDelete(id);
+            await Payment.updateMany({appointment:id},{appointment:null, state:'APPROVED'});
+            res.json({
+                ok:true,
+                msg:'Deleted Appointment',
+                param: {
+                    userPhone
+                }
             })
         }
-        let userPhone;
-        if (appointmentDB.owner.phone !== null){
-            userPhone = appointmentDB.owner.phone
+        else{
+            await Appointment.findByIdAndDelete(id);
+            res.json({
+                ok:true,
+                msg:'Deleted Appointment',
+            })
         }
-        else if(appointmentDB.owner.phone === null){
-            userPhone = appointmentDB.user.phone
-        }
-        //ENVIAR MAIL DE CANCELACION --> VERIFICAR QUIEN CANCELA SI USUAIRO COMUN O CENTRO
-        if(userDB.role === 'USER'){
-            let userCenter = await User.find({ $and: [ { sportCenter: appointmentDB.field.sportCenter }, 
-                                                        { role: 'CENTER-SUPER-ADMIN' } ] });
-            userCenter.forEach(user => {
-                cancelAppointmentUserEmail(user,appointmentDB)
-            });
-        }else{
-            if(appointmentDB.user.role === 'USER'){
-                cancelAppointmentCenterEmail(appointmentDB.user, appointmentDB);
-                // cancelAppointmentSMS(appointmentDB)
-            }
-            else{
-                //aca se enviaria al numero q paso el tipo en la reserva manual
-                // cancelAppointmentSMS(appointmentDB)
-            }
-        }
-        await Payment.updateMany({appointment:id},{appointment:null})
-        await Appointment.findByIdAndDelete(id);
-        res.json({
-            ok:true,
-            msg:'Deleted Appointment',
-            param: {
-                userPhone
-            }
-        })
+        
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -461,8 +534,8 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
         })
     }
 }
-
 appointmentCtrl.deleteAppointmentForPayment = async (req = request, res = response) =>{
+    //ELIMINA EL TURNO SI NO SE REALIZO EL PAGO
     const id = req.params.id;
     try {
         const appointmentDB = await Appointment.findById(id).populate('user').populate('field');
@@ -482,6 +555,40 @@ appointmentCtrl.deleteAppointmentForPayment = async (req = request, res = respon
         })
     }
 }
+createDebt = async (appointmentDB, userDB, description) => {
+    let debt = new Debt({
+        createdDate: moment().subtract(3,'h'),
+        appointment: appointmentDB.date,
+        field:appointmentDB.field,
+        totalDebt:appointmentDB.totalPaid,
+        sportCenter: appointmentDB.sportCenter,
+        user: appointmentDB.user.role === 'USER' ? appointmentDB.user : null,
+        owner:{
+            oid: appointmentDB.owner.oid,
+            name: appointmentDB.owner.name,
+            phone: appointmentDB.owner.phone,
+        },
+        description: null,
+        cancelDescription: description,
+        centerApprove: false,
+        userApprove: appointmentDB.user.role === 'USER' ? false: null,
+        payments: appointmentDB.payments,
+        closeDate: null,
+        cancelDoer: userDB.role === 'USER' ? 'USER' : 'SPORTCENTER'
+    })
+    await debt.save();
+}
+breakPolicy = (appointmentDB) => {
+    const diffInMs = Date.parse(appointmentDB.date) - Date.parse(new Date().toISOString());
+    const diffInHours = (diffInMs / 1000 / 60 / 60) +   3 ;
+    if(diffInHours >= appointmentDB.sportCenter.cancelationHour){
+      //no rompe politica entonces genera deuda
+      return true;
+    }else{
+      return false
+    }
+}
+
 function unknownIDResponse(res){
     return res.status(404).json({
         ok:false,
@@ -512,20 +619,12 @@ sortDateFromLargest = (array)=>{
     return array
 }
 
-cron.schedule('0,10,20,30,43,50 * * * *', async () => {
-     try {
-        const appointmentsDB = await Appointment.find({state:{$ne:'Completed'}})
-        appointmentsDB.forEach(element=>{
-            const difference = (element.date.getTime() - (new Date().getTime()- process.env.UTC_ARG))
-            changeState(element,difference)
-        })
-
-     } catch (error) {
-         console.log(error)
-     }
+cron.schedule('0,10,20,30,40,50 * * * *', async () => {
+    const appointmentsDB = await Appointment.find({state:{$ne:'Completed'}})
+    updateAutomatic(appointmentsDB);
  })
 
-changeState = async (element,difference) =>{
+async function changeState(element,difference){
     if(difference < 3600000 && difference > 0){
         const change={
             state: 'AboutToStart'
@@ -545,6 +644,15 @@ changeState = async (element,difference) =>{
         await Appointment.findByIdAndUpdate(element.id,change)
     }
  }
-
+function updateAutomatic (appointmentsDB) {
+    try {
+        appointmentsDB.forEach(element=>{
+            const difference = (element.date.getTime() - (new Date().getTime()- process.env.UTC_ARG))
+            changeState(element,difference)
+        })
+    } catch (error) {
+          console.log(error)
+      }
+} 
 module.exports = appointmentCtrl;
 

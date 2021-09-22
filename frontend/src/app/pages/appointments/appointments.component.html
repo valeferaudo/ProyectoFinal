@@ -113,11 +113,36 @@
                     </div>
                     </mat-menu>
                 </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="paymentMenu">
+                    <span class="filters__items-container__item__button__resume">Pagos</span>
+                    <span class="filters__items-container__item__button__name">Pagos</span>
+                    </button>
+                        <!-- FILTER MENU -->
+                    <mat-menu #paymentMenu="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="paymentSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let payment of payments" [value]="payment">
+                                {{payment}}
+                            </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                            <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetPayment()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterPayment()">Aplicar</button>
+                    </div> 
+                    </mat-menu>
+                </div>
         </div>
         </article>
     </div>
 </div>
-<app-table-appointment *ngIf="filterAboutToStartON" [page]="aboutToStartPage" [appointments]="aboutToStartAppointments" [text]="'por comenzar.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterAboutToStartON" [page]="aboutToStartPage" [appointments]="aboutToStartAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'por comenzar.'"></app-table-appointment>
 <div class="row" *ngIf="aboutToStartAppointments.length !==0 && aboutToStartTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -135,7 +160,7 @@
             </ul>
     </div>
 </div>
-<app-table-appointment *ngIf="filterReservedON" [page]="reservedPage" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" [text]="'reservados.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterReservedON" [page]="reservedPage" (getAppointments)="getAppointments()" [appointments]="reservedAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'reservados.'"></app-table-appointment>
 <div class="row" *ngIf="reservedAppointments.length !==0 && reservedTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -153,7 +178,7 @@
             </ul>
     </div>
 </div>
-<app-table-appointment *ngIf="filterInProgressON" [page]="inProgressPage" [appointments]="inProgressAppointments" [text]="'en curso.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterInProgressON" [page]="inProgressPage" [appointments]="inProgressAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'en curso.'"></app-table-appointment>
 <div class="row" *ngIf="inProgressAppointments.length !==0 && inProgressTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">
@@ -171,7 +196,7 @@
             </ul>
     </div>
 </div>
-<app-table-appointment *ngIf="filterCompletedON" [page]="completedPage" [appointments]="completedAppointments" [text]="'finalizados.'"></app-table-appointment>
+<app-table-appointment *ngIf="filterCompletedON" [page]="completedPage" [appointments]="completedAppointments" (openPaymentModal)="openPaymentModal($event)" [text]="'finalizados.'"></app-table-appointment>
 <div class="row" *ngIf="completedAppointments.length!==0 && completedTotalPages > 1">
     <div class="col-md-12 text-center">
             <ul class="pagination justify-content-center">

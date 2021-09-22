@@ -1,0 +1,140 @@
+<div>
+    <div class="row">
+        <div class="col">
+            <h2 class="card-title"><strong>Listado de deudas </strong></h2>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="col-12 mb-2">
+    <div class="row">
+      <div class="col-sm-9 col-md-9 p-0">
+      </div>
+      <div class="col-sm-3 col-md-3 p-0">
+        <a class="text-info pointer d-flex pull-right entry-button" (click)="refreshTable()">Limpiar</a>
+      </div>
+    </div>
+    <div class="row">
+        <article class="filters mt-2">
+            <h6 class="pull-left">
+                <strong class="search-title-text">Filtrar:</strong>
+            </h6>
+            <div class="filters__items-container ml-3">
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuInvitados">
+                        <span class="filters__items-container__item__button__resume">Estado</span>
+                        <span class="filters__items-container__item__button__name">Estado</span>
+                </button>
+                <!-- FILTER MENU -->
+                <mat-menu #menuInvitados="matMenu" (closed)="setCheckValue()">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="debtStateSelected">
+                                <mat-radio-button class="example-radio-button" *ngFor="let debtState of debtStates" [value]="debtState">
+                                        {{debtState}}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                <!-- ACTIONS -->
+                <div class="filters__items-container__item__actions-container">
+                     <button mat-button (click)="clearFilter('state')" type="button"
+                        class="filters__items-container__item__actions-container__button">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDebts()">Aplicar</button>
+                    </div>
+                </mat-menu>
+            </div>
+            <div class="filters__items-container__item">
+                <!-- FILTER BUTTON -->
+                <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menunew">
+                    <span class="filters__items-container__item__button__resume">Pago</span>
+                    <span class="filters__items-container__item__button__name">Pago</span>
+            </button>
+            <!-- FILTER MENU -->
+            <mat-menu #menunew="matMenu" (closed)="setCheckValue()">
+                <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                            <!-- VALUES -->
+                    <div class="filters__items-container__item__menu__boolean-container">
+                        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="paymentStateSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let paymentState of paymentStates" [value]="paymentState">
+                                    {{paymentState}}
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
+            <!-- ACTIONS -->
+            <div class="filters__items-container__item__actions-container">
+                 <button mat-button (click)="clearFilter('payment')" type="button"
+                    class="filters__items-container__item__actions-container__button">Limpiar</button>
+                    <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDebts()">Aplicar</button>
+                </div>
+            </mat-menu>
+        </div>
+        </div>
+        </article>
+    </div>
+</div>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters">{{item}}</span></p>
+<div class="table-responsive animated fadeIn" *ngIf="debts.length!==0">
+    <table id="myTable" class="table table-hover color-table inverse-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Persona</th>
+                <th>Teléfono</th>
+                <th>Cancha</th> 
+                <th>Turno</th>                
+                <th>Fecha Cancelación</th>                
+                <th>Estado</th>
+                <th>Monto</th>        
+                <th class="text-center">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let debt of debts; let i = index">
+                <td>{{((page -1) * 6) + i+1}}</td>
+                <td>{{debt.owner.name}}</td>
+                <td>{{debt.owner.phone}}</td>
+                <td >{{debt.field.name}}</td>
+                <td >{{debt.appointment | date:"dd-MM-yyyy":'+0'}} {{debt.appointment | date:'HH:mm':'+0'}}</td>
+                <td >{{debt.createdDate | date:"dd-MM-yyyy":'+0'}} {{debt.createdDate | date:'HH:mm':'+0'}}</td>
+                <td >
+                    <span class="badge badge-danger" *ngIf="debt.closeDate === null && !debt.centerApprove">Falta pago</span>
+                    <span class="badge badge-warning" *ngIf="debt.closeDate === null &&debt.centerApprove && !debt.userApprove">Falta Aprobación</span>
+                    <span class="badge badge-success" *ngIf="debt.closeDate !== null && debt.centerApprove && (debt.userApprove || debt.userApprove === null)">Cerrada</span>
+                    <span class="badge badge-danger" *ngIf="debt.closeDate !== null && !debt.centerApprove">Cerrada <br> <small>Sin Pago</small></span>
+                    <span class="badge badge-danger" *ngIf="debt.closeDate !== null && debt.centerApprove && debt.userApprove !== null && !debt.userApprove">Cerrada <br> <small>Sin Aprobación</small></span>
+                </td>
+                <td>{{debt.totalDebt}}$</td>
+                <td class="text-center">
+                    <button (click)="markAsPaid(debt)" *ngIf="debt.closeDate === null && !debt.centerApprove" class="btn btn-success badge m-1" data-toggle="tooltip" data-placement="top" title="Marcar como Paga" >
+                        <i class="fas fa-check"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="debts.length === 0"> 
+    <i class="fas fa-times"></i> No se encontraron <strong>Deudas</strong>.
+</div>
+<div class="row" *ngIf="debts.length!==0 && totalPages > 1">
+    <div class="col-md-12 text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                <li class="page-item" [class.active]="page === page">
+                <a class="page-link">{{page}}</a>
+                </li>
+                <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                <li class="page-item" *ngIf="page !== totalPages">
+                <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                </li>
+            </ul>
+    </div>
+</div>
+<app-line-loader></app-line-loader>

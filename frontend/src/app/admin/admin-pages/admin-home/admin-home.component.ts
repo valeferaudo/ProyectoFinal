@@ -7,6 +7,7 @@ import { User } from 'src/app/models/user.model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { UserService } from 'src/app/services/user.service';
 import { WeatherService } from 'src/app/services/weather.service';
 
@@ -19,6 +20,10 @@ export class AdminHomeComponent implements OnInit {
 
   userLogged: User;
   hiddenSportCenterModal: boolean = false;
+  hiddenNotPaymentModal: boolean = false;
+  hiddenDebtModal: boolean = false;
+  hiddenPaymentModal = false;
+  appointmentSelected = null;
   aboutToStartAppointments = [];
   reservedAppointments = [];
   filterReservedON : boolean = false;
@@ -53,7 +58,8 @@ export class AdminHomeComponent implements OnInit {
               private loaderService: LoaderService,
               private _config: NgbCarouselConfig,
               private weatherService: WeatherService,
-              private errorService: ErrorsService) {}
+              private errorService: ErrorsService,
+              private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.setConfig();
@@ -61,6 +67,7 @@ export class AdminHomeComponent implements OnInit {
     this.getAppointments();
     this.getCurrentWeather();
     this.getPerHourWeather();
+    this.throwNotification();
   }
   getUserLogged(){
     this.userLogged = this.userService.user;
@@ -82,7 +89,7 @@ export class AdminHomeComponent implements OnInit {
   }
   getReservedAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getUserAppointments(this.userLogged.uid,this.filterObjectReserved,this.page)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObjectReserved,this.page)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
@@ -97,7 +104,7 @@ export class AdminHomeComponent implements OnInit {
   }
   getAboutToStartAppointments(){
     this.loaderService.openLineLoader();
-    this.appointmentService.getUserAppointments(this.userLogged.uid,this.filterObjectAboutToStart, this.page)
+    this.appointmentService.getSportCenterAppointments(this.userLogged.sportCenter.id,this.filterObjectAboutToStart, this.page)
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
@@ -138,5 +145,40 @@ export class AdminHomeComponent implements OnInit {
   }
   formatDate(date){
     return new Date(date)
+  }
+  throwNotification(){
+    if(this.userService.haveDebt){
+      this.notificationService.showDebtNotification();
+    }
+    if(this.userService.nonPayment){
+      this.notificationService.showNonPaymentNotification();
+    }
+    if(this.userService.pendingPayment){
+      this.notificationService.showPendingNotification();
+    }
+  }
+  openDebtModal(){
+    this.hiddenDebtModal = true;
+  }
+  closeDebtModal(){
+    this.hiddenDebtModal = false;
+  }
+  openNotPaymentModal(){
+    this.hiddenNotPaymentModal = true;
+  }
+  closeNotPaymentModal(){
+    this.getAppointments();
+    this.hiddenNotPaymentModal = false;
+  }
+  openPaymentModal(appointment){
+    this.hiddenNotPaymentModal = false;
+    this.appointmentSelected = appointment;
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(boolean){
+    if(boolean){
+      this.getAppointments();
+    }
+    this.hiddenPaymentModal = false;
   }
 }

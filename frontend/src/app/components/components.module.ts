@@ -42,6 +42,13 @@ import { GpsMapComponent } from './maps/gps-map/gps-map.component';
 import { ApprovePaymentComponent } from './modals/approve-payment/approve-payment.component';
 import { AddPaymentComponent } from './modals/add-payment/add-payment.component';
 import { PaymentRequiredInfoComponent } from './modals/payment-required-info/payment-required-info.component';
+import { CancelPolicyComponent } from './modals/cancel-policy/cancel-policy.component';
+import { NotificationComponent } from './modals/notification/notification.component';
+import { NotificationToastComponent } from './toast/notification-toast/notification-toast.component';
+import { PaymentDebtModalComponent } from './modals/payment-debt-modal/payment-debt-modal.component';
+import { NotPaymentTableComponent } from './modals/not-payment-table/not-payment-table.component';
+import { DebtTableComponent } from './modals/debt-table/debt-table.component';
+
 
 
 @NgModule({
@@ -77,7 +84,12 @@ import { PaymentRequiredInfoComponent } from './modals/payment-required-info/pay
     ApprovePaymentComponent,
     AddPaymentComponent,
     PaymentRequiredInfoComponent,
-
+    CancelPolicyComponent,
+    NotificationComponent,
+    NotificationToastComponent,
+    PaymentDebtModalComponent,
+    NotPaymentTableComponent,
+    DebtTableComponent,
   ],
   imports: [
     FormsModule,
@@ -123,7 +135,13 @@ import { PaymentRequiredInfoComponent } from './modals/payment-required-info/pay
     GpsMapComponent,
     ApprovePaymentComponent,
     AddPaymentComponent,
-    PaymentRequiredInfoComponent
+    PaymentRequiredInfoComponent,
+    CancelPolicyComponent,
+    NotificationComponent,
+    NotificationToastComponent,
+    PaymentDebtModalComponent,
+    NotPaymentTableComponent,
+    DebtTableComponent
   ]
 })
 export class ComponentsModule { }

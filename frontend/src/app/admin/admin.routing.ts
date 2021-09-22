@@ -25,6 +25,11 @@ import { RequestDoComponent } from './super-admin-pages/request-do/request-do.co
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
 import { UserSettingComponent } from '../components/user-setting/user-setting.component';
 import { AdminPaymentsComponent } from './admin-pages/admin-payments/admin-payments.component';
+import { AdminDebtsComponent } from './admin-pages/admin-debts/admin-debts.component';
+import { PaymentReportComponent } from './admin-pages/admin-reports/payment-report/payment-report.component';
+import { ReportComponent } from './admin-pages/admin-reports/report/report.component';
+import { DebtReportComponent } from './admin-pages/admin-reports/debt-report/debt-report.component';
+import { AppointmentReportComponent } from './admin-pages/admin-reports/appointment-report/appointment-report.component';
 
 
 
@@ -42,6 +47,11 @@ export const AdminRoutes: Routes = [
      {path: 'sportcenter/:id', component: SportCenterComponent, canActivate: [CenterGuard]},
      {path: 'requests', component: AdminRequestsComponent, canActivate: [CenterSuperAdminGuard]},
      {path: 'payments', component: AdminPaymentsComponent, canActivate: [CenterGuard]},
+     {path: 'debts', component: AdminDebtsComponent, canActivate: [CenterGuard]},
+     {path: 'report', component: ReportComponent, canActivate: [CenterGuard]},
+     {path: 'report/payments', component: PaymentReportComponent, canActivate: [CenterGuard]},
+     {path: 'report/debts', component: DebtReportComponent, canActivate: [CenterGuard]},
+     {path: 'report/appointments', component: AppointmentReportComponent, canActivate: [CenterGuard]},
 
      
      //rutas del SUPER-ADMIN

@@ -19,7 +19,8 @@ export class UserSettingComponent implements OnInit {
   editMode: boolean = false;
   createMode: boolean = false;
   hiddenPasswordModal:boolean = false;
-
+  hiddenNotificationModal: boolean = false;
+  
   userForm: FormGroup;
   pass = false;
   change = false;
@@ -148,5 +149,11 @@ export class UserSettingComponent implements OnInit {
     else if(this.userLogged.role === 'CENTER-SUPER-ADMIN'){
       this.router.navigateByUrl('admin/users');
     }
+  }
+  openNotificationModal(){
+    this.hiddenNotificationModal = true;
+  }
+  closeNotificationModal(){
+    this.hiddenNotificationModal = false;
   }
 }

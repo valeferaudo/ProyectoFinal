@@ -11,6 +11,7 @@ import { SportCentersComponent } from './sport-centers/sport-centers.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { SearchComponent } from './search/search.component';
+import { DebtsComponent } from './debts/debts.component';
 
 
 export const PagesRoutes: Routes = [
@@ -25,6 +26,7 @@ export const PagesRoutes: Routes = [
    {path: 'search', component: SearchComponent, canActivate: [UserGuard]},
    {path: 'favorites', component: FavoritesComponent,  canActivate: [UserGuard]},
    {path: 'payments', component: PaymentsComponent,  canActivate: [UserGuard]},
+   {path: 'debts', component: DebtsComponent,  canActivate: [UserGuard]},
    {path: 'appointments', component: AppointmentsComponent, canActivate: [UserGuard]},
    {path: 'appointment/:id', component: DoAppointmentComponent, canActivate: [UserGuard]},
 ];

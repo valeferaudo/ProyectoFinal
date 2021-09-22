@@ -127,7 +127,7 @@ export class HomeComponent implements OnInit {
     return new Date(date)
   }
   openGPSModal(appointment){
-    this.sportCenter = appointment.field.sportCenter
+    this.sportCenter = appointment.sportCenter
     this.hiddenGPSModal = true;
   }
   closeGPSModal(){

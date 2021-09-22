@@ -3,12 +3,13 @@ import { Schedule } from "./schedule.model";
 
 export class SportCenter{
     constructor(
-           public name: string,
-           public address: string,
-           public phone: string,
-           public aditionalElectricityHour: string,
-           public aditionalElectricity: number,
-           public mercadoPago: boolean,
+           public name?: string,
+           public address?: string,
+           public phone?: string,
+           public aditionalElectricityHour?: string,
+           public aditionalElectricity?: number,
+           public mercadoPago?: boolean,
+           public cancelationHour?: number,
            public credentials?: {
                accessToken?:string,
                publicKey?:string

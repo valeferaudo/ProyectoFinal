@@ -1,0 +1,71 @@
+<div class="background-modal" [class.hidden]="hiddenModal" >
+    <div class="modal  show animated fadeIn fast" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="display: block; overflow-y: auto;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title font-bold" id="exampleModalLabel">Devoluciones por hacer</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="table-responsive animated fadeIn" *ngIf="debts.length!==0">
+                <table id="myTable" class="table table-hover color-table inverse-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Persona</th>
+                            <th>Teléfono</th>
+                            <th>Cancha</th> 
+                            <th>Turno</th>                
+                            <th>Fecha Cancelación</th>                
+                            <th>Monto</th>        
+                            <th class="text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let debt of debts; let i = index">
+                            <td>{{((page -1) * 6) + i+1}}</td>
+                            <td>{{debt.owner.name}}</td>
+                            <td>{{debt.owner.phone}}</td>
+                            <td >{{debt.field.name}}</td>
+                            <td >{{debt.appointment | date:"dd-MM-yyyy":'+0'}} {{debt.appointment | date:'HH:mm':'+0'}}</td>
+                            <td >{{debt.createdDate | date:"dd-MM-yyyy":'+0'}} {{debt.createdDate | date:'HH:mm':'+0'}}</td>
+                            <td>{{debt.totalDebt}}$</td>
+                            <td class="text-center">
+                                <button (click)="markAsPaid(debt)" *ngIf="debt.closeDate === null && !debt.centerApprove" class="btn btn-success badge m-1" data-toggle="tooltip" data-placement="top" title="Marcar como Paga" >
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="alert alert-danger animated fadeIn" role="alert" *ngIf="debts.length === 0"> 
+                <i class="fas fa-times"></i> No se encontraron <strong>Deudas</strong>.
+            </div>
+            <div class="row" *ngIf="debts.length!==0 && totalPages > 1">
+                <div class="col-md-12 text-center">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                            <button class="page-link text-dark btn-paginator pointer" *ngIf="page !== 1" [disabled]="page === 1" (click)="paginate(1)"><i class="fas fa-backward"></i></button>
+                            </li>
+                            <li class="page-item" *ngIf="page !== 1" (click)="paginate(page - 1)"><a class="page-link pointer">{{page - 1 }}</a></li>
+                            <li class="page-item" [class.active]="page === page">
+                            <a class="page-link">{{page}}</a>
+                            </li>
+                            <li class="page-item" *ngIf="totalPages >= 2 && page !== totalPages" (click)="paginate(page + 1)"><a class="page-link pointer">{{page + 1}}</a></li>
+                            <li class="page-item" *ngIf="page !== totalPages">
+                            <button class="page-link text-dark btn-paginator pointer" [disabled]="page === totalPages" (click)="paginate(totalPages)"><i class="fas fa-forward"></i></button>
+                            </li>
+                        </ul>
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+<app-line-loader></app-line-loader>

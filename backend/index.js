@@ -38,6 +38,8 @@ app.use('/api/fields',require('./routes/field.routes'));
 app.use('/api/appointments',require('./routes/appointment.routes'));
 app.use('/api/uploads',require('./routes/upload.routes'));
 app.use('/api/payments',require('./routes/payment.routes'));
+app.use('/api/debts',require('./routes/debt.routes'));
+app.use('/api/reports',require('./routes/report.routes'));
 
 //start server
 app.listen(app.get('Port'),()=>{

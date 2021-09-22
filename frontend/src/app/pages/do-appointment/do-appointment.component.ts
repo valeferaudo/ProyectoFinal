@@ -24,6 +24,7 @@ export class DoAppointmentComponent  implements OnInit{
   availableAppointments: [] = [];
   searchON: boolean = false;
   isFilter: boolean = false;
+  hiddenCancelPolicyModal: boolean = false;
 
   doNotCloseMenu = (event) => event.stopPropagation();
   dateRangeForm = new FormGroup({
@@ -253,5 +254,11 @@ export class DoAppointmentComponent  implements OnInit{
   }
   scroll(){
     document.getElementById("appointments").scrollIntoView();
+  }
+  openCancelPolicyModal(){
+    this.hiddenCancelPolicyModal = true;
+  }
+  closeCancelPolicyModal(){
+    this.hiddenCancelPolicyModal = false;
   }
 }

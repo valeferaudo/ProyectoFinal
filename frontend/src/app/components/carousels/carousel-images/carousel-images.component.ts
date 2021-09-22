@@ -17,6 +17,7 @@ export class CarouselImagesComponent implements OnInit {
   @Output() deleteImage = new EventEmitter<string>();
   @Input() type: 'field' |  'sportCenter';
   @Input() mode: 'update' |  'get';
+  @Input() editMode: boolean = false;
   userLogged: User;
   constructor(private _config: NgbCarouselConfig,
             private userService: UserService) { }

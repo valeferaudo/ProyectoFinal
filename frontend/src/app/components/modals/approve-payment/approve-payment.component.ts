@@ -45,14 +45,14 @@ export class ApprovePaymentComponent implements OnInit {
         this.preferenceID = resp.id;
         this.generetePayment();
         setTimeout(() => {
-          initMercadoPago(this.appointment.field.sportCenter.credentials.publicKey,this.preferenceID);
+          initMercadoPago(this.appointment.sportCenter.credentials.publicKey,this.preferenceID);
           this.loaderService.closeLineLoader();
         }, 1);
       })
   }
   setMode(){
     if(this.type === 'new'){
-      if(this.appointment.field.sportCenter.minimunAmount === null){
+      if(this.appointment.sportCenter.minimunAmount === null){
         this.toPaid = this.appointment.totalAmount;
         this.typePayment = 'Total';
       }
@@ -71,10 +71,10 @@ export class ApprovePaymentComponent implements OnInit {
   }
   fillBody(){
     this.paymentBody = {
-      description: `Turno en ${this.appointment.field.sportCenter.name}, abona ${this.typePayment} = ${this.toPaid}$.`,
+      description: `Turno en ${this.appointment.sportCenter.name}, abona ${this.typePayment} = ${this.toPaid}$.`,
       price: this.toPaid,
       quantity: 1,
-      sportCenterID: this.appointment.field.sportCenter._id
+      sportCenterID: this.appointment.sportCenter._id
     }
   }
   generetePayment(){
@@ -92,7 +92,7 @@ export class ApprovePaymentComponent implements OnInit {
   }
   setToPaid(paymentType: 'safe' | 'total'){
     if(paymentType === 'safe'){
-      this.toPaid = (this.appointment.totalAmount * this.appointment.field.sportCenter.minimunAmount)/100;
+      this.toPaid = (this.appointment.totalAmount * this.appointment.sportCenter.minimunAmount)/100;
       this.typePayment = 'Seña';
     }
     else if(paymentType === 'total'){

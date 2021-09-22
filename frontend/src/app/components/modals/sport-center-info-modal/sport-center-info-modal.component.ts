@@ -16,13 +16,15 @@ export class SportCenterInfoModalComponent implements OnInit {
   @Input() sportCenterSelectedID: string;
   @Input() type : 'USER' | 'SUPER-ADMIN';
   @Output() closeModal = new EventEmitter<string>();
+  @Output() openPolicyModal = new EventEmitter<any>();
 
   sportCenterForm: FormGroup;
-  sportCenter: SportCenter;
+  sportCenter: SportCenter = new SportCenter();
   slideElectricity: boolean = false;
   slideMercadoPago:boolean = false;
   slidePaymentRequired: boolean = false;
   deletedDate = null;
+  searchON = false;
   constructor(private fb: FormBuilder,
               private sportCenterService: SportCenterService,
               private errorService: ErrorsService,
@@ -74,6 +76,7 @@ export class SportCenterInfoModalComponent implements OnInit {
                     this.loaderService.closeLineLoader();
                     if (resp.ok){
                       this.sportCenter = resp.param.sportCenter;
+                      this.searchON = true;
                       this.fillForm();
                     }
                   }, (err) => {
@@ -95,5 +98,7 @@ export class SportCenterInfoModalComponent implements OnInit {
     this.deletedDate = this.sportCenter.deletedDate;
     this.setSlide();
   }
-
+  openCancelPolicyModal(){
+    this.openPolicyModal.emit(this.sportCenter)
+  }
 }

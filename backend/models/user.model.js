@@ -13,6 +13,8 @@ const UserSchema = new Schema({
     favorites:{type: Array, default:[]},
     sportCenter:{type:Schema.Types.ObjectId,ref:'SportCenter',default:null},
     state:{type:Boolean, default: true},
+    paymentNotification:{type:Boolean, default: null},
+    debtNotification: {type:Boolean, default: null},
     role:{type:String, enum: ['USER', 'CENTER-ADMIN', 'CENTER-SUPER-ADMIN', 'SUPER-ADMIN'], required:true},
 },{collection:'users'})
 

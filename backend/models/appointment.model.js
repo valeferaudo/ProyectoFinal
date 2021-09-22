@@ -14,8 +14,10 @@ const AppointmentSchema = new Schema({
         name:{type:String, required:true},
         phone:{type:Number,required:true}
     },
+    description: {type:String, default: null},
     user:{type:Schema.Types.ObjectId,ref:'User',required:true},
     field:{type:Schema.Types.ObjectId,ref:'Field',required:true},
+    sportCenter:{type:Schema.Types.ObjectId,ref:'SportCenter',required:true},
     payments:[{type:Schema.Types.ObjectId,ref:'Payment'}],
 },{collection:'appointments'})
 

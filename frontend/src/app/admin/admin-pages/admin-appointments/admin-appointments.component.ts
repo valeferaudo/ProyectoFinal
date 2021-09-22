@@ -9,6 +9,7 @@ import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { FieldService } from 'src/app/services/field.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -17,6 +18,9 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./admin-appointments.component.css']
 })
 export class AdminAppointmentsComponent implements OnInit {
+
+  hiddenNotPaymentModal: boolean = false;
+  hiddenDebtModal: boolean = false;
 
   reservedAppointments = [];
   aboutToStartAppointments = [];
@@ -45,14 +49,17 @@ export class AdminAppointmentsComponent implements OnInit {
     untilDate: null,
     sinceHour: 0,
     untilHour: 23,
-    fieldID: null
+    fieldID: null,
+    payment: null
   }
   filterReservedON: boolean = false;
   filterCompletedON: boolean = false;
   filterAboutToStartON: boolean = false;
   filterInProgressON: boolean = false;
   states = ['Reservado','Por comenzar','En progreso','Completado']
-  statesSelected = ['Reservado','Por comenzar','En progreso'];
+  statesSelected = ['Reservado'];
+  payments = ['Total','Parcial','Sin Pagos'];
+  paymentSelected: 'Total' | 'Parcial' | 'Sin Pagos';
   //PAGINATOR
   reservedTotalPages = null;
   reservedPage = 1;
@@ -71,7 +78,8 @@ export class AdminAppointmentsComponent implements OnInit {
               private userService: UserService,
               private fieldService: FieldService,
               private dateAdapter: DateAdapter<Date>,
-              private loaderService: LoaderService) {}
+              private loaderService: LoaderService,
+              public notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.dateAdapter.setLocale('es-AR');
@@ -79,7 +87,7 @@ export class AdminAppointmentsComponent implements OnInit {
     this.getAppointments();
     this.formatDates();
     this.getFieldCombo();
-
+    this.throwNotification();
   }
   getFieldCombo(){
     this.fieldService.getFieldCombo(this.userLogged.sportCenter.id)
@@ -169,6 +177,7 @@ export class AdminAppointmentsComponent implements OnInit {
       sinceHour: this.sinceHourSelected,
       untilHour: this.untilHourSelected,
       fieldID: this.fieldID,
+      payment: this.paymentSelected
     }
   }
   clearFilters(){
@@ -182,6 +191,7 @@ export class AdminAppointmentsComponent implements OnInit {
     this.untilHourSelected = 23;
     this.fieldSelected = null;
     this.fieldID = null;
+    this.paymentSelected = null;
     this.fillFilterObject();
     this.getAppointments();
   }
@@ -250,6 +260,15 @@ export class AdminAppointmentsComponent implements OnInit {
     this.fillFilterObject();
     this.getAppointments();
   }
+  filterPayment(){
+    this.fillFilterObject();
+    this.getAppointments();
+  }
+  resetPayment(){
+    this.paymentSelected = null;
+    this.fillFilterObject();
+    this.getAppointments();
+  }
   filterStates(){
     this.fillFilterObject();
     this.getAppointments();
@@ -309,7 +328,32 @@ export class AdminAppointmentsComponent implements OnInit {
       break;
     }
   }
+  throwNotification(){
+    if(this.userService.haveDebt){
+      this.notificationService.showDebtNotification();
+    }
+    if(this.userService.nonPayment){
+      this.notificationService.showNonPaymentNotification();
+    }
+    if(this.userService.pendingPayment){
+      this.notificationService.showPendingNotification();
+    }
+  }
+  openDebtModal(){
+    this.hiddenDebtModal = true;
+  }
+  closeDebtModal(){
+    this.hiddenDebtModal = false;
+  }
+  openNotPaymentModal(){
+    this.hiddenNotPaymentModal = true;
+  }
+  closeNotPaymentModal(){
+    this.getAppointments();
+    this.hiddenNotPaymentModal = false;
+  }
   openPaymentModal(appointment){
+    this.hiddenNotPaymentModal = false;
     this.appointmentSelected = appointment;
     this.hiddenPaymentModal = true;
   }

@@ -47,13 +47,22 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group mb-1">
-                    <label for="mercadoPago" class="col-form-label mr-2"><strong>¿Cobro electrónico?</strong></label>
-                    <mat-slide-toggle color="primary" [checked]="slideMercadoPago" disabled>
-                      {{this.slideMercadoPago? 'SI': 'NO'}}
-                    </mat-slide-toggle>
-                  </div>
                   <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group mb-1">
+                        <label for="mercadoPago" class="col-form-label mr-2"><strong>¿Cobro electrónico?</strong></label>
+                        <mat-slide-toggle color="primary" [checked]="slideMercadoPago" disabled>
+                          {{this.slideMercadoPago? 'SI': 'NO'}}
+                        </mat-slide-toggle>
+                      </div>
+                    </div>
+                    <div class="col-md-6" *ngIf="slideMercadoPago">
+                      <div class="form-group mb-1 text-center">
+                        <button class="btn btn-danger btn-sm" (click)="openCancelPolicyModal()">Política de cancelación</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-1">
                     <div class="col-6">
                       <div class="form-group mb-1">
                         <label for="paymentRequired" class="col-form-label mr-2">
@@ -75,6 +84,20 @@
                               </div> 
                           </div>
                       </div>
+                    </div>
+                  </div>
+                  <div class="form-group mb-1" *ngIf="searchON && sportCenter.services.length !== 0">
+                    <div style="overflow-x: auto;">
+                      <table class="table table-bordered table-sm">
+                          <thead class="thead-dark">
+                              <th scope="col">Servicio</th>
+                              <th scope="col">Descripción</th>
+                          </thead>
+                          <tbody *ngFor="let service of sportCenter.services">
+                            <td>{{service.service.name}}</td>
+                            <td>{{service.description}}</td>
+                          </tbody>
+                      </table>
                     </div>
                   </div>
               </form>

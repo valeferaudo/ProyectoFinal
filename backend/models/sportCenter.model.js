@@ -12,6 +12,7 @@ const SportCenterSchema = new Schema({
     aditionalElectricityHour:{type:String, default:null},
     aditionalElectricity:{type:Number, default:null},
     mercadoPago:{type:Boolean, default: false},
+    cancelationHour:{type:Number},
     credentials:{accessToken:{type:String},
             publicKey:{type:String}},
     paymentRequired:{type:Boolean,default:false},

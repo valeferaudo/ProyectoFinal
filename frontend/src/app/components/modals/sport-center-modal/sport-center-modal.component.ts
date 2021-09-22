@@ -58,7 +58,8 @@ export class SportCenterModalComponent implements OnInit {
       paymentRequired: [''],
       minimunAmount: [null,[Validators.min(0),Validators.max(100)]],
       accessToken: [null],
-      publicKey: [null]
+      publicKey: [null],
+      cancelationHour: [null],
     })
   }
 
@@ -120,6 +121,14 @@ export class SportCenterModalComponent implements OnInit {
       }
       else{
         this.sportCenterForm.controls['publicKey'].setErrors(null);
+      }
+      if(this.sportCenterForm.controls['cancelationHour'].value === null){
+        this.sportCenterForm.controls['cancelationHour'].setErrors({'incorrect': true});
+        this.markAsTouched();
+        return;
+      }
+      else{
+        this.sportCenterForm.controls['cancelationHour'].setErrors(null);
       }
     }
     if(this.slidePaymentRequired === true){

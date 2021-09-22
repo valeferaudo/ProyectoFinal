@@ -25,9 +25,9 @@
                 <hr>
                 <strong>Pagar: </strong><span *ngIf="toPaid !== null">{{toPaid}}$ <br></span>
                 <div class="text-center">
-                    <button *ngIf="appointment.totalPaid === 0" (click)="setToPaid('safe')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': amount === 'safe'}">Seña ({{appointment.field.sportCenter.minimunAmount}}%)</button>
-                    <button *ngIf="appointment.totalPaid === 0" (click)="setToPaid('total')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': amount === 'total'}">Total (100%)</button>
-                    <br *ngIf="appointment.totalPaid === 0">
+                    <button *ngIf="appointment.totalPaid === 0 && mercadoPago" (click)="setToPaid('safe')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': amount === 'safe'}">Seña ({{appointment.sportCenter.minimunAmount}}%)</button>
+                    <button *ngIf="appointment.totalPaid === 0 && mercadoPago" (click)="setToPaid('total')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': amount === 'total'}">Total (100%)</button>
+                    <br *ngIf="appointment.totalPaid === 0 && mercadoPago">
                     <button (click)="setType('CASH')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': type === 'CASH'}">Efectivo</button>
                     <button (click)="setType('OTHER')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': type === 'OTHER'}">Otro</button>
                     <br>

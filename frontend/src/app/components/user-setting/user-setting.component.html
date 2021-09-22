@@ -5,10 +5,13 @@
             <h4 class="card-subtitle"><strong>{{this.userLogged.email}}</strong></h4>
             <div class="row text-right justify-content-md-center action-headers" *ngIf="!editMode">
                 <div class="col text-center">
-                    <a href="javascript:void(0)" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><p class="mb-0">Editar</p></a>
+                    <a href="javascript:void(0)" (click)="unlockForm()" class=" text-info"><i class="fas fa-edit fa-1x"></i><br><span class="mb-0">Editar</span></a>
+                </div>
+                <div class="col text-center" *ngIf="userLogged.sportCenter !== null && userLogged.sportCenter.mercadoPago">
+                    <a href="javascript:void(0)" (click)="openNotificationModal()" class="text-info"><i class="fas fa-bell fa-1x"></i><br><span class="mb-0">Notificaciones</span></a>
                 </div>
                 <div class="col text-center" >
-                    <a href="javascript:void(0)" (click)="openChangePasswordModal()" class="text-info"><i class="fas fa-key fa-1x"></i><br><p class="mb-0">Contraseña</p></a>
+                    <a href="javascript:void(0)" (click)="openChangePasswordModal()" class="text-info"><i class="fas fa-key fa-1x"></i><br><span class="mb-0">Contraseña</span></a>
                 </div>
             </div>
         </div>
@@ -59,6 +62,6 @@
             </form>
         </div>
 
-<app-change-password-modal [hiddenPasswordModal]="!hiddenPasswordModal" (closeModalOutput)="closeChangePasswordModal($event)"></app-change-password-modal>
-
+<app-change-password-modal *ngIf="hiddenPasswordModal" [hiddenPasswordModal]="!hiddenPasswordModal" (closeModalOutput)="closeChangePasswordModal($event)"></app-change-password-modal>
+<app-notification *ngIf="hiddenNotificationModal" [hiddenModal]="!hiddenNotificationModal" (closeModal)="closeNotificationModal()"></app-notification>
 <app-line-loader></app-line-loader>

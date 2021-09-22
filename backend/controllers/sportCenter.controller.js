@@ -13,7 +13,7 @@ moment().format();
 sportCenterCtrl.getSportCenter = async (req = request,res = response)=>{
     sportCenterID = req.params.id;
     try {
-        let sportCenter = await SportCenter.findById(sportCenterID).populate('schedules')
+        let sportCenter = await SportCenter.findById(sportCenterID).populate('schedules').populate('services.service')
         if (!sportCenter) {
             return unknownIDResponse(res);
         }
@@ -179,6 +179,7 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
             aditionalElectricityHour: sportCenterBody.aditionalElectricity ? sportCenterBody.aditionalElectricityHour : null,
             aditionalElectricity: sportCenterBody.aditionalElectricity,
             mercadoPago: sportCenterBody.mercadoPago,
+            cancelationHour: sportCenterBody.cancelationHour,
             credentials:{
                 accessToken: sportCenterBody.mercadoPago ? cryptr.encrypt(sportCenterBody.accessToken) : null,
                 publicKey: sportCenterBody.mercadoPago ? sportCenterBody.publicKey : null,
@@ -278,30 +279,37 @@ sportCenterCtrl.updateSportCenter = async (req = request, res = response) =>{
         }
         changes.aditionalElectricityHour = req.body.aditionalElectricity ? req.body.aditionalElectricityHour : null;
         const cryptr = new Cryptr(process.env.CRYTPR);
-        if(sportCenterDB.credentials.accessToken !== null){
-            if(cryptr.decrypt(sportCenterDB.credentials.accessToken) !== req.body.accessToken){
+        if(changes.accessToken !== null && changes.publicKey !== null){
+            if(sportCenterDB.credentials.accessToken !== null){
+                if(cryptr.decrypt(sportCenterDB.credentials.accessToken) !== req.body.accessToken){
+                    changes.credentials = {
+                        accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
+                        publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+                    }
+                }
+                else{
+                    delete changes.accessToken
+                }
+            }else{
                 changes.credentials = {
                     accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
                     publicKey: req.body.mercadoPago ? req.body.publicKey : null,
                 }
             }
-            else{
-                delete changes.accessToken
-            }
-        }
-        if(sportCenterDB.credentials.publicKey !== null){
-            if(sportCenterDB.credentials.publicKey !== req.body.publicKey){
-                changes.credentials = {
-                    accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
-                    publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+            if(sportCenterDB.credentials.publicKey !== null){
+                if(sportCenterDB.credentials.publicKey !== req.body.publicKey){
+                    changes.credentials = {
+                        accessToken: req.body.mercadoPago ? cryptr.encrypt(req.body.accessToken) : null,
+                        publicKey: req.body.mercadoPago ? req.body.publicKey : null,
+                    }
                 }
-            }
-            else{
-                delete changes.publicKey
+                else{
+                    delete changes.publicKey
+                }
             }
         }
         sportCenter = await SportCenter.findByIdAndUpdate(sportCenterID,changes,{new:true})
-        if(sportCenterDB.credentials.accessToken !== null){
+        if(sportCenter.credentials.accessToken !== null){
             sportCenter.credentials.accessToken = cryptr.decrypt(sportCenter.credentials.accessToken)
         }
         res.json({

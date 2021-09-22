@@ -19,6 +19,7 @@ export class AddPaymentComponent implements OnInit {
   description = '';
   type: 'CASH' | 'OTHER' = null;
   amount: 'safe' | 'total';
+  mercadoPago: boolean = true;
   constructor(private loaderService:LoaderService,
               private sweetAlertService: SweetAlertService,
               private paymentService: PaymentService,
@@ -34,11 +35,15 @@ export class AddPaymentComponent implements OnInit {
     if(this.appointment.totalPaid > 0){
       this.toPaid = this.appointment.totalAmount - this.appointment.totalPaid
     }
+    if(!this.appointment.sportCenter.mercadoPago){
+      this.mercadoPago = false;
+      this.toPaid = this.appointment.totalAmount;
+    }
   }
   setToPaid(paymentType: 'safe' | 'total'){
     this.amount = paymentType
     if(paymentType === 'safe'){
-      this.toPaid = (this.appointment.totalAmount * this.appointment.field.sportCenter.minimunAmount)/100;
+      this.toPaid = (this.appointment.totalAmount * this.appointment.sportCenter.minimunAmount)/100;
     }
     else if(paymentType === 'total'){
       this.toPaid = this.appointment.totalAmount;
@@ -56,7 +61,7 @@ export class AddPaymentComponent implements OnInit {
       .then((result) => {
         if (result.value) {
           this.loaderService.openLineLoader();
-          this.paymentService.createSportCenterPayment(this.appointment.field.sportCenter._id,this.fillObject())
+          this.paymentService.createSportCenterPayment(this.appointment.sportCenter._id,this.fillObject())
                           .subscribe((resp: any)=>{
                             this.loaderService.closeLineLoader();
                             if(resp.ok){

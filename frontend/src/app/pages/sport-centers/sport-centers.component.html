@@ -205,7 +205,7 @@
 </div>
 <app-line-loader></app-line-loader>
 <app-sport-center-info-modal *ngIf="hiddenSportCenterModal" [hiddenModal]="!hiddenSportCenterModal" [sportCenterSelectedID]="sportCenterSelected.id"
-                               [type]="'USER'" (closeModal)="closeSportCenterModal()">
+                               [type]="'USER'" (closeModal)="closeSportCenterModal()" (openPolicyModal)="openCancelPolicyModal($event)">
 
 </app-sport-center-info-modal>
 <app-sport-center-schedule-modal *ngIf="hiddenScheduleModal" [hiddenModal]="!hiddenScheduleModal" [mode]="'get'"
@@ -215,3 +215,4 @@
 
 <app-one-point-map *ngIf="hiddenOnePointMap" [hiddenOnePointMap]="!hiddenOnePointMap" [sportCenter]="sportCenterSelected" (goGPSModal)="openGPSModal($event)" (closeModal)="closeMap()"></app-one-point-map>
 <app-gps-map *ngIf="hiddenGPSModal" [hiddenModal]="!hiddenGPSModal" [sportCenter]="sportCenterSelected" (closeModal)="closeGPSModal()"></app-gps-map>
+<app-cancel-policy *ngIf="hiddenCancelPolicyModal" [hiddenModal]="!hiddenCancelPolicyModal" [sportCenter]="sportCenterSelected" (closeModal)="closeCancelPolicyModal()"></app-cancel-policy>

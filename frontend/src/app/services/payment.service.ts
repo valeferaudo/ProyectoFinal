@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { PaymentFilter } from '../interfaces/filters/paymentFilter.interface';
 
 const baseUrl = environment.base_url;
 
@@ -21,14 +22,28 @@ export class PaymentService {
   updateMercadoPagoPayment(paymentBody){
     return this.http.put(`${baseUrl}/payments/mercado_pago/${paymentBody.preferenceID}`, paymentBody );
   }
-  getUserPayments(userID,page){
+  getUserPayments(filters: PaymentFilter,userID,page){
+    console.log(filters)
     let params = new HttpParams();
+    params = params.append('state',filters.state);
+    params = params.append('type',filters.type);
+    params = params.append('sincePaymentDate',filters.sincePaymentDate);
+    params = params.append('untilPaymentDate',filters.untilPaymentDate);
+    params = params.append('sinceAppointmentDate',filters.sinceAppointmentDate);
+    params = params.append('untilAppointmentDate',filters.untilAppointmentDate);
     params = params.append('page',`${page}`);
     params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/payments/user/${userID}`,{params});
   }
-  getSportCenterPayments(sportCenterID,page){
+  getSportCenterPayments(filters: PaymentFilter, sportCenterID,page){
     let params = new HttpParams();
+    params = params.append('state',filters.state);
+    params = params.append('type',filters.type);
+    params = params.append('sincePaymentDate',filters.sincePaymentDate);
+    params = params.append('untilPaymentDate',filters.untilPaymentDate);
+    params = params.append('sinceAppointmentDate',filters.sinceAppointmentDate);
+    params = params.append('untilAppointmentDate',filters.untilAppointmentDate);
+    params = params.append('field',filters.fieldID);
     params = params.append('page',`${page}`);
     params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/payments/sportCenter/${sportCenterID}`,{params});

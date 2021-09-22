@@ -187,7 +187,7 @@ fieldCtrl.createField = async (req = request , res = response) => {
             field.deletedDate = new Date();
         }
         let fieldDB = await field.save();
-        const fieldPrice = new FieldPrice({field: fieldDB.id, sinceDate: new Date(), price: price})
+        const fieldPrice = new FieldPrice({field: fieldDB.id, sinceDate: moment().add(3,'h'), price: price})
         await fieldPrice.save();
         res.json({
             ok:true,

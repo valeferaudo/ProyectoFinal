@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
 declare function customInitFunctions();
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

@@ -6,6 +6,7 @@ import { User } from 'src/app/models/user.model';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { FieldService } from 'src/app/services/field.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -20,6 +21,10 @@ export class AdminFieldsComponent implements OnInit {
   hiddenFieldModal: boolean = false;
   hiddenSportModal: boolean = false;
   hiddenPriceHistorialModal: boolean = false;
+  hiddenNotPaymentModal: boolean = false;
+  hiddenDebtModal: boolean = false;
+  hiddenPaymentModal = false;
+  appointmentSelected = null;
   searchText: string = '';
   fields: Field[] = [];
   filterON: boolean = false;
@@ -48,12 +53,14 @@ export class AdminFieldsComponent implements OnInit {
               private loaderService: LoaderService,
               private sweetAlertService: SweetAlertService,
               private errorService: ErrorsService,
-              private userService: UserService) {}
+              private userService: UserService,
+              private notificationService: NotificationService) {}
               
   ngOnInit(): void {
     this.userLogged = this.userService.user;
     this.fillFilterObject();
     this.getFields();
+    this.throwNotification();
   }
   getFields(){
     this.filterON = true;
@@ -195,5 +202,36 @@ export class AdminFieldsComponent implements OnInit {
   paginate(page){
     this.page = page;
     this.getFields();
+  }
+  throwNotification(){
+    if(this.userService.haveDebt){
+      this.notificationService.showDebtNotification();
+    }
+    if(this.userService.nonPayment){
+      this.notificationService.showNonPaymentNotification();
+    }
+    if(this.userService.pendingPayment){
+      this.notificationService.showPendingNotification();
+    }
+  }
+  openDebtModal(){
+    this.hiddenDebtModal = true;
+  }
+  closeDebtModal(){
+    this.hiddenDebtModal = false;
+  }
+  openNotPaymentModal(){
+    this.hiddenNotPaymentModal = true;
+  }
+  closeNotPaymentModal(){
+    this.hiddenNotPaymentModal = false;
+  }
+  openPaymentModal(appointment){
+    this.hiddenNotPaymentModal = false;
+    this.appointmentSelected = appointment;
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(boolean){
+    this.hiddenPaymentModal = false;
   }
 }

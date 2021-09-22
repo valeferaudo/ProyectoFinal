@@ -28,6 +28,11 @@ import { AdminRequestsComponent } from './admin-pages/admin-requests/admin-reque
 import { RequestDoComponent } from './super-admin-pages/request-do/request-do.component';
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
 import { AdminPaymentsComponent } from './admin-pages/admin-payments/admin-payments.component';
+import { AdminDebtsComponent } from './admin-pages/admin-debts/admin-debts.component';
+import { PaymentReportComponent } from './admin-pages/admin-reports/payment-report/payment-report.component';
+import { AppointmentReportComponent } from './admin-pages/admin-reports/appointment-report/appointment-report.component';
+import { DebtReportComponent } from './admin-pages/admin-reports/debt-report/debt-report.component';
+import { ReportComponent } from './admin-pages/admin-reports/report/report.component';
 
 
 @NgModule({
@@ -48,6 +53,11 @@ import { AdminPaymentsComponent } from './admin-pages/admin-payments/admin-payme
      RequestDoComponent,
      AdminUsersComponent,
      AdminPaymentsComponent,
+     AdminDebtsComponent,
+     PaymentReportComponent,
+     AppointmentReportComponent,
+     DebtReportComponent,
+     ReportComponent,
   ],
   imports: [
     CommonModule,

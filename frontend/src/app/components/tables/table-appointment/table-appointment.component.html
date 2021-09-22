@@ -27,16 +27,16 @@
           <th class="text-center" scope="row">{{((page -1) * 6) + i+1}}</th>
           <td class="text-center" *ngIf="this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN'">{{item.owner.name}}</td>
           <td class="text-center" *ngIf="this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN'">{{item.owner.phone}}</td>
-          <td class="text-center" *ngIf="userLogged.role === 'USER'">{{item.field.sportCenter.name}}</td>
+          <td class="text-center" *ngIf="userLogged.role === 'USER'">{{item.sportCenter.name}}</td>
           <td class="text-center" >{{item.field.name}}</td>
           <td class="text-center" >{{item.date | date:"dd-MM-yyyy":'+0'}}</td>
           <td class="text-center" >{{item.date | date:'HH:mm':'+0'}}</td>
           <td class="text-center" >{{item.totalPaid}} / {{item.totalAmount}} $</td>
           <td class="text-center">
-            <button class="btn btn-sm bg-danger m-1" (click)="deleteAppointment(item)" *ngIf="item.state==='Reserved'" data-toggle="tooltip" data-placement="top" title="Cancelar">
+            <button class="btn btn-sm bg-danger m-1" *ngIf="(userLogged.role === 'USER' && item.state !== 'Completed') || userLogged.role !== 'USER'" (click)="deleteAppointment(item)" data-toggle="tooltip" data-placement="top" title="Cancelar">
                 <i class="fas fa-trash-alt pointer text-white"></i>
             </button>
-            <button class="btn btn-sm btn-success m-1" (click)="addPayment(item)" *ngIf="item.totalAmount > item.totalPaid && ((item.field.sportCenter.mercadoPago && userLogged.role === 'USER') || userLogged.role !== 'USER')" data-toggle="tooltip" data-placement="top" title="Agregar Pago">
+            <button class="btn btn-sm btn-success m-1" (click)="addPayment(item)" *ngIf="item.totalAmount > item.totalPaid && ((item.sportCenter.mercadoPago && userLogged.role === 'USER') || userLogged.role !== 'USER')" data-toggle="tooltip" data-placement="top" title="Agregar Pago">
               <i class="fas fa-dollar-sign"></i>
           </button>
           </td>

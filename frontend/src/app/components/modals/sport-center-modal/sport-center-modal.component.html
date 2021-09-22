@@ -23,10 +23,9 @@
                     </div>
                     <div class="form-group mb-1">
                       <label for="address" class="col-form-label">
-                        <strong>Dirección:</strong>
-                        <i class="fas fa-question-circle content-tooltip">
-                          <span class="tooltip-box">Indique la dirección y luego márquela en el mapa</span>
-                        </i>
+                        <strong>Dirección: 
+                          <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Indique la dirección y luego márquela en el mapa."></i>
+                        </strong>
                       </label>
                       <input type="text" class="form-control m-b-5"  formControlName="address" [class.is-invalid]="getFieldValid('address')">
                       <small *ngIf="getFieldValid('address')" class="text-danger m-b-5">
@@ -79,9 +78,7 @@
                   <div class="form-group mb-1">
                     <label for="mercadoPago" class="col-form-label mr-2">
                       <strong>Cobro electrónico 
-                        <i class="fas fa-question-circle content-tooltip">
-                            <span class="tooltip-box">Sólo se aceptarán mediante MercadoPago.</span>
-                        </i>
+                        <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Solo se aceptarán mediante MercadoPago."></i>
                     </strong>
                     </label>
                     <mat-slide-toggle (change)="mercadoPagoSlideChange($event)" color="primary">
@@ -115,6 +112,22 @@
                             </div>
                             <small *ngIf="getFieldValid('publicKey')" class="text-danger">
                               *Ingrese un <strong>Public Key</strong>.
+                            </small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="form-group" *ngIf="slideMercadoPago">
+                        <label for="aditionalElectricityHour" class="col-form-label">Cancelación 
+                          <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Hora de anticipación máxima de cancelación de turno para no perder el dinero de pagos realizados."></i>
+                        </label>
+                        <div class="input-group" [class.has-danger]="getFieldValid('cancelationHour')">
+                            <input type="number" class="form-control"  formControlName="cancelationHour"  [class.is-invalid]="getFieldValid('cancelationHour')">
+                            <div class="input-group-addon">
+                                HS
+                            </div> 
+                            <small *ngIf="getFieldValid('cancelationHour')" class="text-danger">
+                                *Ingrese las <strong>horas </strong>para cancelación permitidas.
                             </small>
                         </div>
                       </div>

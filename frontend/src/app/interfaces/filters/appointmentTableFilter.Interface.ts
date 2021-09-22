@@ -5,4 +5,5 @@ export interface AppointmentTableFilter{
     sinceHour?: any;
     untilHour?: any;
     fieldID?: string;
+    payment?: null | 'Total' | 'Parcial' | 'Sin Pagos';
 }

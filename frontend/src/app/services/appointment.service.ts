@@ -35,6 +35,7 @@ export class AppointmentService {
     params = params.append('sinceHour', filterObject.sinceHour);
     params = params.append('untilHour', filterObject.untilHour);
     params = params.append('fieldID', filterObject.fieldID);
+    params = params.append('payment', filterObject.payment);
     params = params.append('page',`${page}`);
     params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/appointments/sportCenter/${sportCenterID}`,{params})
@@ -47,14 +48,28 @@ export class AppointmentService {
     params = params.append('sinceHour', filterObject.sinceHour);
     params = params.append('untilHour', filterObject.untilHour);
     params = params.append('fieldID', filterObject.fieldID);
+    params = params.append('payment', filterObject.payment);
     params = params.append('page',`${page}`);
     params = params.append('registerPerPage',this.registerPerPage);
     return this.http.get(`${baseUrl}/appointments/user/${userID}`,{params})
   }
-  deleteAppointment(id: string){
-      return this.http.delete(`${baseUrl}/appointments/${id}`);
+  deleteAppointment(id: string,description){
+      return this.http.put(`${baseUrl}/appointments/${id}`,{description});
   }
   deleteAppointmentForPayment(id: string){
     return this.http.delete(`${baseUrl}/appointments/payment/${id}`);
-}
+  }
+  getReservedSportCenterAppointments(sportCenterID: string, filterObject){
+    let params = new HttpParams();
+    params = params.append('date', filterObject.date);
+    params = params.append('sinceHour', filterObject.sinceHour);
+    params = params.append('untilHour', filterObject.untilHour);
+    return this.http.get(`${baseUrl}/appointments/sportCenter/reserved/${sportCenterID}`,{params})
+  }
+  getNotPayAppointments(sportCenterID: string, page){
+    let params = new HttpParams();
+    params = params.append('page',`${page}`);
+    params = params.append('registerPerPage',this.registerPerPage);
+    return this.http.get(`${baseUrl}/appointments/sportCenter/notPayment/${sportCenterID}`,{params})
+  }
 }

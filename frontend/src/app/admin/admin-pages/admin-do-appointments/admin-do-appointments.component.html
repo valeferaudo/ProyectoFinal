@@ -140,4 +140,8 @@
             </ul>
     </div>
 </div>
+<app-notification-toast (openDebtModal)="openDebtModal()" (openPaymentModal)="openNotPaymentModal()"></app-notification-toast>
+<app-add-payment *ngIf="hiddenPaymentModal" [appointment]="appointmentSelected" [hiddenModal]="!hiddenPaymentModal" (closeModal)="closePaymentModal($event)"></app-add-payment>
+<app-not-payment-table *ngIf="hiddenNotPaymentModal" [hiddenModal]="!hiddenNotPaymentModal" (openPaymentModal)="openPaymentModal($event)" (closeModal)="closeNotPaymentModal()"></app-not-payment-table>
+<app-debt-table *ngIf="hiddenDebtModal" [hiddenModal]="!hiddenDebtModal" (closeModal)="closeDebtModal()"></app-debt-table>
 <app-line-loader></app-line-loader>

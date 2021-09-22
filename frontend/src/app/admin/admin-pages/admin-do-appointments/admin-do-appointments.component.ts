@@ -10,6 +10,7 @@ import { AppointmentService } from 'src/app/services/appointment.service';
 import { ErrorsService } from 'src/app/services/errors.service';
 import { FieldService } from 'src/app/services/field.service';
 import { LoaderService } from 'src/app/services/loader.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -20,6 +21,10 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class AdminDoAppointmentsComponent implements OnInit {
 
+  hiddenNotPaymentModal: boolean = false;
+  hiddenDebtModal: boolean = false;
+  hiddenPaymentModal = false;
+  appointmentSelected = null;
   fieldInParam: boolean = false;
   field: Field = new Field();
   fieldID: string;
@@ -61,13 +66,15 @@ export class AdminDoAppointmentsComponent implements OnInit {
               private sweetAlertService: SweetAlertService,
               private loaderService: LoaderService,
               private dateAdapter: DateAdapter<Date>,
-              private errorService: ErrorsService) {}
+              private errorService: ErrorsService,
+              private notificationService: NotificationService) {}
 
   ngOnInit(){
     this.dateAdapter.setLocale('es-AR');
     this.userLogged = this.userService.user;
     this.getMode();
     this.formatDates();
+    this.throwNotification();
   }
   getMode(){
     this.activateRoute.params.subscribe((param: {id: string}) => {
@@ -218,5 +225,36 @@ export class AdminDoAppointmentsComponent implements OnInit {
   }
   scroll(){
     document.getElementById("appointments").scrollIntoView();
+  }
+  throwNotification(){
+    if(this.userService.haveDebt){
+      this.notificationService.showDebtNotification();
+    }
+    if(this.userService.nonPayment){
+      this.notificationService.showNonPaymentNotification();
+    }
+    if(this.userService.pendingPayment){
+      this.notificationService.showPendingNotification();
+    }
+  }
+  openDebtModal(){
+    this.hiddenDebtModal = true;
+  }
+  closeDebtModal(){
+    this.hiddenDebtModal = false;
+  }
+  openNotPaymentModal(){
+    this.hiddenNotPaymentModal = true;
+  }
+  closeNotPaymentModal(){
+    this.hiddenNotPaymentModal = false;
+  }
+  openPaymentModal(appointment){
+    this.hiddenNotPaymentModal = false;
+    this.appointmentSelected = appointment;
+    this.hiddenPaymentModal = true;
+  }
+  closePaymentModal(boolean){
+    this.hiddenPaymentModal = false;
   }
 }

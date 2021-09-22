@@ -14,7 +14,9 @@ export class User{
         public role?: 'USER' | 'SUPER-ADMIN' | 'CENTER-SUPER-ADMIN' | 'CENTER-ADMIN',
         public uid?: string,
         public favorites?: any [],
-        public sportCenter?: SportCenter
+        public sportCenter?: SportCenter,
+        public paymentNotification?: boolean,
+        public debtNotification?: boolean,
         ){}
 
     /*Feature for user's image (add image in constructor) use this with the instance

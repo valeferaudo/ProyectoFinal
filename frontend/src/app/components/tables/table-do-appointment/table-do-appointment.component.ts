@@ -45,7 +45,6 @@ export class TableDoAppointmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.userLogged = this.userService.user;
-    console.log(this.field)
   }
   async reserveAppointment(appointmentDate: Date){
     this.sweetAlertService.showSwalConfirmation({
@@ -70,13 +69,13 @@ export class TableDoAppointmentComponent implements OnInit {
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
                         //DESCOMENTAR ESTOY BORRAR EL FILLOBJECT DE AFUERA DEL IF
-                        // if(!resp.param.roofed){
-                        //   this.checkDay(appointmentDate);
-                        // }
-                        // else{
-                        //   this.fillObject(appointmentDate)
-                        // }
-                        this.fillObject(appointmentDate)
+                        if(!resp.param.roofed){
+                          this.checkDay(appointmentDate);
+                        }
+                        else{
+                          this.fillObject(appointmentDate)
+                        }
+                        // this.fillObject(appointmentDate)
                       }
                     }, (err) => {
                       console.log(err);
@@ -227,6 +226,7 @@ export class TableDoAppointmentComponent implements OnInit {
     let name;
     let oid;
     let phone;
+    let description;
     await Swal.fire({
       title: 'Datos de la reserva',
       customClass: {
@@ -238,7 +238,9 @@ export class TableDoAppointmentComponent implements OnInit {
         '<label><strong>Documento</strong></label>'+ '<br>'+
         '<input style="width:100%" type="number" id="swal-oid" placeholder="DNI" class="swal2-input" required>' + '<br>'+
         '<label><strong>Teléfono</strong></label>'+ '<br>'+
-        '<input type="number" id="swal-phone" placeholder="Teléfono" class="swal2-input" required>',
+        '<input type="number" id="swal-phone" placeholder="Teléfono" class="swal2-input" required>'+ '<br>' +
+        '<label><strong>Observación</strong></label>'+ '<br>'+
+        '<textarea  id="swal-description" cols="30" class="swal2-input" rows="50"></textarea>',
       focusConfirm: false,
       allowOutsideClick: false,
       showCancelButton: true,
@@ -253,7 +255,8 @@ export class TableDoAppointmentComponent implements OnInit {
         return [
          name = (document.getElementById('swal-name') as HTMLInputElement).value,
          oid =  (document.getElementById('swal-oid') as HTMLInputElement).value,
-         phone =  (document.getElementById('swal-phone') as HTMLInputElement).value
+         phone =  (document.getElementById('swal-phone') as HTMLInputElement).value,
+         description = (document.getElementById('swal-description') as HTMLInputElement).value
         ];
       }
     });
@@ -266,7 +269,8 @@ export class TableDoAppointmentComponent implements OnInit {
           name,
           oid,
           phone
-        }
+        },
+        description: description
       };
       await this.sendAppointment();
     }
@@ -287,7 +291,7 @@ export class TableDoAppointmentComponent implements OnInit {
                             }
                           }
                           else{
-                            this.sweetAlertService.showSwalResponse({
+                            this.sweetAlertService.showSwalResponseDelay({
                               title: 'Turno Reservado',
                               text: `¡Que te diviertas!`,
                               icon: 'success',
@@ -298,7 +302,7 @@ export class TableDoAppointmentComponent implements OnInit {
                         if (this.userLogged.role === 'CENTER-ADMIN' || this.userLogged.role === 'CENTER-SUPER-ADMIN'){
                           if(this.field.sportCenter.mercadoPago){
                             if(this.field.sportCenter.paymentRequired){
-                              this.sweetAlertService.showSwalResponse({
+                              this.sweetAlertService.showSwalResponseDelay({
                                 title: 'Turno Reservado',
                                 text: `¡Recordarle al usuario el pago de la seña!`,
                                 icon: 'success',
@@ -306,7 +310,7 @@ export class TableDoAppointmentComponent implements OnInit {
                             }
                           }
                           else{
-                            this.sweetAlertService.showSwalResponse({
+                            this.sweetAlertService.showSwalResponseDelay({
                               title: 'Turno Reservado',
                               text: ``,
                               icon: 'success',
@@ -353,7 +357,7 @@ export class TableDoAppointmentComponent implements OnInit {
         this.openPaymentModal(newAppointment)
       }
       else{
-        this.sweetAlertService.showSwalResponse({
+        this.sweetAlertService.showSwalResponseDelay({
           title: 'Turno Reservado',
           text: `¡Que te diviertas!`,
           icon: 'success',

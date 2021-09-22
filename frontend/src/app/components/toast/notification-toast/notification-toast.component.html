@@ -1,0 +1,24 @@
+<div class="notif" *ngIf="userService.haveDebt || userService.nonPayment || userService.pendingPayment">
+    <div class="alert alert-danger animated fadeIn"  *ngIf="notificationService.debtNotification">
+        <button type="button" class="close" (click)="closeDebtNotification()" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+        <h3 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Devolución</h3> Un turno fue cancelado y ya tenía un pago realizado. Por favor revise la sección 
+                                                                                            <span class="ared pointer"><strong (click)="openDebt()">devoluciones</strong></span> para saldar las mismas.
+    </div>
+    <div class="alert alert-warning animated fadeIn" *ngIf="notificationService.nonPaymentNotification">
+        <button type="button" class="close" (click)="closeNonPaymentNotification" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+        <h3 class="text-warning"><i class="fa fa-exclamation-triangle"></i> Falta de pago</h3> 
+        <p>
+            El centro deportivo tiene turnos reservados con pagos pendientes.
+        </p>
+        <p>
+            Por favor revise los <span class="ayellow pointer"><strong (click)="openAppointmentToPay()">turnos</strong></span> recientemente reservados y solicite el pago o cancele el turno.
+        </p>
+    </div>
+    <div class="alert alert-info animated fadeIn"  *ngIf="notificationService.pendingPayment">
+        <button type="button" class="close" (click)="closePendingNotification()" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+        <h3 class="text-info"><i class="fa fa-exclamation-triangle"></i> Aprobar pago</h3>
+        <p>
+            Tiene algún pago con falta de aprobación. Revise la sección <span class="ainfo pointer"><strong (click)="goPayment()">pagos</strong></span> para verificar y confirmar o rechazar el mismo.
+        </p>
+    </div>
+</div>

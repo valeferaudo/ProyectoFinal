@@ -1,0 +1,26 @@
+.notif{
+    position: fixed ;
+    top: 3vh;
+    left: 20vw;
+    right: 20vw;
+    z-index: 1000;
+    opacity: 0.99;
+}
+.ared{
+    color: #721c24;
+}
+.ayellow{
+    color: #D6AD06
+}
+.ayellow:hover{
+    text-decoration: underline;
+}
+.ared:hover{
+    text-decoration: underline;
+}
+.ainfo{
+    color: #31598f;
+}
+.ainfo:hover{
+    text-decoration: underline;
+}

@@ -1,5 +1,6 @@
 const Day = require ('../models/day.model');
-const User = require ('../models/user.model');
+const Payment = require ('../models/payment.model');
+const Debt = require ('../models/debt.model')
 const SpecialSchedule = require ('../models/specialSchedule.model');
 const Appointment = require ('../models/appointment.model');
 const SportCenter = require ('../models/sportCenter.model');
@@ -100,19 +101,12 @@ scheduleCtrl.createSpecialSchedule = async (req = request, res = response) =>{
         })
         await specialSchedule.save();
         //ELIMINAR LOS TURNOS CARGADOS.
-        let specialSchedules = [];
-        let minHour = moment(specialSchedule.sinceHour).add(3,'h').hour() - 1;
-        let maxHour = moment(specialSchedule.untilHour).add(3,'h').hour() - 1;
-        do {
-            minHour = minHour +1;
-            specialSchedules.push(moment(specialSchedule.date).add(minHour,'h'))
-        } while (moment(specialSchedule.date).add(minHour,'h').isBefore(moment(specialSchedule.date).add(maxHour,'h')));
-        const minDate = specialSchedules[0];
-        const maxDate = specialSchedules[specialSchedules.length - 1];
-        appointmentDelete = await Appointment.find({ $and: [ { date: { $gte: moment(minDate).subtract(3,'h') } },
-                                                            { date: { $lte: moment(maxDate).subtract(3,'h')} } ] }).populate('user')
-        await Appointment.deleteMany({ $and: [ { date: { $gte: moment(minDate).subtract(3,'h') } },
-                                                { date: { $lte: moment(maxDate).subtract(3,'h')} } ] })
+        let query = {
+            '$and': []
+        };
+        query['$and'].push({$and: [ { date: { $gte: moment(req.body.date).add(parseInt(req.body.sinceHour),'h').subtract(3,'h') } },
+                                    { date: { $lt: moment(req.body.date).add(parseInt(req.body.untilHour),'h').subtract(3,'h') }}]})
+        appointmentDelete = await Appointment.find(query).populate('user').populate('field')
         appointmentDelete.forEach(appointment => {
             if(appointment.user.role === 'USER'){
                 cancelAppointmentCenterEmail(appointment.user, appointment);
@@ -121,7 +115,9 @@ scheduleCtrl.createSpecialSchedule = async (req = request, res = response) =>{
             else{
                 // cancelAppointmentSMS(appointment)
             }
+            checkPayment(appointment);
         });
+        await Appointment.deleteMany(query);
         res.json({
             ok: true,
             msg:'Created Special Schedule',
@@ -133,6 +129,44 @@ scheduleCtrl.createSpecialSchedule = async (req = request, res = response) =>{
             msg:'An unexpected error occurred'
         })
     }
+}
+checkPayment = async (appointment) => {
+    try {
+        const [ids, updates] = await Promise.all([Payment.find({appointment:appointment.id},'id'),
+                                            Payment.updateMany({appointment:appointment.id},{appointment:null})]);
+        if(updates.n !== 0){
+            createDebtManual(appointment)
+        } 
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'An unexpected error ocurred'
+        })
+    }
+}
+createDebtManual = async (appointment) => {
+    let debt = new Debt({
+        createdDate: moment().subtract(3,'h'),
+        appointment: appointment.date,
+        field:appointment.field,
+        totalDebt:appointment.totalPaid,
+        sportCenter: appointment.sportCenter,
+        user: appointment.user.role === 'USER' ? appointment.user : null,
+        owner:{
+            oid: appointment.owner.oid,
+            name: appointment.owner.name,
+            phone: appointment.owner.phone,
+        },
+        description: null,
+        cancelDescription: 'Creado de horario especial',
+        centerApprove: false,
+        userApprove: appointment.user.role === 'USER' ? false: null,
+        payments: appointment.payments,
+        closeDate: null,
+        cancelDoer: 'SPORTCENTER'
+    })
+    await debt.save();
 }
 scheduleCtrl.deleteSpecialSchedule = async (req = request, res = response) =>{
     userID = req.uid;

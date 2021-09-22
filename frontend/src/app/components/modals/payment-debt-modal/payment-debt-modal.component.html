@@ -1,0 +1,42 @@
+<div class="background-modal" [class.hidden]="hiddenModal">
+    <div class="modal  show animated fadeIn fast modal-dialog-centered" id="exampleModal" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel1" aria-hidden="true" 
+        style="display: block; overflow-y: auto;" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog " role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title font-bold" id="exampleModalLabel">Deuda</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row text-center">
+                <div class="col-12">
+                        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Motivo Cancelación</span> <br> {{debt.cancelDescription}}</p>
+                </div>
+                <div class="col-6">
+                        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Cancelado por</span> <br>
+                          <span *ngIf="debt.cancelDoer === 'USER'" class="badge badge-info">Mi</span>
+                          <span *ngIf="debt.cancelDoer === 'SPORTCENTER'" class="badge badge-info">Centro deportivo</span>
+                        </p>
+                </div>
+                <div class="col-6">
+                        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Fecha Cancelación</span> <br> {{debt.createdDate | date:"dd-MM-yyyy":'+0'}} {{debt.createdDate | date:'HH:mm':'+0'}}</p>
+                </div>
+                <div class="col-6">
+                        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Estado</span> <br> 
+                          <span class="badge badge-danger" *ngIf="!debt.centerApprove">Falta pago</span>
+                          <span class="badge badge-warning" *ngIf="debt.centerApprove && debt.userApprove === false">Falta Aprobación</span>
+                          <span class="badge badge-success" *ngIf="debt.closeDate !== null">Cerrada</span>
+                        </p>
+                </div>
+                <div class="col-6">
+                  <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Monto</span> <br> {{debt.totalDebt}}$</p>
+                </div>
+        </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

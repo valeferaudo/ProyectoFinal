@@ -28,6 +28,7 @@ export class FieldsComponent implements OnInit {
   hiddenScheduleModal:boolean = false;
   hiddenOnePointMap:boolean = false;
   hiddenGPSModal:boolean = false;
+  hiddenCancelPolicyModal: boolean = false;
 
   sportCenterInParam: string = '';
   searchText: string = '';
@@ -353,5 +354,12 @@ export class FieldsComponent implements OnInit {
     }
     closeGPSModal(){
       this.hiddenGPSModal = false;
+    }
+    openCancelPolicyModal(sportCenter){
+      this.sportCenterSelected = sportCenter
+      this.hiddenCancelPolicyModal = true;
+    }
+    closeCancelPolicyModal(){
+      this.hiddenCancelPolicyModal = false;
     }
 }

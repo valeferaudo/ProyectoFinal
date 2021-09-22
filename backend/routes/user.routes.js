@@ -46,4 +46,7 @@ router.put('/acceptBlock/:id',[validateJWT,
 router.put('/changeRole/:id',[validateJWT,
                 validateUserID,
                 validateSuperRole],userCtrl.changeRole);
+router.put('/changeNotification/:id',[validateJWT,
+                validateUserID,
+                validateSuperRole],userCtrl.changeNotification);
 module.exports = router;

@@ -68,14 +68,12 @@ export class TableDoAppointmentComponent implements OnInit {
                     .subscribe((resp:any)=>{
                       this.loaderService.closeLineLoader();
                       if(resp.ok){
-                        //DESCOMENTAR ESTOY BORRAR EL FILLOBJECT DE AFUERA DEL IF
                         if(!resp.param.roofed){
                           this.checkDay(appointmentDate);
                         }
                         else{
                           this.fillObject(appointmentDate)
                         }
-                        // this.fillObject(appointmentDate)
                       }
                     }, (err) => {
                       console.log(err);

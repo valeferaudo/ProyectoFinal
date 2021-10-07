@@ -33,6 +33,8 @@ import { PaymentReportComponent } from './admin-pages/admin-reports/payment-repo
 import { AppointmentReportComponent } from './admin-pages/admin-reports/appointment-report/appointment-report.component';
 import { DebtReportComponent } from './admin-pages/admin-reports/debt-report/debt-report.component';
 import { ReportComponent } from './admin-pages/admin-reports/report/report.component';
+import { OccupationReportComponent } from './admin-pages/admin-reports/occupation-report/occupation-report.component';
+import { CashReportComponent } from './admin-pages/admin-reports/cash-report/cash-report.component';
 
 
 @NgModule({
@@ -58,6 +60,8 @@ import { ReportComponent } from './admin-pages/admin-reports/report/report.compo
      AppointmentReportComponent,
      DebtReportComponent,
      ReportComponent,
+     OccupationReportComponent,
+     CashReportComponent,
   ],
   imports: [
     CommonModule,

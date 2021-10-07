@@ -8,6 +8,7 @@ const SportCenterSchema = new Schema({
     coords:{latitude:{type:Number, required: true},
             longitude:{type:Number, required: true}},
     phone:{type:String, required:true},
+    createdDate:{type: Date, default:null},
     deletedDate:{type: Date, default:null},
     aditionalElectricityHour:{type:String, default:null},
     aditionalElectricity:{type:Number, default:null},

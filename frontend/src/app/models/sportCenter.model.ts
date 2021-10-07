@@ -20,6 +20,7 @@ export class SportCenter{
                 latitude?:number,
                 longitude?:number
            },
+           public createdDate?:any,
            public deletedDate?: any,
            public services?: SportCenterService[],
            public images?: any [],

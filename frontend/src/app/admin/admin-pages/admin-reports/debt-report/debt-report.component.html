@@ -1,1 +1,131 @@
-<p>debt-report works!</p>
+<div class="m-t-5">
+    <h2 class="card-title">
+        <strong>Reporte</strong> - <strong>Devoluciones</strong>
+        <button class="btn btn-info entry-button pull-right" (click)="generateReport()"><i class="far fa-file-pdf"></i> Generar reporte</button>
+      </h2>
+      <p class="text-center">
+        <span class="font-bold">Fecha: </span>{{reportTime | date:'dd-MM-yyyy'}} 
+        <span class="font-bold"> Hora: </span>{{reportTime | date:"mediumTime" }}
+      </p>
+    <hr class="mt-1 mb-1">
+</div>
+<div class="col-12 mb-2">
+    <div class="row">
+      <div class="col-sm-9 col-md-9 p-0">
+      </div>
+      <div class="col-sm-3 col-md-3 p-0">
+        <a class="text-info pointer d-flex pull-right entry-button" (click)="refreshTable()">Limpiar</a>
+      </div>
+    </div>
+    <div class="row">
+        <article class="filters mt-2">
+            <h6 class="pull-left">
+                <strong class="search-title-text">Filtrar:</strong>
+            </h6>
+            <div class="filters__items-container ml-3">
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuInvitados">
+                        <span class="filters__items-container__item__button__resume">Estado</span>
+                        <span class="filters__items-container__item__button__name">Estado</span>
+                </button>
+                <!-- FILTER MENU -->
+                <mat-menu #menuInvitados="matMenu" (closed)="setCheckValue()">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="debtStateSelected">
+                                <mat-radio-button class="example-radio-button" *ngFor="let debtState of debtStates" [value]="debtState">
+                                        {{debtState}}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                <!-- ACTIONS -->
+                <div class="filters__items-container__item__actions-container">
+                     <button mat-button (click)="clearFilter('state')" type="button"
+                        class="filters__items-container__item__actions-container__button">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDebts()">Aplicar</button>
+                    </div>
+                </mat-menu>
+            </div>
+            <div class="filters__items-container__item">
+                <!-- FILTER BUTTON -->
+                <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menunew">
+                    <span class="filters__items-container__item__button__resume">Pago</span>
+                    <span class="filters__items-container__item__button__name">Pago</span>
+            </button>
+            <!-- FILTER MENU -->
+            <mat-menu #menunew="matMenu" (closed)="setCheckValue()">
+                <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                            <!-- VALUES -->
+                    <div class="filters__items-container__item__menu__boolean-container">
+                        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="paymentStateSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let paymentState of paymentStates" [value]="paymentState">
+                                    {{paymentState}}
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
+            <!-- ACTIONS -->
+            <div class="filters__items-container__item__actions-container">
+                 <button mat-button (click)="clearFilter('payment')" type="button"
+                    class="filters__items-container__item__actions-container__button">Limpiar</button>
+                    <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDebts()">Aplicar</button>
+                </div>
+            </mat-menu>
+        </div>
+        </div>
+        </article>
+    </div>
+</div>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters">{{item}}</span></p>
+<div class="table-responsive animated fadeIn" *ngIf="debts.length!==0">
+    <table id="myTable" class="table table-hover color-table inverse-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Persona</th>
+                <th>Teléfono</th>
+                <th>Cancha</th> 
+                <th>Turno</th>                
+                <th>Fecha Cancelación</th>                
+                <th>Estado</th>
+                <th>Monto</th>        
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let debt of debts; let i = index">
+                <td>{{i + 1}}</td>
+                <td>{{debt.owner.name}}</td>
+                <td>{{debt.owner.phone}}</td>
+                <td >{{debt.field.name}}</td>
+                <td >{{debt.appointment | date:"dd-MM-yyyy":'+0'}} {{debt.appointment | date:'HH:mm':'+0'}}</td>
+                <td >{{debt.createdDate | date:"dd-MM-yyyy":'+0'}} {{debt.createdDate | date:'HH:mm':'+0'}}</td>
+                <td >
+                    <span class="badge badge-danger" *ngIf="debt.closeDate === null && !debt.centerApprove">Falta pago</span>
+                    <span class="badge badge-warning" *ngIf="debt.closeDate === null &&debt.centerApprove && !debt.userApprove">Falta Aprobación</span>
+                    <span class="badge badge-success" *ngIf="debt.closeDate !== null && debt.centerApprove && (debt.userApprove || debt.userApprove === null)">Cerrada</span>
+                    <span class="badge badge-danger" *ngIf="debt.closeDate !== null && !debt.centerApprove">Cerrada <br> <small>Sin Pago</small></span>
+                    <span class="badge badge-danger" *ngIf="debt.closeDate !== null && debt.centerApprove && debt.userApprove !== null && !debt.userApprove">Cerrada <br> <small>Sin Aprobación</small></span>
+                </td>
+                <td>{{debt.totalDebt}}$</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="pull-right"><strong>Total:</strong></td>
+                <td><strong>{{totalAmount}}</strong></td>
+              </tr>
+        </tbody>
+    </table>
+</div>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="debts.length === 0"> 
+    <i class="fas fa-times"></i> No se encontraron <strong>Deudas</strong>.
+</div>
+<app-line-loader></app-line-loader>
+<app-full-screen-loader [message]="'Generando Reporte'"></app-full-screen-loader>

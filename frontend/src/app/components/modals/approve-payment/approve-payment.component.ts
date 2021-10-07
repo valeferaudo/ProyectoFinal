@@ -80,7 +80,6 @@ export class ApprovePaymentComponent implements OnInit {
   generetePayment(){
     this.paymentService.createMercadoPagoPayment(this.setMercadoPagoObject())
                 .subscribe((resp: any) => {
-                  console.log(resp)
                 })
   }
   setMercadoPagoObject(){

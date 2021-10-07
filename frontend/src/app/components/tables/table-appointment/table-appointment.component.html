@@ -19,6 +19,7 @@
           <th class="text-center" scope="col">Día</th>
           <th class="text-center" scope="col">Horario</th>
           <th class="text-center" scope="col">Pagado</th>
+          <th class="text-center" scope="col">Total</th>
           <th class="text-center" scope="col">Acción</th>
         </tr>
       </thead>
@@ -31,7 +32,8 @@
           <td class="text-center" >{{item.field.name}}</td>
           <td class="text-center" >{{item.date | date:"dd-MM-yyyy":'+0'}}</td>
           <td class="text-center" >{{item.date | date:'HH:mm':'+0'}}</td>
-          <td class="text-center" >{{item.totalPaid}} / {{item.totalAmount}} $</td>
+          <td class="text-center" >{{item.totalPaid}}</td>
+          <td class="text-center" >{{item.totalAmount}}</td>
           <td class="text-center">
             <button class="btn btn-sm bg-danger m-1" *ngIf="(userLogged.role === 'USER' && item.state !== 'Completed') || userLogged.role !== 'USER'" (click)="deleteAppointment(item)" data-toggle="tooltip" data-placement="top" title="Cancelar">
                 <i class="fas fa-trash-alt pointer text-white"></i>

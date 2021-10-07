@@ -2,7 +2,7 @@
     <ng-template *ngFor="let appointment of appointments" ngbSlide>
       <div class="picsum-img-wrapper" style="background-color: rgb(207, 207, 207); overflow-y: hidden !important;">
         <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Cancha</span> <br>{{appointment.field.name}}</p>
-        <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Centro Deportivo</span> <br> {{appointment.sportCenter.name}}</p>
+        <p class="card-text m-1" *ngIf="userLogged.role === 'USER'"><span class="font-bold" style="text-decoration: underline;">Centro Deportivo</span> <br> {{appointment.sportCenter.name}}</p>
         <p class="card-text m-1"><span class="font-bold" style="text-decoration: underline;">Fecha</span> <br> {{appointment.date | date:"dd-MM-yyyy":'+0'}} {{appointment.date | date:'HH:mm':'+0'}} hs.</p>
         <hr class="m-1">
         <button class="btn btn-success m-1 content-tooltip" *ngIf="appointment.sportCenter.mercadoPago && appointment.totalAmount > appointment.totalPaid" (click)="goPayment(appointment)">

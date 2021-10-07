@@ -112,7 +112,6 @@ export class PaymentsComponent implements OnInit {
                         this.page = resp.param.paginator.page;
                         this.totalPages = resp.param.paginator.totalPages;
                         this.filterON = false;
-                        console.log(this.payments)
                         this.loaderService.closeLineLoader();
                       },(err)=>{
                         console.log(err);

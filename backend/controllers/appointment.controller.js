@@ -177,13 +177,7 @@ appointmentCtrl.createAppointment = async (req = request, res = response) =>{
             description: body.description
         })
         let newAppointment = await appointment.save()
-        newAppointment = await Appointment.findById(newAppointment.id).populate({ 
-                                                                        path: 'field',
-                                                                        model: 'Field',
-                                                                        populate: {
-                                                                            path: 'sportCenter',
-                                                                            model: 'SportCenter'
-                                                                        }})
+        newAppointment = await Appointment.findById(newAppointment.id).populate('field').populate('sportCenter')
         const appointmentsDB = await Appointment.find({state:{$ne:'Completed'}})
         updateAutomatic(appointmentsDB);
         res.json({
@@ -226,6 +220,8 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
         let query = {
             '$and': []
         };
+        console.log(sinceDate,untilDate)
+
         query['$and'].push({ sportCenter: sportCenterID})
         state !== null ? query['$and'].push({ state: state}) : query ;
         fieldID !== null ? query['$and'].push({field: fieldID}) : query;

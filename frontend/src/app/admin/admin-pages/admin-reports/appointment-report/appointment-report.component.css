@@ -1,0 +1,16 @@
+.bg-aboutToStart {
+    background-color: #F4F097 !important; 
+}
+.bg-reserved {
+    background-color: #85B9ED !important; 
+}
+.bg-inProgress {
+    background-color: #78E37A !important; 
+}
+.bg-completed {
+    background-color: #C4CDC4 !important; 
+}
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+  }

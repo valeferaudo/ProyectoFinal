@@ -52,13 +52,7 @@ paymentCtrl.createPreference = async (req = request , res = response) => {
 paymentCtrl.createMercadoPagoPayment = async (req = request , res = response) => {
     const paymentBody = req.body;
     try {
-        const appointmentDB = await Appointment.findById(paymentBody.appointmentID).populate({ 
-            path: 'field',
-            model: 'Field',
-            populate: {
-                path: 'sportCenter',
-                model: 'SportCenter'
-            }})
+        const appointmentDB = await Appointment.findById(paymentBody.appointmentID).populate('field').populate('sportCenter')
         if(!appointmentDB){
         return canceledAppointmentResponse(res);
         }

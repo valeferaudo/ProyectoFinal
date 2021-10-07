@@ -1,0 +1,7 @@
+{
+    "/data/2.5/*":{
+        "target": "https://api.openweathermap.org",
+        "secure": false,
+        "changeOrigin": true
+    }
+}

@@ -20,6 +20,7 @@ app.set('Port',process.env.PORT);
 
 //middlewares
 app.use(cors({origin:'http://localhost:4200'}));
+
 app.use(express.json());
 
 //routes

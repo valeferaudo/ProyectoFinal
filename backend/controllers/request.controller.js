@@ -157,8 +157,7 @@ requestCtrl.createRequest = async (req = request , res = response) => {
             creatorEmail: request.creatorEmail,
             date: setDate()
         })
-        a = await newRequest.save();
-        console.log(a)
+        await newRequest.save();
         res.json({
             ok:true,
             msg:'Created Request',

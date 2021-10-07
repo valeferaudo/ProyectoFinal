@@ -30,6 +30,8 @@ import { PaymentReportComponent } from './admin-pages/admin-reports/payment-repo
 import { ReportComponent } from './admin-pages/admin-reports/report/report.component';
 import { DebtReportComponent } from './admin-pages/admin-reports/debt-report/debt-report.component';
 import { AppointmentReportComponent } from './admin-pages/admin-reports/appointment-report/appointment-report.component';
+import { OccupationReportComponent } from './admin-pages/admin-reports/occupation-report/occupation-report.component';
+import { CashReportComponent } from './admin-pages/admin-reports/cash-report/cash-report.component';
 
 
 
@@ -52,6 +54,8 @@ export const AdminRoutes: Routes = [
      {path: 'report/payments', component: PaymentReportComponent, canActivate: [CenterGuard]},
      {path: 'report/debts', component: DebtReportComponent, canActivate: [CenterGuard]},
      {path: 'report/appointments', component: AppointmentReportComponent, canActivate: [CenterGuard]},
+     {path: 'report/occupation', component: OccupationReportComponent, canActivate: [CenterGuard]},
+     {path: 'report/cash', component: CashReportComponent, canActivate: [CenterGuard]},
 
      
      //rutas del SUPER-ADMIN

@@ -84,6 +84,7 @@ export class AdminRequestsComponent implements OnInit {
                           text:'',
                           icon: 'success',
                         })
+                        this.requestForm.reset();
                         this.loaderService.closeLineLoader();
                         this.getRequests();
                       }

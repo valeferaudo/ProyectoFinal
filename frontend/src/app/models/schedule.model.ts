@@ -1,6 +1,6 @@
 export class Schedule{
     constructor(
-           public day?: string,
+           public day?: any,
            public openingHour?: string,
            public closingHour?: string,
         ){}

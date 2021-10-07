@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col">
-            <h2 class="card-title"><strong>Listado de deudas </strong></h2>
+            <h2 class="card-title"><strong>Listado de devoluciones </strong></h2>
         </div>
     </div>
 </div>
@@ -107,7 +107,7 @@
                     <span class="badge badge-danger" *ngIf="debt.closeDate !== null && !debt.centerApprove">Cerrada <br> <small>Sin Pago</small></span>
                     <span class="badge badge-danger" *ngIf="debt.closeDate !== null && debt.centerApprove && debt.userApprove !== null && !debt.userApprove">Cerrada <br> <small>Sin Aprobación</small></span>
                 </td>
-                <td>{{debt.totalDebt}}$</td>
+                <td>{{debt.totalDebt}}</td>
                 <td class="text-center">
                     <button (click)="markAsPaid(debt)" *ngIf="debt.closeDate === null && !debt.centerApprove" class="btn btn-success badge m-1" data-toggle="tooltip" data-placement="top" title="Marcar como Paga" >
                         <i class="fas fa-check"></i>

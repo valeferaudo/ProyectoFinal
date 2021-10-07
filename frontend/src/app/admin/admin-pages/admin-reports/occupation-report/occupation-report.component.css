@@ -1,0 +1,7 @@
+.bg-grey{
+    background-color: #6C757D;
+}
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+  }

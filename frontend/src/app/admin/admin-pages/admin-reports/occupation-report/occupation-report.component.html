@@ -1,0 +1,191 @@
+<div class="m-t-5">
+    <h2 class="card-title">
+        <strong>Reporte</strong> - <strong>Ocupación</strong>
+        <button class="btn btn-info entry-button pull-right" [disabled]="filterObject.fieldID === null"
+                    (click)="generateReport()"><i class="far fa-file-pdf"></i> Generar reporte</button>
+      </h2>
+      <p class="text-center">
+        <span class="font-bold">Fecha: </span>{{reportTime | date:'dd-MM-yyyy'}} 
+        <span class="font-bold"> Hora: </span>{{reportTime | date:'HH:mm':'-3'}}
+      </p>
+    <hr class="mt-1 mb-1">
+</div>
+<div class="col-12 mb-2">
+  <div class="row">
+      <div class="col-md-9"
+      ></div>
+    <div class="col-sm-3 col-md-3 p-0">
+      <a class="text-info pointer d-flex pull-right entry-button" (click)="clearFilters()">Limpiar</a>
+    </div>
+  </div>
+  <div class="row">
+      <article class="filters mt-2">
+          <h6 class="pull-left">
+              <strong class="search-title-text">Filtrar:</strong>
+          </h6>
+          <div class="filters__items-container ml-3">
+              <div class="filters__items-container__item">
+                  <!-- FILTER BUTTON -->
+                  <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="fieldMenu">
+                  <span class="filters__items-container__item__button__resume">Canchas</span>
+                  <span class="filters__items-container__item__button__name">Canchas</span>
+                  </button>
+                      <!-- FILTER MENU -->
+                  <mat-menu #fieldMenu="matMenu">
+                  <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                              <!-- VALUES -->
+                      <div class="filters__items-container__item__menu__boolean-container">
+                          <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="fieldSelected">
+                          <mat-radio-button class="example-radio-button" *ngFor="let item of fieldsCombo" [value]="item">
+                              {{item.text}}
+                          </mat-radio-button>
+                          </mat-radio-group>
+                      </div>
+                  </div>
+                          <!-- ACTIONS -->
+                  <div class="filters__items-container__item__actions-container">
+                      <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetField()">Limpiar</button>
+                      <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterField()">Aplicar</button>
+                  </div> 
+                  </mat-menu>
+              </div>
+              <div class="filters__items-container__item" *ngIf="filterObject.fieldID !== null">
+                <!-- FILTER BUTTON -->
+                <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDates">
+                <span class="filters__items-container__item__button__resume">Fecha</span>
+                <span class="filters__items-container__item__button__name">Fecha</span>
+                </button>
+                            <!-- FILTER MENU -->
+                <mat-menu #menuDates="matMenu">
+                <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                    <!-- VALUES -->
+                    <div class="filters__items-container__item__menu__range-container">
+                        <div class="filters__items-container__item__menu__range-container__header">
+                            <!-- <p class="filters__items-container__item__menu__range-container__header__title">Desde <br> ({{sinceDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                            <!-- <p class="filters__items-container__item__menu__range-container__header__title">Hasta <br> ({{untilDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                        </div>
+                        <!-- <mat-label>Fechas</mat-label> -->
+                        <mat-form-field>
+                        <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRangeForm" [min]="minDate" [max]="maxDate" separator=" - " (click)="picker.open()">
+                            <input matStartDate formControlName="sinceDateSelected" placeholder="Desde">
+                            <input matEndDate formControlName="untilDateSelected" placeholder="Hasta">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- ACTIONS -->
+                <div class="filters__items-container__item__actions-container">
+                    <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetDates()">Limpiar</button>
+                    <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDates()">Aplicar</button>
+                </div>
+                </mat-menu>
+            </div>
+            <div class="filters__items-container__item" *ngIf="filterObject.fieldID !== null">
+              <!-- FILTER BUTTON -->
+              <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuCat">
+              <span class="filters__items-container__item__button__resume">Día</span>
+              <span class="filters__items-container__item__button__name">Día</span>
+              </button>
+                          <!-- FILTER MENU -->
+              <mat-menu #menuCat="matMenu">
+              <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                  <!-- VALUES -->
+                  <div class="filters__items-container__item__menu__options-container">
+                  <div class="filters__items-container__item__menu__options-container__option">
+                      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="daySelected">
+                          <mat-radio-button class="example-radio-button" *ngFor="let day of days" [value]="day.value">
+                              {{day.text}}
+                          </mat-radio-button>
+                          </mat-radio-group>
+                  </div>
+                  </div>
+              </div>
+                              <!-- ACTIONS -->
+              <div class="filters__items-container__item__actions-container">
+                  <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetDays()">Limpiar</button>
+                  <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDays()">Aplicar</button>
+              </div>
+              </mat-menu>
+          </div>
+          <div class="filters__items-container__item" *ngIf="filterObject.fieldID !== null">
+            <!-- FILTER BUTTON -->
+            <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuHours">
+            <span class="filters__items-container__item__button__resume">Horario</span>
+            <span class="filters__items-container__item__button__name">Horario</span>
+            </button>
+                        <!-- FILTER MENU -->
+            <mat-menu #menuHours="matMenu">
+            <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                    <!-- VALUES -->
+                <div class="filters__items-container__item__menu__range-container">
+                <div class="filters__items-container__item__menu__range-container__header">
+                    <p class="filters__items-container__item__menu__range-container__header__title">Desde ({{sinceHourSelected}})</p>
+                </div>
+                    <mat-slider class="filters__items-container__item__menu__range-container__range"
+                        tickInterval="1"
+                        [(ngModel)]="sinceHourSelected" color="accent" [max]="untilHourSelected - 1" min="0" step="1" thumbLabel="true">
+                    </mat-slider>
+                </div>
+                <div class="filters__items-container__item__menu__range-container">
+                    <div class="filters__items-container__item__menu__range-container__header">
+                    <p class="filters__items-container__item__menu__range-container__header__title">Hasta ({{untilHourSelected}})</p>
+                    </div>
+                    <mat-slider class="filters__items-container__item__menu__range-container__range" 
+                    tickInterval="1"
+                    [(ngModel)]="untilHourSelected" color="accent" max="23" [min]="sinceHourSelected + 1" step="1" thumbLabel="true"></mat-slider>
+                </div>
+            </div>
+                            <!-- ACTIONS -->
+            <div class="filters__items-container__item__actions-container">
+                <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetHour()">Limpiar</button>
+                <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterHour()">Aplicar</button>
+            </div>
+            </mat-menu>
+        </div>
+      </div>
+      </article>
+  </div>
+</div>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters">{{item}}</span></p>
+<div class="card-body" *ngIf="field !== null">
+  <div class="row">
+      <div class="col-md-3 col-sm-12 col-xl-3 p-0">
+          <h2 class="font-medium"><strong>{{field.name}}</strong></h2>
+          <h6><strong>Duración del turno: </strong> {{field.duration/60}} HS.</h6>
+          <h6 *ngIf="filterObject.day !== null"><strong>Día: </strong> {{days[daySelected -1].text}}.</h6>
+          <h6 *ngIf="filterObject.day !== null"><strong>Horario: </strong> {{sportCenter.schedules[daySelected -1].openingHour | date:'HH:mm':'-0'}} - {{sportCenter.schedules[daySelected -1].closingHour | date:'HH:mm':'-0'}}</h6>
+      </div>
+      <div class="col-md-9 col-sm-12 col-xl-9 p-0">
+        <div class="row">
+          <div class="col b-r text-center">
+              <h2 class="font-light">{{totalAppointments}}</h2>
+              <h6>Posibles</h6></div>
+          <div class="col b-r text-center">
+              <h2 class="font-light">{{reservedAppointments}}</h2>
+              <h6>Reservados</h6></div>
+          <div class="col text-center">
+              <h2 class="font-light" *ngIf="totalAppointments !== 0" ><strong>{{(reservedAppointments/totalAppointments*100).toFixed(2)}} %</strong></h2>
+              <h2 class="font-light" *ngIf="totalAppointments === 0" ><strong> - </strong></h2>
+              <h6>Porcentaje</h6></div>
+        </div>
+    </div>
+  </div>
+  <div style="overflow-x: auto;" class="mt-2" *ngIf="sportCenter.schedules.length !== 0 && filterObject.day === null">
+    <table class="table table-bordered  table-sm">
+        <thead class="bg-grey">
+            <th class="text-center">Día</th>
+            <th class="text-center">Hora Inicio</th>
+            <th class="text-center">Hora Fin</th>
+        </thead>
+        <tbody *ngFor="let horario of sportCenter.schedules; let i = index">
+                <td class="text-center">{{days[horario.day - 1].text}}</td>
+                <td class="text-center">{{horario.openingHour | date:'HH:mm':'-0'}}</td>
+                <td class="text-center">{{horario.closingHour | date:'HH:mm':'-0'}}</td>                     
+        </tbody>
+    </table>
+  </div>
+</div>
+<app-line-loader></app-line-loader>
+<app-full-screen-loader [message]="'Generando Reporte'"></app-full-screen-loader>

@@ -10,57 +10,168 @@
     <hr class="mt-1 mb-1">
 </div>
 <div class="col-12 mb-2">
-  <div class="row">
-      <div class="col-md-9"
-      ></div>
-    <div class="col-sm-3 col-md-3 p-0">
-      <!-- <a class="text-info pointer d-flex pull-right entry-button" (click)="clearFilters()">Limpiar</a> -->
-    </div>
-  </div>
-  <div class="row">
-      <article class="filters mt-2">
-          <h6 class="pull-left">
-              <strong class="search-title-text">Filtrar:</strong>
-          </h6>
-          <div class="filters__items-container ml-3">
-              <div class="filters__items-container__item">
-                  <!-- FILTER BUTTON -->
-                  <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDates">
-                  <span class="filters__items-container__item__button__resume">Fecha</span>
-                  <span class="filters__items-container__item__button__name">Fecha</span>
-                  </button>
-                              <!-- FILTER MENU -->
-                  <mat-menu #menuDates="matMenu">
-                  <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
-                                      <!-- VALUES -->
-                      <div class="filters__items-container__item__menu__range-container">
-                          <div class="filters__items-container__item__menu__range-container__header">
-                              <!-- <p class="filters__items-container__item__menu__range-container__header__title">Desde <br> ({{sinceDateSelected | date:"dd-MM-yyyy"}})</p> -->
-                              <!-- <p class="filters__items-container__item__menu__range-container__header__title">Hasta <br> ({{untilDateSelected | date:"dd-MM-yyyy"}})</p> -->
-                          </div>
-                          <!-- <mat-label>Fechas</mat-label> -->
-                          <mat-form-field>
-                          <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRangeForm" [max]="maxDate" separator=" - " (click)="picker.open()">
-                              <input matStartDate formControlName="sinceDateSelected" placeholder="Desde">
-                              <input matEndDate formControlName="untilDateSelected" placeholder="Hasta">
-                          </mat-date-range-input>
-                          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                          <mat-date-range-picker #picker></mat-date-range-picker>
-                          </mat-form-field>
-                      </div>
-                  </div>
-                  <!-- ACTIONS -->
-                  <div class="filters__items-container__item__actions-container">
-                      <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetDates()">Limpiar</button>
-                      <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDates()">Aplicar</button>
-                  </div>
-                  </mat-menu>
-              </div>
+    <div class="row">
+      <div class="col-sm-9 col-md-9 p-0">
       </div>
-      </article>
-  </div>
+      <div class="col-sm-3 col-md-3 p-0">
+        <a class="text-info pointer d-flex pull-right entry-button" (click)="refreshTable()">Limpiar</a>
+      </div>
+    </div>
+    <div class="row">
+        <article class="filters mt-2">
+            <h6 class="pull-left">
+                <strong class="search-title-text">Filtrar:</strong>
+            </h6>
+            <div class="filters__items-container">
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="fieldMenu">
+                    <span class="filters__items-container__item__button__resume">Canchas</span>
+                    <span class="filters__items-container__item__button__name">Canchas</span>
+                    </button>
+                        <!-- FILTER MENU -->
+                    <mat-menu #fieldMenu="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="fieldSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let item of fieldsCombo" [value]="item">
+                                {{item.text}}
+                            </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                            <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetFields()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="setFieldID()">Aplicar</button>
+                    </div> 
+                    </mat-menu>
+                </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDates">
+                    <span class="filters__items-container__item__button__resume">Fecha Pago</span>
+                    <span class="filters__items-container__item__button__name">Fecha Pago</span>
+                    </button>
+                                <!-- FILTER MENU -->
+                    <mat-menu #menuDates="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                        <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__range-container">
+                            <div class="filters__items-container__item__menu__range-container__header">
+                                <!-- <p class="filters__items-container__item__menu__range-container__header__title">Desde <br> ({{sinceDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                                <!-- <p class="filters__items-container__item__menu__range-container__header__title">Hasta <br> ({{untilDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                            </div>
+                            <!-- <mat-label>Fechas</mat-label> -->
+                            <mat-form-field>
+                            <mat-date-range-input [rangePicker]="picker" [formGroup]="datePaymentRangeForm"  separator=" - " (click)="picker.open()">
+                                <input matStartDate formControlName="sinceDateSelected" placeholder="Desde">
+                                <input matEndDate formControlName="untilDateSelected" placeholder="Hasta">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetPaymentDates()">Limpiar</button>
+                        <!-- <button mat-button (click)="clearFilter(filter)" type="button"
+                            class="filters__items-container__item__actions-container__button">Limpiar</button> -->
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterPaymentDates()">Aplicar</button>
+                    </div>
+                    </mat-menu>
+                </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDatesApp">
+                    <span class="filters__items-container__item__button__resume">Fecha Turno</span>
+                    <span class="filters__items-container__item__button__name">Fecha Turno</span>
+                    </button>
+                                <!-- FILTER MENU -->
+                    <mat-menu #menuDatesApp="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                        <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__range-container">
+                            <div class="filters__items-container__item__menu__range-container__header">
+                                <!-- <p class="filters__items-container__item__menu__range-container__header__title">Desde <br> ({{sinceDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                                <!-- <p class="filters__items-container__item__menu__range-container__header__title">Hasta <br> ({{untilDateSelected | date:"dd-MM-yyyy"}})</p> -->
+                            </div>
+                            <!-- <mat-label>Fechas</mat-label> -->
+                            <mat-form-field>
+                            <mat-date-range-input [rangePicker]="picker2" [formGroup]="dateAppointmentRangeForm"  separator=" - " (click)="picker2.open()">
+                                <input matStartDate formControlName="sinceDateSelected" placeholder="Desde">
+                                <input matEndDate formControlName="untilDateSelected" placeholder="Hasta">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker2></mat-date-range-picker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetAppointmentDates()">Limpiar</button>
+                        <!-- <button mat-button (click)="clearFilter(filter)" type="button"
+                            class="filters__items-container__item__actions-container__button">Limpiar</button> -->
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterAppointmentDates()">Aplicar</button>
+                    </div>
+                    </mat-menu>
+                </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="paymentMenu">
+                    <span class="filters__items-container__item__button__resume">Estados</span>
+                    <span class="filters__items-container__item__button__name">Estados</span>
+                    </button>
+                        <!-- FILTER MENU -->
+                    <mat-menu #paymentMenu="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="stateSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let state of states" [value]="state">
+                                {{state}}
+                            </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                            <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetState()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterState()">Aplicar</button>
+                    </div> 
+                    </mat-menu>
+                </div>
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="typeMenu">
+                    <span class="filters__items-container__item__button__resume">Medio de pago</span>
+                    <span class="filters__items-container__item__button__name">Medio de pago</span>
+                    </button>
+                        <!-- FILTER MENU -->
+                    <mat-menu #typeMenu="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="typeSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let type of types" [value]="type">
+                                {{type}}
+                            </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                            <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetType()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterType()">Aplicar</button>
+                    </div> 
+                    </mat-menu>
+                </div>
+            </div>
+        </article>
+    </div>
 </div>
-<hr>
 <div class="table-responsive animated fadeIn" *ngIf="payments.length!==0">
   <table id="myTable" class="table table-sm table-hover color-table inverse-table">
       <thead>
@@ -88,14 +199,24 @@
               </td>
               <td>{{item.date |date:"dd-MM-yyyy":'-3'}} {{item.date |date:'HH:mm':'-3'}}hs.</td>
               <td>{{item.amountPayment}}</td>
-              <td>{{item.appointmentField}}</td>
+              <td>{{item.appointmentField.name}}</td>
               <td>{{item.appointmentDate | date:"dd-MM-yyyy":'-3'}} {{item.appointmentDate |date:'HH:mm':'-3'}}hs.
                   <br *ngIf="item.appointment === null">
                   <span *ngIf="item.appointment === null" class="badge bg-danger">Turno Cancelado</span>
               </td>
               <td *ngIf="item.state === 'APPROVE'"></td>
           </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="pull-right"><strong>Total:</strong></td>
+            <td><strong>{{totalAmount}} $</strong></td>
+            <td></td>
+            <td></td>
+          </tr>
       </tbody>
   </table>
 </div>
+<app-line-loader></app-line-loader>
 <app-full-screen-loader [message]="'Generando Reporte'"></app-full-screen-loader>

@@ -1,7 +1,8 @@
 <div class="m-t-5">
     <h2 class="card-title">
         <strong>Reporte</strong> - <strong>Turnos</strong>
-        <button class="btn btn-info entry-button pull-right" (click)="generateReport()"><i class="far fa-file-pdf"></i> Generar reporte</button>
+        <button class="btn btn-info entry-button pull-right" [disabled]="filterObject.state === null"
+                        (click)="generateReport()"><i class="far fa-file-pdf"></i> Generar reporte</button>
       </h2>
       <p class="text-center">
         <span class="font-bold">Fecha: </span>{{reportTime | date:'dd-MM-yyyy'}} 
@@ -34,10 +35,12 @@
                     <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
                                         <!-- VALUES -->
                         <div class="filters__items-container__item__menu__options-container">
-                        <div class="filters__items-container__item__menu__options-container__option" *ngFor="let state of states; let i = index">
-                            <mat-checkbox  (change)="changeStateSelected($event,state)" #myCheckBoxCategory [checked]="statesSelected.includes(state)">
-                            <span>{{state}}</span>
-                            </mat-checkbox>
+                        <div class="filters__items-container__item__menu__options-container__option">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="statesSelected">
+                                <mat-radio-button class="example-radio-button" *ngFor="let state of states" [value]="state">
+                                    {{state}}
+                                </mat-radio-button>
+                                </mat-radio-group>
                         </div>
                         </div>
                     </div>
@@ -48,7 +51,7 @@
                     </div>
                     </mat-menu>
                 </div>
-                <div class="filters__items-container__item">
+                <div class="filters__items-container__item" *ngIf="filterObject.state !== null">
                     <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="fieldMenu">
                     <span class="filters__items-container__item__button__resume">Canchas</span>
@@ -73,7 +76,7 @@
                     </div> 
                     </mat-menu>
                 </div>
-                <div class="filters__items-container__item">
+                <div class="filters__items-container__item" *ngIf="filterObject.state !== null">
                     <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDates">
                     <span class="filters__items-container__item__button__resume">Fecha</span>
@@ -106,7 +109,7 @@
                     </div>
                     </mat-menu>
                 </div>
-                <div class="filters__items-container__item">
+                <div class="filters__items-container__item" *ngIf="filterObject.state !== null">
                     <!-- FILTER BUTTON -->
                     <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuHours">
                     <span class="filters__items-container__item__button__resume">Horario</span>
@@ -141,8 +144,78 @@
                     </div>
                     </mat-menu>
                 </div>
+                <div class="filters__items-container__item" *ngIf="filterObject.state !== null">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="paymentMenu">
+                    <span class="filters__items-container__item__button__resume">Pagos</span>
+                    <span class="filters__items-container__item__button__name">Pagos</span>
+                    </button>
+                        <!-- FILTER MENU -->
+                    <mat-menu #paymentMenu="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__boolean-container">
+                            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="paymentSelected">
+                            <mat-radio-button class="example-radio-button" *ngFor="let payment of payments" [value]="payment">
+                                {{payment}}
+                            </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                            <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetPayment()">Limpiar</button>
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterPayment()">Aplicar</button>
+                    </div> 
+                    </mat-menu>
+                </div>
         </div>
         </article>
     </div>
 </div>
+<p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters">{{item}}</span></p>
+<div class="alert alert-danger animated fadeIn" role="alert" *ngIf="appointments.length === 0 && filterON" > 
+    <i class="fas fa-times"></i> No se encontraron turnos.
+  </div>
+  <div style="overflow-x: auto;">
+    <table *ngIf="appointments.length!==0" class="table table-striped">
+        <thead [ngClass]="{'bg-reserved':appointments[0].state==='Reserved','bg-completed':appointments[0].state==='Completed','bg-inProgress':appointments[0].state==='InProgress','bg-aboutToStart':appointments[0].state==='AboutToStart'}">
+          <tr [ngClass]="{'text-dark':appointments[0].state==='Reserved','text-dark':appointments[0].state==='Completed','text-dark':appointments[0].state==='InProgress','text-dark':appointments[0].state==='AboutToStart'}">
+            <th class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col" *ngIf="this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN'">A nombre de</th>
+            <th class="text-center" scope="col" *ngIf="this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN'">Teléfono</th>
+            <th class="text-center" scope="col" *ngIf="userLogged.role === 'USER'">Centro Deportivo</th>
+            <th class="text-center" scope="col">Cancha</th>
+            <th class="text-center" scope="col">Día</th>
+            <th class="text-center" scope="col">Horario</th>
+            <th class="text-center" scope="col">Pagado</th>
+            <th class="text-center" scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of appointments; let i=index">
+            <th class="text-center" scope="row">{{ i+1}}</th>
+            <td class="text-center" *ngIf="this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN'">{{item.owner.name}}</td>
+            <td class="text-center" *ngIf="this.userLogged.role==='CENTER-ADMIN' || this.userLogged.role==='CENTER-SUPER-ADMIN'">{{item.owner.phone}}</td>
+            <td class="text-center" *ngIf="userLogged.role === 'USER'">{{item.sportCenter.name}}</td>
+            <td class="text-center" >{{item.field.name}}</td>
+            <td class="text-center" >{{item.date | date:"dd-MM-yyyy":'+0'}}</td>
+            <td class="text-center" >{{item.date | date:'HH:mm':'+0'}}</td>
+            <td class="text-center" >{{item.totalPaid}}</td>
+            <td class="text-center" >{{item.totalAmount}}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="pull-right"><strong>Total:</strong></td>
+            <td class="text-center"><strong>{{totalPaid}}</strong></td>
+            <td class="text-center"><strong>{{totalAmount}}</strong></td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
 <app-full-screen-loader [message]="'Generando Reporte'"></app-full-screen-loader>
+<app-line-loader></app-line-loader>

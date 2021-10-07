@@ -25,16 +25,14 @@ interface jsPDFWithPlugin extends jsPDF{
 export class AppointmentReportComponent implements OnInit {
 
   reportTime = new Date();
-  selectedFilters;
-  appointments;
+  selectedFilters = [];
+  appointments = [];
   userLogged: User;
-  reservedAppointments = [];
-  aboutToStartAppointments = [];
-  inProgressAppointments = [];
-  completedAppointments = [];
+  totalAmount = 0;
+  totalPaid = 0;
   //FILTROS
   states = ['Reservado','Por comenzar','En progreso','Completado']
-  statesSelected = ['Reservado','Por comenzar','En progreso'];
+  statesSelected = null;
   fieldsCombo: Combo[] = [];
   fieldSelected = null;
   fieldID = null;
@@ -56,8 +54,13 @@ export class AppointmentReportComponent implements OnInit {
     untilDate: null,
     sinceHour: 0,
     untilHour: 23,
-    fieldID: null
+    fieldID: null,
+    payment: null
   }
+  payments = ['Total','Parcial','Sin Pagos'];
+  paymentSelected: 'Total' | 'Parcial' | 'Sin Pagos';
+  filterON = false;
+
   constructor(private loaderService: LoaderService,
               private reportService: ReportService,
               private dateAdapter: DateAdapter<Date>,
@@ -68,7 +71,6 @@ export class AppointmentReportComponent implements OnInit {
   ngOnInit(): void {
     this.dateAdapter.setLocale('es-AR');
     this.userLogged = this.userService.user
-    this.getAppointments();
     this.formatDates();
     this.getFieldCombo();
   }
@@ -85,29 +87,21 @@ export class AppointmentReportComponent implements OnInit {
                   });
   }
   getAppointments(){
-    if(this.statesSelected.includes('Reservado')){
+    if(this.statesSelected === 'Reservado'){
       this.filterObject.state= 'Reserved';
       this.getReservedAppointments();
-    }else{
-      this.reservedAppointments = []
     }
-    if(this.statesSelected.includes('Por comenzar')){
+    if(this.statesSelected === 'Por comenzar'){
       this.filterObject.state= 'AboutToStart';
       this.getAboutToStartAppointments()
-    }else{
-      this.aboutToStartAppointments = []
     }
-    if(this.statesSelected.includes('En progreso')){
+    if(this.statesSelected === 'En progreso'){
       this.filterObject.state= 'InProgress';
       this.getInProgressAppointments();
-    }else{
-      this.inProgressAppointments = []
     }
-    if(this.statesSelected.includes('Completado')){
+    if(this.statesSelected === 'Completado'){
       this.filterObject.state= 'Completed';
       this.getCompletedAppointments();
-    }else{
-      this.completedAppointments = []
     }
   }
   getReservedAppointments(){
@@ -116,7 +110,10 @@ export class AppointmentReportComponent implements OnInit {
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
-                                          this.reservedAppointments= resp.param.appointments;
+                                          this.appointments = resp.param.appointments;
+                                          this.selectedFilters = resp.param.selectedFilters;
+                                          this.totalAmount = resp.param.totalAmount;
+                                          this.totalPaid = resp.param.totalPaid;
                                         }
                                       }, (err) =>{
                                         console.log(err)
@@ -130,8 +127,10 @@ export class AppointmentReportComponent implements OnInit {
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
-                                          this.aboutToStartAppointments= resp.param.appointments;
-                                          
+                                          this.appointments = resp.param.appointments;
+                                          this.selectedFilters = resp.param.selectedFilters;
+                                          this.totalAmount = resp.param.totalAmount;
+                                          this.totalPaid = resp.param.totalPaid;
                                         }
                                       }, (err) =>{
                                         console.log(err)
@@ -145,7 +144,10 @@ export class AppointmentReportComponent implements OnInit {
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
-                                          this.inProgressAppointments= resp.param.appointments;
+                                          this.appointments = resp.param.appointments;
+                                          this.selectedFilters = resp.param.selectedFilters;
+                                          this.totalAmount = resp.param.totalAmount;
+                                          this.totalPaid = resp.param.totalPaid;
                                         }
                                       }, (err) =>{
                                         console.log(err)
@@ -159,7 +161,10 @@ export class AppointmentReportComponent implements OnInit {
                                       .subscribe((resp:any) => {
                                         this.loaderService.closeLineLoader();
                                         if(resp.ok){
-                                          this.completedAppointments= resp.param.appointments;
+                                          this.appointments = resp.param.appointments;
+                                          this.selectedFilters = resp.param.selectedFilters;
+                                          this.totalAmount = resp.param.totalAmount;
+                                          this.totalPaid = resp.param.totalPaid;
                                         }
                                       }, (err) =>{
                                         console.log(err)
@@ -175,11 +180,20 @@ export class AppointmentReportComponent implements OnInit {
       sinceHour: this.sinceHourSelected,
       untilHour: this.untilHourSelected,
       fieldID: this.fieldID,
+      payment: this.paymentSelected
+    }
+    if(this.fieldSelected === null && this.statesSelected === null && this.sinceDateSelected === null && this.untilDateSelected === null 
+                                  && this.sinceHourSelected === 0 && this.untilHourSelected === 23 && this.fieldSelected === null){
+      this.filterON = false;
+    }
+    else{
+      this.filterON = true;
     }
   }
   clearFilters(){
+    this.appointments = [];
     this.fieldSelected = null;
-    this.statesSelected = ['Reservado'];
+    this.statesSelected = null;
     this.sinceDateSelected = null;
     this.sinceDate = null;
     this.untilDateSelected = null;
@@ -189,7 +203,6 @@ export class AppointmentReportComponent implements OnInit {
     this.fieldSelected = null;
     this.fieldID = null;
     this.fillFilterObject();
-    this.getAppointments();
   }
   changeStateSelected(event:MatCheckboxChange,state){
     if(event.checked){
@@ -265,50 +278,62 @@ export class AppointmentReportComponent implements OnInit {
     this.fillFilterObject();
     this.getAppointments();
   }
+  filterPayment(){
+    this.fillFilterObject();
+    this.getAppointments();
+  }
+  resetPayment(){
+    this.paymentSelected = null;
+    this.fillFilterObject();
+    this.getAppointments();
+  }
   generateReport(){
     const doc = new jsPDF('p','px','a4') as jsPDFWithPlugin
     this.loaderService.openFullScreenLoader();
     let body: RowInput[] = [];
     let i = 1;
-    this.appointments.forEach(IngresoDTO => {
-      // let motivos = '';
-      // IngresoDTO.motivos.forEach(motivo => {
-      //   motivos += `${motivo}, `
-      // });
-      // motivos = motivos.trim();
-      // motivos = motivos.substring(0, motivos.length - 1)
-      // let fecha = IngresoDTO.fechaHora.slice(0,10);
-      // let hora = IngresoDTO.fechaHora.slice(11,16);
-      const item: string[] = [`${i}`,'IngresoDTO.nombreApellidoSocio','IngresoDTO.nroSocio','fecha', 'hora', 'motivos','IngresoDTO.temperatura']
+    this.appointments.forEach(appointment => {
+      const item: string[] = [`${i}`,
+                            appointment.owner.name,
+                            `${appointment.owner.phone}`,
+                            appointment.field.name,
+                            `${this.formatDate(appointment.date)}- ${this.formatHour(appointment.date)}`,
+                            `${appointment.totalPaid} / ${ appointment.totalAmount}$`]
       body.push(item)
       i++;
     });
+    const lastItem2: string[] = [``,
+                                ``,
+                                ``,
+                                ``,
+                                `Total: `,
+                                `${this.totalPaid} / ${this.totalAmount}$`];
+    body.push(lastItem2)
     doc.setFontSize(30);
-    doc.text('Reporte - Pagos',15,30,{renderingMode:'fillThenStroke'});
+    doc.text('Reporte - Turnos',15,30,{renderingMode:'fillThenStroke'});
     doc.setFontSize(10);
     let fechaReporte = this.reportTime.toLocaleDateString();
     let horaReporte = this.reportTime.toLocaleTimeString().slice(0, -3);
     doc.text(`Fecha: ${fechaReporte}`,15,50);
-    doc.text(`Hora: ${horaReporte}`,90,50)
-    doc.text(`Filtrado por: ${this.selectedFilters}`,15,60);
+    doc.text(`Hora: ${horaReporte}`,90,50);
+    doc.text(`Total registros: ${this.appointments.length}`,300,50);
+    this.selectedFilters.length > 0 ? doc.text(`Filtrando por: ${this.selectedFilters}`,15,65): null;
     doc.autoTable({
       startY:75,
       theme:'striped',
-      head:[['#','Socio','Nro.','Fecha', 'Hora', 'Motivo/s','Temp.']],
+      head:[['#','A nombre de','Teléfono', 'Cancha', 'Día y hora','Pagado']],
       body: body,
       bodyStyles: {overflow:'linebreak', lineColor:[189,195,199], lineWidth:0.75},
       tableWidth: 390,
       styles: {overflow: 'ellipsize'},
       // styles: {overflow: 'linebreak'},
-
       columnStyles: {
-        0: {cellWidth: 20},
-        1: {cellWidth: 120},
-        2: {cellWidth: 30},
-        3: {cellWidth: 50},
-        4: {cellWidth: 30},
-        5: {cellWidth: 110},
-        6: {cellWidth: 30},
+        0: {cellWidth: 15},
+        1: {cellWidth: 75},
+        2: {cellWidth: 70},
+        3: {cellWidth: 70},
+        4: {cellWidth: 90},
+        5: {cellWidth: 70},
       },
       tableLineColor: [189, 195, 199],
       tableLineWidth: 0.75,
@@ -318,7 +343,13 @@ export class AppointmentReportComponent implements OnInit {
         doc.text(`${i}/${doc.getNumberOfPages()}`,420,620)
       }
       const date = new Date();
-      doc.save(`Pagos.pdf`)
+      doc.save(`Turnos.pdf`)
     this.loaderService.closeFullScreenLoader();
+  }
+  formatDate(date){
+    return (new Date(new Date(date).setHours(new Date(date).getHours() - 3)).toISOString().slice(0,10))
+  }
+  formatHour(date){
+    return (new Date(new Date(date).setHours(new Date(date).getHours() - 3)).toISOString().slice(11,16))
   }
 }

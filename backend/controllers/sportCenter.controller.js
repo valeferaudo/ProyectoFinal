@@ -175,6 +175,7 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
                 latitude: sportCenterBody.latitude,
                 longitude: sportCenterBody.longitude
             },
+            createdDate: new Date(),
             phone: sportCenterBody.phone,
             aditionalElectricityHour: sportCenterBody.aditionalElectricity ? sportCenterBody.aditionalElectricityHour : null,
             aditionalElectricity: sportCenterBody.aditionalElectricity,

@@ -23,7 +23,6 @@ export class PaymentService {
     return this.http.put(`${baseUrl}/payments/mercado_pago/${paymentBody.preferenceID}`, paymentBody );
   }
   getUserPayments(filters: PaymentFilter,userID,page){
-    console.log(filters)
     let params = new HttpParams();
     params = params.append('state',filters.state);
     params = params.append('type',filters.type);

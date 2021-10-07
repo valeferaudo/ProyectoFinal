@@ -12,7 +12,14 @@ const { validateSuperAdminRole } = require('../middlewares/roleValidators/valida
 const { validateUserID } = require('../middlewares/validateUserID');
 
 
-router.get('/payment/:id',[validateJWT,
+router.get('/payment/:sportCenterID',[validateJWT,
             validateUserID],reportCtrl.generatePaymentReport);
-
+router.get('/debt/:sportCenterID',[validateJWT,
+            validateUserID],reportCtrl.generateDebtReport);
+router.get('/appointment/:sportCenterID',[validateJWT,
+            validateUserID],reportCtrl.generateAppointmentReport);
+router.get('/cash/:sportCenterID',[validateJWT,
+            validateUserID],reportCtrl.generateCashReport);
+router.get('/occupation/:sportCenterID',[validateJWT,
+            validateUserID],reportCtrl.generateOccupationReport);
 module.exports = router;

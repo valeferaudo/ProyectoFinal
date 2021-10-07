@@ -155,7 +155,6 @@ featureCtrl.activateBlockFeature = async (req= request, res= response) => {
         await Feature.findByIdAndUpdate(featureID,featureDB,{new:true});
         if (action === 'block'){
             await Field.updateMany({features:{$in:[featureDB.id]}}, {$pull:{features:{$in:[featureDB.id]}}})
-            console.log(x)
             res.json({
                 ok:true,
                 msg:'Blocked Feature'

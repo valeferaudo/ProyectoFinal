@@ -187,7 +187,7 @@
             <tr *ngFor="let item of payments; let i = index">
                 <td>{{((page -1) * 15) + i+1}}</td>
                 <td>
-                    <span class="badge badge-info" *ngIf="item.type === 'MERCADO-PAGO'">Mercado Pago</span>
+                    <span class="badge badge-info" *ngIf="item.type === 'MERCADO-PAGO'" data-toggle="tooltip" data-placement="top" [title]="item.mercadoPagoPaymentID">Mercado Pago</span>
                     <span class="badge badge-success" *ngIf="item.type === 'CASH'">Efectivo</span>
                     <span class="badge badge-secondary" *ngIf="item.type === 'OTHER'">Otro</span>
                 </td>
@@ -195,7 +195,7 @@
                     <i *ngIf="item.state === 'APPROVED'" class="fas fa-check-circle text-success"></i>
                     <i *ngIf="item.state === 'PENDING'" class="fas fa-history text-warning"></i>
                 </td>
-                <td>{{item.date |date:"dd-MM-yyyy":'-3'}} {{item.date |date:'HH:mm':'-3'}}hs.</td>
+                <td>{{item.date |date:"dd-MM-yyyy":'+0'}} {{item.date |date:'HH:mm':'+0'}}hs.</td>
                 <td>{{item.amountPayment}}</td>
                 <td>{{item.appointmentField.name}}</td>
                 <td>{{item.appointmentDate | date:"dd-MM-yyyy":'-3'}} {{item.appointmentDate |date:'HH:mm':'-3'}}hs.

@@ -211,6 +211,99 @@
         </article>
     </div>
 </div>
+<div class="col-12 mb-2">
+    <div class="row">
+        <div class="col-sm-12 col-md-1">
+            <h6 class="pull-left pointer" (click)="resetDisponibility()">
+                <strong class="filters__title font-disponibility">Disponibilidad</strong>
+            </h6>
+        </div>
+        <article class="filters mt-2 col-sm-9 col-md-5">
+            <div class="filters__items-container-disponibility" *ngIf="disponibilityON">
+                <div class="filters__items-container__item">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuDates">
+                    <span class="filters__items-container__item__button__resume">Fecha</span>
+                    <span class="filters__items-container__item__button__name">Fecha</span>
+                    </button>
+                                <!-- FILTER MENU -->
+                    <mat-menu #menuDates="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                                        <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__range-container">
+                            <div class="filters__items-container__item__menu__range-container__header">
+                            </div>
+                            <mat-form-field>
+                            <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRangeForm" [min]="minDate" [max]="maxDate" separator=" - " (click)="picker.open()">
+                                <input matStartDate formControlName="sinceDateSelected" placeholder="Desde">
+                                <input matEndDate formControlName="untilDateSelected" placeholder="Hasta">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetDates()">Limpiar</button>
+                        <!-- <button mat-button (click)="clearFilter(filter)" type="button"
+                            class="filters__items-container__item__actions-container__button">Limpiar</button> -->
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterDates()">Aplicar</button>
+                    </div>
+                    </mat-menu>
+                    <div>
+                        <span class="sub-text"><strong>Desde:</strong> {{sinceDateSelected | date:"dd-MM-yyyy":'+0'}}</span><br>
+                        <span class="sub-text"><strong>Hasta:</strong> {{untilDateSelected | date:"dd-MM-yyyy":'+0'}}</span>
+                    </div>
+                </div>
+                <div class="filters__items-container__item" *ngIf="filterObject.sinceDate !== null">
+                    <!-- FILTER BUTTON -->
+                    <button class="filters__items-container__item__button pointer" [matMenuTriggerFor]="menuHoursDisponibility">
+                    <span class="filters__items-container__item__button__resume">Horario</span>
+                    <span class="filters__items-container__item__button__name">Horario</span>
+                    </button>
+                                <!-- FILTER MENU -->
+                    <mat-menu #menuHoursDisponibility="matMenu">
+                    <div class="filters__items-container__item__menu" (click)="doNotCloseMenu($event)">
+                            <!-- VALUES -->
+                        <div class="filters__items-container__item__menu__range-container">
+                        <div class="filters__items-container__item__menu__range-container__header">
+                            <p class="filters__items-container__item__menu__range-container__header__title">Desde ({{sinceHourSelectedDisponibility}})</p>
+                        </div>
+                            <mat-slider class="filters__items-container__item__menu__range-container__range"
+                                tickInterval="1"
+                                [(ngModel)]="sinceHourSelectedDisponibility" color="accent" [max]="untilHourSelectedDisponibility - 1" min="0" step="1" thumbLabel="true">
+                            </mat-slider>
+                        </div>
+                        <div class="filters__items-container__item__menu__range-container">
+                            <div class="filters__items-container__item__menu__range-container__header">
+                            <p class="filters__items-container__item__menu__range-container__header__title">Hasta ({{untilHourSelectedDisponibility}})</p>
+                            </div>
+                            <mat-slider class="filters__items-container__item__menu__range-container__range" 
+                            tickInterval="1"
+                            [(ngModel)]="untilHourSelectedDisponibility" color="accent" max="23" [min]="sinceHourSelectedDisponibility + 1" step="1" thumbLabel="true"></mat-slider>
+                        </div>
+                    </div>
+                                    <!-- ACTIONS -->
+                    <div class="filters__items-container__item__actions-container">
+                        <button mat-button type="button" class="filters__items-container__item__actions-container__button" (click)="resetHourDisponibility()">Limpiar</button>
+                        <!-- <button mat-button (click)="clearFilter(filter)" type="button"
+                            class="filters__items-container__item__actions-container__button">Limpiar</button> -->
+                        <button mat-button color="primary" class="filters__items-container__item__actions-container__button" (click)="filterHourDisponibility()">Aplicar</button>
+                    </div>
+                    </mat-menu>
+                    <div>
+                        <span class="sub-text"><strong>Desde:</strong> {{sinceHourSelectedDisponibility}} hs.</span><br>
+                        <span class="sub-text"><strong>Hasta:</strong> {{untilHourSelectedDisponibility}} hs.</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <div class="col-sm-3 col-md-6 p-0">
+            <a class="text-info pointer d-flex pull-right entry-button" *ngIf="disponibilityON" (click)="resetDisponibility()">Quitar</a>
+          </div>
+    </div>
+</div>
 <p *ngIf="selectedFilters.length !== 0">Filtrando por: <span class="badge bg-secondary m-1" *ngFor="let item of selectedFilters"> "{{item}}" </span></p>
 <div class="card-group" *ngIf="fields.length > 0">
     <div class="col-sm-12 col-md-6 col-lg-4 animated fadeIn fast" *ngFor="let field of fields">

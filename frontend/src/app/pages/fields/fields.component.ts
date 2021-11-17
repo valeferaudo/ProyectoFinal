@@ -1,8 +1,10 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Combo } from 'src/app/interfaces/combo.interface';
+import { AppointmentFilter } from 'src/app/interfaces/filters/appointmentFilter.interface';
 import { FieldFilter } from 'src/app/interfaces/filters/fieldFilter.interface';
 import { Field } from 'src/app/models/field.model';
 import { SportCenter } from 'src/app/models/sportCenter.model';
@@ -71,6 +73,28 @@ export class FieldsComponent implements OnInit {
   zoom: number = 12.81;
   mapTypeId: string = 'roadmap';
   sportCentersCombo: any [] = [];
+
+
+  //disponibility
+  disponibilityON = false;
+  dateRangeForm = new FormGroup({
+    sinceDateSelected :new FormControl('',[Validators.required]),
+    untilDateSelected : new FormControl('',[Validators.required])
+  })
+  sinceDateSelected = null;
+  untilDateSelected = null;
+  sinceDate: string;
+  untilDate: string;
+  sinceHourSelectedDisponibility = 0;
+  untilHourSelectedDisponibility = 23;
+  minDate = new Date() 
+  maxDate = new Date(new Date().getTime() + (20 * 86400000));
+  filterObject: AppointmentFilter = {
+    sinceDate: null,
+    untilDate: null,
+    sinceHour: null,
+    untilHour: null,
+  }
 
   constructor(private fieldService: FieldService,
               private activatedRoute: ActivatedRoute,
@@ -180,7 +204,7 @@ export class FieldsComponent implements OnInit {
     getFields(){
       this.filterON = true;
       this.loaderService.openLineLoader();
-      this.fieldService.getFields(this.filters,this.page)
+      this.fieldService.getFields(this.filters,this.page, this.filterObject)
                 .subscribe((resp: any) => {
                   this.loaderService.closeLineLoader();
                   if(resp.ok){
@@ -361,5 +385,72 @@ export class FieldsComponent implements OnInit {
     }
     closeCancelPolicyModal(){
       this.hiddenCancelPolicyModal = false;
+    }
+
+    resetDisponibility(){
+      if (this.disponibilityON === false){
+        this.disponibilityON = true;
+      }
+      else{
+        this.disponibilityON = false;
+        this.dateRangeForm.reset();
+        this.sinceDateSelected = null;
+        this.untilDateSelected = null;
+        this.sinceHourSelectedDisponibility = 0;
+        this.untilHourSelectedDisponibility = 23;
+        this.filterObject.sinceDate = null;
+        this.filterObject.untilDate = null;
+        this.filterObject.sinceHour = null;
+        this.filterObject.untilHour = null;
+        this.getFields();
+      }
+    }
+    resetDates(){
+      this.dateRangeForm.reset();
+      this.sinceDateSelected = null;
+      this.untilDateSelected = null;
+      this.filterObject.sinceDate = null;
+      this.filterObject.untilDate = null;
+      this.setFilterObject();
+      this.getFields();
+    }
+    resetHourDisponibility(){
+      this.sinceHourSelectedDisponibility = 0;
+      this.untilHourSelectedDisponibility = 23;
+      this.setFilterObject();
+      this.getFields();
+    }
+    filterDates(){
+      if (this.dateRangeForm.invalid){
+        Object.values(this.dateRangeForm.controls).forEach(control => {
+          control.markAsTouched();
+        });
+        return;
+      }
+      
+      this.sinceDateSelected = this.dateRangeForm.controls['sinceDateSelected'].value;
+      this.untilDateSelected = this.dateRangeForm.controls['untilDateSelected'].value;
+      this.formatDates();
+      this.setFilterObject();
+      this.getFields();
+    }
+    filterHourDisponibility(){
+      this.setFilterObject();
+      this.getFields();
+    }
+    formatDates(){
+      let since = this.sinceDateSelected.toISOString();
+      let until = this.untilDateSelected.toISOString();
+      this.sinceDate = since.slice(0,10);
+      this.untilDate = until.slice(0,10);
+    }
+    setFilterObject(){
+      console.log(this.sinceDate)
+      this.filterObject = {
+        sinceDate: this.sinceDate === undefined ? null : this.sinceDate,
+        untilDate: this.untilDate === undefined ? null : this.untilDate,
+        sinceHour: this.sinceHourSelectedDisponibility,
+        untilHour: this.untilHourSelectedDisponibility,
+      }
     }
 }

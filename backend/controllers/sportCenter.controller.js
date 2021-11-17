@@ -167,7 +167,6 @@ sportCenterCtrl.createSportCenter = async(req = request,res = response)=>{
             daysID.push(day.idDia)
         });
         const cryptr = new Cryptr(process.env.CRYTPR);
-        console.log(sportCenterBody)
         sportCenter = new SportCenter({
             name: sportCenterBody.name,
             address: sportCenterBody.address,

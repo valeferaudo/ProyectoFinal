@@ -4,6 +4,7 @@ import { Field } from '../models/field.model';
 import { FieldForm } from '../interfaces/fieldForm.inteface';
 import { FieldFilter } from '../interfaces/filters/fieldFilter.interface';
 import { environment } from 'src/environments/environment';
+import { AppointmentFilter } from '../interfaces/filters/appointmentFilter.interface';
 
 const baseUrl = environment.base_url;
 
@@ -16,7 +17,7 @@ export class FieldService {
   getField(id: string){
     return this.http.get(`${baseUrl}/fields/${id}`)
   }
-  getFields(filters: FieldFilter, page: number){
+  getFields(filters: FieldFilter, page: number, disponibilityFilter?: AppointmentFilter){
     let params = new HttpParams();
     params = params.append('text',filters.text);
     params = params.append('state',filters.state);
@@ -40,6 +41,12 @@ export class FieldService {
     }
     if(filters.days.length > 0){
       params = params.append('day',`${filters.days}`)
+    }
+    if(disponibilityFilter !== undefined){
+      params = params.append('sinceDateDisponibility',disponibilityFilter.sinceDate);
+      params = params.append('untilDateDisponibility',disponibilityFilter.untilDate);
+      params = params.append('sinceHourDisponibility',disponibilityFilter.sinceHour);
+      params = params.append('untilHourDisponibility',disponibilityFilter.untilHour);
     }
     return this.http.get(`${baseUrl}/fields/` ,{params});
   }

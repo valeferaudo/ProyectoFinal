@@ -1,6 +1,8 @@
 const Field = require ('../models/field.model');
 const User = require ('../models/user.model');
 const FieldPrice = require('../models/fieldPrice.model');
+const Appointment = require('../models/appointment.model');
+const SpecialSchedule = require('../models/specialSchedule.model');
 const SportCenter = require('../models/sportCenter.model');
 const Feature = require ('../models/feature.model');
 const Sport = require ('../models/sport.model');
@@ -49,6 +51,12 @@ fieldCtrl.getFields = async (req = request , res = response) => {
     available = req.query.available === 'true' ? true : false;
     page = parseInt(req.query.page);
     registerPerPage = parseInt(req.query.registerPerPage);
+
+    //DISPONIBILITY
+    req.query.sinceDateDisponibility === 'null' ? sinceDateDisponibility = null : sinceDateDisponibility = req.query.sinceDateDisponibility;
+    req.query.untilDateDisponibility === 'null' ? untilDateDisponibility = null : untilDateDisponibility = req.query.untilDateDisponibility;
+    req.query.sinceHourDisponibility === 'null' ? sinceHourDisponibility = null : sinceHourDisponibility = req.query.sinceHourDisponibility;
+    req.query.untilHourDisponibility === 'null' ? untilHourDisponibility = null : untilHourDisponibility = req.query.untilHourDisponibility;
     try {
         let fields;
         let booleanState;
@@ -147,20 +155,39 @@ fieldCtrl.getFields = async (req = request , res = response) => {
             }
         }
         if(query['$and'].length > 0){
-             [fields,total] = await Promise.all([Field.find(query).populate('sportCenter features sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+            if (sinceDateDisponibility !== null){
+                [fields,total] = await Promise.all([Field.find(query).populate('sportCenter features sports.sport'),
                                                     Field.find(query).populate('sportCenter features sports.sport').countDocuments()
                                                 ])
+            }
+            else{
+                [fields,total] = await Promise.all([Field.find(query).populate('sportCenter features sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                       Field.find(query).populate('sportCenter features sports.sport').countDocuments()
+                                                   ])
+            }
         }else{
-             [fields,total] = await Promise.all([Field.find().populate('sportCenter features sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+            if (sinceDateDisponibility !== null){
+                [fields,total] = await Promise.all([Field.find().populate('sportCenter features sports.sport'),
                                                     Field.find().populate('sportCenter features sports.sport').countDocuments()
                                                 ])
+            }
+            else{
+                [fields,total] = await Promise.all([Field.find().populate('sportCenter features sports.sport').skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                       Field.find().populate('sportCenter features sports.sport').countDocuments()
+                                                   ])
+            }
         }
         total = Math.ceil(total / registerPerPage);
         if(days !== undefined && sportCentersDay.length === 0 && available === true){
             fields = [];
             total = 0;
         }
-        res.json({
+        let disponibility = await getDisponibility(sinceDateDisponibility,untilDateDisponibility,fields);
+        if (sinceDateDisponibility !== null){
+            fields = disponibility.slice();
+            total = 1;
+        }
+        await res.json({
             ok: true,
             msg:'Found sports',
             param: {
@@ -464,5 +491,91 @@ function sportCenterBlockedResponse(res){
         code: 24,
         msg:'This Sport Center is blocked'
     })
+}
+async function getDisponibility(sinceDateDisponibility,untilDateDisponibility,fields){
+    let fieldsDisponibility = [];
+    if (sinceDateDisponibility !== null){
+        let sinceDate = moment(sinceDateDisponibility)
+        let untilDate = moment(untilDateDisponibility)
+        for (let i = 0; i < fields.length; i++) {
+            const hourDuration = (fields[i].duration / 60)
+            let appointments = new Array;
+            do {
+                let openingTime = parseInt(sinceHourDisponibility)
+                let closingTime = parseInt(untilHourDisponibility)
+                do {
+                    date = moment(sinceDate).add(openingTime,'h')
+                    appointments.push(date)
+                    openingTime = openingTime + hourDuration
+                } while (openingTime <= closingTime );
+                sinceDate = moment(sinceDate).add(1,'day')
+            } while (sinceDate <= untilDate);
+            let openDays = [];
+            fields[i].sportCenter.schedules.forEach( schedule => {
+                openDays.push(schedule)
+            });
+            let daysAppointments= []
+            for (let i = 0; i < openDays.length; i++) {
+                for (let j = 0; j < appointments.length; j++) {
+                    if(moment(appointments[j]).isoWeekday() === openDays[i].day){
+                        if(moment(appointments[j]).hours() >= moment(openDays[i].openingHour).add(3,'h').hours() &&  moment(appointments[j]).hours() <= moment(openDays[i].closingHour).add(3,'h').hours())
+                        daysAppointments.push(appointments[j])
+                    }
+                }
+            }
+            appointments = daysAppointments;
+            sinceDate = moment(sinceDateDisponibility)
+            daysAppointments = [];
+            if(sinceDate.date() === moment().date()){
+                if(parseInt(sinceHour) < moment().hour()){
+                    for (let j = 0; j < appointments.length; j++) {
+                        if(moment(appointments[j]).date() ===  moment().date()){
+                            if (moment(appointments[j]).hour() > moment().hour()){
+                                daysAppointments.push(appointments[j])
+                            }
+                        }
+                        else{
+                            daysAppointments.push(appointments[j])
+                        }
+                    }
+                    appointments = daysAppointments;
+                }
+            }
+            let reserved = [];
+            reserved = await Appointment.find({$and: [ { date: { $gte: moment(sinceDate).add(parseInt(sinceHourDisponibility),'h') } },
+                                                        { date: { $lte: moment(untilDate).add(parseInt(untilHourDisponibility),'h') } },
+                                                        {field:fields[i].id} ] } );
+            for (let i = 0; i < reserved.length; i++) {
+                for (let j = 0; j < appointments.length; j++) {
+                    if(moment(reserved[i].date).add(3,'h').isSame(moment(appointments[j]))){
+                        appointments.splice(j,1);
+                    }
+                }
+            }
+            let specialSchedulesDB = await SpecialSchedule.find({ $and: [ { sportCenter: fields[i].sportCenter.id }, 
+                                    { date: { $gte: moment(sinceDate).startOf('day') } },
+                                    { date: { $lte: moment(untilDate).startOf('day') } } ] })
+            let specialSchedules = [];
+            specialSchedulesDB.forEach(item => {
+            let minHour = moment(item.sinceHour).add(3,'h').hour() - 1;
+            let maxHour = moment(item.untilHour).add(3,'h').hour() - 1;
+            do {
+                minHour = minHour +1;
+                specialSchedules.push(moment(item.date).add(minHour,'h'))
+            } while (moment(item.date).add(minHour,'h').isBefore(moment(item.date).add(maxHour,'h')));
+            });
+            for (let i = 0; i < specialSchedules.length; i++) {
+                for (let j = 0; j < appointments.length; j++) {
+                    if(moment(specialSchedules[i]).isSame(moment(appointments[j]))){
+                        appointments.splice(j,1);
+                    }
+                }
+            }
+            if (appointments.length > 0){
+                fieldsDisponibility.push(fields[i]);
+            }
+        }
+        return fieldsDisponibility;
+}
 }
 module.exports = fieldCtrl;

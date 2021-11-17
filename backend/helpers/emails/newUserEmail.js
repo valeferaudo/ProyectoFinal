@@ -12,7 +12,8 @@ const sendNewUserEmail = async (newUser) =>{
           from: 'sporturno.new.user@gmail.com',
           to: 'sporturno@gmail.com',
           subject: 'Aviso - Solicitud de registro',
-          html: '<h1>NUEVO USUARIO</h1><p>+user.email+</p>'
+          html: `<h1>NUEVO USUARIO</h1>
+                  <p>Bienvenido/a ${newUser.name} a Sporturno.</p>`
         }
     await transporter.sendMail(mailOptions, function(error, info){
         if (error) {

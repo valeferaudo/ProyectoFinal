@@ -53,7 +53,7 @@ export class AppointmentsComponent {
   filterAboutToStartON: boolean = false;
   filterInProgressON: boolean = false;
   states = ['Reservado','Por comenzar','En progreso','Completado']
-  statesSelected = ['Reservado','Por comenzar','En progreso'];
+  statesSelected = ['Reservado'];
   payments = ['Total','Parcial','Sin Pagos'];
   paymentSelected: 'Total' | 'Parcial' | 'Sin Pagos';
   //PAGINATOR

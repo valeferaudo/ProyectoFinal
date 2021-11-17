@@ -220,8 +220,6 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
         let query = {
             '$and': []
         };
-        console.log(sinceDate,untilDate)
-
         query['$and'].push({ sportCenter: sportCenterID})
         state !== null ? query['$and'].push({ state: state}) : query ;
         fieldID !== null ? query['$and'].push({field: fieldID}) : query;
@@ -242,24 +240,26 @@ appointmentCtrl.getSportCenterAppointments = async (req = request , res = respon
                   }
             })
         }
+        let sort;
+        state === 'Completed' ? sort = -1 : sort = 1;
         if(query['$and'].length > 0){
-            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage),
+            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage).sort({date:sort}),
                                                     Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                 ])
         }else{
-            [appointments,total] = await Promise.all([Appointment.find().populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage),
+            [appointments,total] = await Promise.all([Appointment.find().populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage).sort({date: sort}),
                                                     Appointment.find().populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                 ])
         }
         total = Math.ceil(total / registerPerPage);
-        if(appointments.length > 0){
-            if(appointments[0].state === 'Completed'){
-                sortDateFromLargest(appointments);
-            }
-            else{
-                sortDateFromSmallest(appointments);
-            }
-        }
+        // if(appointments.length > 0){
+        //     if(appointments[0].state === 'Completed'){
+        //         sortDateFromLargest(appointments);
+        //     }
+        //     else{
+        //         sortDateFromSmallest(appointments);
+        //     }
+        // }
         res.json({
             ok:true,
             msg:'Found Appointments',
@@ -296,19 +296,21 @@ appointmentCtrl.getReservedSportCenterAppointments = async (req = request , res 
         query['$and'].push({ sportCenter: sportCenterID})
         query['$and'].push({$and: [ { date: { $gte: moment(date).add(parseInt(sinceHour),'h').subtract(3,'h') } },
                                     { date: { $lt: moment(date).add(parseInt(untilHour),'h').subtract(3,'h') }}]})
+        let sort;
+        state === 'Completed' ? sort = -1 : sort = 1;
         if(query['$and'].length > 0){
-            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name').populate('field').populate('sportCenter'),
+            [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').sort({date:sort}),
                                                     Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                 ])
         }
-        if(appointments.length > 0){
-            if(appointments[0].state === 'Completed'){
-                sortDateFromLargest(appointments);
-            }
-            else{
-                sortDateFromSmallest(appointments);
-            }
-        }
+        // if(appointments.length > 0){
+        //     if(appointments[0].state === 'Completed'){
+        //         sortDateFromLargest(appointments);
+        //     }
+        //     else{
+        //         sortDateFromSmallest(appointments);
+        //     }
+        // }
         res.json({
             ok:true,
             msg:'Found Reserved Appointments',
@@ -364,16 +366,16 @@ appointmentCtrl.getUserAppointments = async (req = request , res = response) => 
                     ]
                   }
             })
-        }                                    
+        }
         let sort;
-        state === 'Completed' ? sort = -1 : sort = 1;
+        state === 'Completed' ? sort = -1 : sort = 1;                        
         if(query['$and'].length > 0){
             [appointments,total] = await Promise.all([Appointment.find(query).populate('user','name')
-                                                                            .populate('field').populate('sportCenter').sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+                                                                            .populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage).sort({date: sort}),
                                                         Appointment.find(query).populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                     ])
         }else{
-            [appointments,total] = await Promise.all([Appointment.find().populate('user','name').populate('field').populate('sportCenter').sort({date: sort}).skip(registerPerPage*(page -1)).limit(registerPerPage),
+            [appointments,total] = await Promise.all([Appointment.find().populate('user','name').populate('field').populate('sportCenter').skip(registerPerPage*(page -1)).limit(registerPerPage).sort({date:sort}),
                                                     Appointment.find().populate('user','name').populate('field').populate('sportCenter').countDocuments()
                                                 ])
         }
@@ -476,11 +478,11 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
             }else{
                 if(appointmentDB.user.role === 'USER'){
                     cancelAppointmentCenterEmail(appointmentDB.user, appointmentDB);
-                    // cancelAppointmentSMS(appointmentDB)
+                    cancelAppointmentSMS(appointmentDB)
                 }
                 else{
                     //aca se enviaria al numero q paso el tipo en la reserva manual
-                    // cancelAppointmentSMS(appointmentDB)
+                    cancelAppointmentSMS(appointmentDB)
                 }
             }
             [ids, updates] = await Promise.all([Payment.find({appointment:id},'id amountPayment'),
@@ -493,7 +495,6 @@ appointmentCtrl.deleteAppointment = async (req = request, res = response) =>{
             });
             appointmentDB.totalPaid = totalPaid;
             appointmentDB.payments = paymentsID
-            console.log(appointmentDB)
             await Appointment.findByIdAndUpdate(id,appointmentDB)
             if(updates.n !== 0){
                 if(userDB.role === 'USER'){

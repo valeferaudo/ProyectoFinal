@@ -306,6 +306,13 @@ export class TableDoAppointmentComponent implements OnInit {
                                 icon: 'success',
                               })
                             }
+                            else{
+                              this.sweetAlertService.showSwalResponseDelay({
+                                title: 'Turno Reservado',
+                                text: ``,
+                                icon: 'success',
+                              })
+                            }
                           }
                           else{
                             this.sweetAlertService.showSwalResponseDelay({

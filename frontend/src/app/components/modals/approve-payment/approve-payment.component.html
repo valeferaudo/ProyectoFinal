@@ -29,7 +29,7 @@
               <strong>Costo del turno: </strong>{{appointment.totalAmount}}$
               <br>
               <strong>Pagar: </strong><span *ngIf="toPaid !== null">{{toPaid}}$ <br></span>
-              <button (click)="setToPaid('safe')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': typePayment === 'Seña'}">Seña ({{appointment.field.sportCenter.minimunAmount}}%)</button>
+              <button (click)="setToPaid('safe')" class="btn btn-outline-secondary m-1" *ngIf="appointment.sportCenter.minimunAmount !== null" [ngClass]="{'active': typePayment === 'Seña'}">Seña ({{appointment.sportCenter.minimunAmount}}%)</button>
               <button (click)="setToPaid('total')" class="btn btn-outline-secondary m-1" [ngClass]="{'active': typePayment === 'Total'}">Total (100%)</button>
           </div>
             <div class="modal-footer">

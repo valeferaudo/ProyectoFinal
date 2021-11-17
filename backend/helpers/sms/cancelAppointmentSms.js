@@ -9,7 +9,7 @@ const cancelAppointmentSMS
         to:'+543492659902',
         from: process.env.PHONE_NUMBER,
         body: `Turno cancelado. Fecha: ${getDate(appointment.date)}. 
-            Centro Deportivo: ${appointment.field.sportCenter.name}. 
+            Centro Deportivo: ${appointment.sportCenter.name}. 
             Cancha: ${appointment.field.name}. 
             Usuario: ${appointment.user.name}.
             Total pagado: ${appointment.totalPaid}.
